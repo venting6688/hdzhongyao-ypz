@@ -24,7 +24,6 @@ const patient = {
 	async archiveQuery(data) {
 		const queryParams = Object.keys(data).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
 		const url = `archiveQuery?${queryParams}`;
-		console.log(url);
 		const res = await cjRequest({
 			url: url,
 			method: "get",

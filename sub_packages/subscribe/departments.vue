@@ -79,49 +79,14 @@
 								})
 								v.children = this.secondDepartment
 							})
-							console.log(JSON.stringify(this.stairDepartment[0]));
-							this.filteredItems.push(this.stairDepartment[0]);
+							this.filteredItems = this.stairDepartment;
+							// this.filteredItems.push(this.stairDepartment[0]);
 						}
 					}
 				}).catch(err => {
 					console.log('errrrrr：', err);
 				})
 			},
-			// 获取小科室
-			// getSpecialtyGroup(CliSerGroupID) {
-			// 	registrationApi.getSpecialtyGroup(CliSerGroupID).then(res => {
-			// 		if(Array.isArray(res.data.data.ClinicGroup)){
-			// 			this.secondDepartment = res.data.data.ClinicGroup.map(item =>({text:item.CLGRPDesc,...item}));
-			// 		} else {
-			// 			this.secondDepartment = [res.data.data.ClinicGroup].map(item =>({text:item.CLGRPDesc,...item}));
-			// 		}
-			// 		this.integration()
-			// 	}).catch(err => {
-			// 		console.log('2：', err);
-			// 	})
-			// },
-			//整合最后数据
-			// integration(){
-			// 	if(!this.items.length){
-			// 		console.log('1111');
-			// 		this.items = this.stairDepartment.map((i,x)=> {
-			// 			if(x === this.mainActiveIndex){
-			// 				i.children = this.secondDepartment
-			// 			}
-			// 			return i
-			// 		})
-			// 		this.filteredItems = this.items
-			// 	}else if(!this.filteredItems.length && !this.searchQuery){
-			// 		this.filteredItems = this.items
-			// 	}else {
-			// 		this.filteredItems.forEach((i,x)=> {
-			// 			if(x===this.mainActiveIndex){
-			// 				i.children = this.secondDepartment
-			// 			}
-			// 		})
-			// 	}
-			// 	console.log(JSON.stringify(this.filteredItems));
-			// },
 			//搜索科室
 			filterItemsFun() {
 				if (this.searchQuery) {
@@ -144,18 +109,13 @@
 				this.getSpecialtyGroup(CliSerGroupID)
 			},
 			onNavClick(index) {
-				console.log(index);
-				// this.mainActiveIndex = index.target.index;
-				// this.filteredItems = this.filteredItems[this.mainActiveIndex];
-				// this.mainActiveIndex = index.target.index;
+				this.mainActiveIndex = index.target.index;
 				this.clickDepartment = this.filteredItems[this.mainActiveIndex];
-				console.log(JSON.stringify(this.clickDepartment),'aaaaaaa');
 				this.filteredItems.forEach((i,x)=> {
 					if(x === this.mainActiveIndex){
 						i.children = this.clickDepartment['children'];
 					}
 				})
-				// mergeData();
 			},
 			onItemClick(item) {
 				this.activeId = item.target.text;
@@ -166,9 +126,6 @@
 					uni.navigateTo({
 						url: `/sub_packages/subscribe/doctors?title=${item.target.text}&deptCode=${item.target.deptCode}`
 					})
-				// uni.navigateTo({
-				// 	url: '../hpvOrder-detail/hpvOrder-detail?key=' + encodeURIComponent(JSON.stringify(item))
-				// })
 			}
 	},
 	mounted() {

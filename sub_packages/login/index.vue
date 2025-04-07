@@ -57,11 +57,9 @@
 					console.log("登录返回的信息：", JSON.stringify(res));
 					console.log('手机号动态令牌：',e.detail.code);
 					this.getPhoneNumberFn(e.detail.code, res.code).then(data => { // 服务端获取手机号
-					console.log(JSON.stringify(data.data));
+					let phone = data.data.phoneNum;
 						if (!data.data.patientName) {
-							uni.navigateTo({
-								url:"/sub_packages/family/familyInformation"
-							})
+							uni.navigateTo({ url:"/sub_packages/family/familyInformation?phone="+phone })
 						} else {
 							let items = JSON.stringify(data.data)
 							uni.setStorageSync('loginData', items)

@@ -29,6 +29,7 @@
 				countTimer:null,
 				time:60,
 				verificationCodeState:false,
+				phoneNum: '',
 			}
 		},
 		methods: {
@@ -53,12 +54,13 @@
 						patientName: this.informationObj.name,
 						cardType: 1, 
 						cardNo: this.informationObj.num,
+						phone: this.phoneNum,
 					}
 					filingApi.archiveQuery(data).then(res => {
-						let result = JSON.parse(res.data.msg);
-						if (result.data == null && result.code == 0) {
+						let result = res.data.data;
+						if (!result.defaultArchives) {
 							uni.showModal({
-								title: result.msg,
+								title: "未查询当建档信息，请先建档。",
 								success: res => {
 									if (res.confirm) {
 										uni.navigateTo({
@@ -68,10 +70,8 @@
 								}
 							});
 						} else{
-							uni.setStorageSync('loginData', result.data);
-							uni.switchTab({
-								url:"/pages/virtualNurse/index"
-							})
+							uni.setStorageSync('loginData', result);
+							uni.switchTab({ url:"/pages/virtualNurse/index" })
 						}
 					})
 					.catch(err => {
@@ -95,6 +95,9 @@
 			        }, 1000)
 			    }
 			},
+		},
+		onLoad(e) {
+			this.phoneNum = e.phone;
 		}
 	}
 </script>

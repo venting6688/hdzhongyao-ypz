@@ -1,9 +1,10 @@
 <script>
 	export default {
 		onLaunch: function() {
-			const isLogin = uni.getStorageSync("loginData");
-			if (isLogin) {
-				if (isLogin.patientName) { 
+			let loginData = uni.getStorageSync("loginData");
+			loginData = loginData.defaultArchives ? loginData.defaultArchives : false;
+			if (loginData) {
+				if (loginData.patientName) { 
 					setTimeout(() => {
 						uni.reLaunch({ url: '/pages/virtualNurse/index' });
 					}, 100);

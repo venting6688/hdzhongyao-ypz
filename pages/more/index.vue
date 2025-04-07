@@ -2,7 +2,6 @@
 	<view class="box" :animation="animationData">
 		<HeaderBar @handle="show" :footState="footState" />
 		<view class="scroll-Y">
-			
 			<van-grid column-num="4" :border="false" v-for="(i,x) in moduleList" :key="x">
 				<view class="title">
 					{{i.title}}
@@ -86,100 +85,104 @@
 						],
 					},
 					{
-						title:'便民服务',
-						list: uni.getStorageSync("loginData") ?  [
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/person3.png',
-								name:'疾病百科',
-								num:10,
-							},
-						   {
-						    	img:'https://aiwz.sdtyfy.com:8099/img/person2.png',
-						    	name:'药品查询',
-						    	num:11,
-						    },
-						    {
-						    	img:'https://aiwz.sdtyfy.com:8099/img/electronicBills.png',
-						    	name:'电子票据',
-						    	num:12,
-						    },
-								{
-									img:'https://aiwz.sdtyfy.com:8099/img/health.png',
-									name:'医保凭证',
-									num:13,
-								},
-								{
-									img:'https://aiwz.sdtyfy.com:8099/img/medicalRecord.png',
-									name:'病案通',
-									num:14,
-								},
-								{
-									img:'../../static/image/quyaofy.png',
-									name:'智慧取药',
-									num:40,
-								},
-								{
-									img:'https://aiwz.sdtyfy.com:8099/img/hospitalized4.png',
-									name:'营养点餐',
-									num:15,
-								},
-					    ] : [
-						    {
-						    	img:'https://aiwz.sdtyfy.com:8099/img/electronicBills.png',
-						    	name:'电子票据',
-						    	num:12,
-						    },
-								{
-									img:'https://aiwz.sdtyfy.com:8099/img/health.png',
-									name:'医保凭证',
-									num:13,
-								},
-								{
-									img:'https://aiwz.sdtyfy.com:8099/img/medicalRecord.png',
-									name:'病案通',
-									num:14,
-								},
-								{
-									img:'../../static/image/quyaofy.png',
-									name:'取药服务',
-									num:40,
-								},
-								{
-									img:'https://aiwz.sdtyfy.com:8099/img/hospitalized4.png',
-									name:'营养点餐',
-									num:15,
-								},
-					    ]
+						title: '住院服务',
+						list: []
 					},
 					{
-						title:'综合服务',
+						title: '智慧取药',
+						list: [
+							{
+								img:'../../static/image/quyaofy.png',
+								name:'智慧取药',
+								num:40,
+							},
+						]
+					},
+					// {
+					// 	title:'便民服务',
+					// 	list: uni.getStorageSync("loginData") ?  [
+					// 		{
+					// 			img:'https://aiwz.sdtyfy.com:8099/img/person3.png',
+					// 			name:'疾病百科',
+					// 			num:10,
+					// 		},
+					// 	   {
+					// 	    	img:'https://aiwz.sdtyfy.com:8099/img/person2.png',
+					// 	    	name:'药品查询',
+					// 	    	num:11,
+					// 	    },
+					// 	    {
+					// 	    	img:'https://aiwz.sdtyfy.com:8099/img/electronicBills.png',
+					// 	    	name:'电子票据',
+					// 	    	num:12,
+					// 	    },
+					// 			{
+					// 				img:'https://aiwz.sdtyfy.com:8099/img/health.png',
+					// 				name:'医保凭证',
+					// 				num:13,
+					// 			},
+					// 			{
+					// 				img:'https://aiwz.sdtyfy.com:8099/img/medicalRecord.png',
+					// 				name:'病案通',
+					// 				num:14,
+					// 			},
+					// 			{
+					// 				img:'../../static/image/quyaofy.png',
+					// 				name:'智慧取药',
+					// 				num:40,
+					// 			},
+					// 			{
+					// 				img:'https://aiwz.sdtyfy.com:8099/img/hospitalized4.png',
+					// 				name:'营养点餐',
+					// 				num:15,
+					// 			},
+					//     ] : [
+					// 	    {
+					// 	    	img:'https://aiwz.sdtyfy.com:8099/img/electronicBills.png',
+					// 	    	name:'电子票据',
+					// 	    	num:12,
+					// 	    },
+					// 			{
+					// 				img:'https://aiwz.sdtyfy.com:8099/img/health.png',
+					// 				name:'医保凭证',
+					// 				num:13,
+					// 			},
+					// 			{
+					// 				img:'https://aiwz.sdtyfy.com:8099/img/medicalRecord.png',
+					// 				name:'病案通',
+					// 				num:14,
+					// 			},
+					// 			{
+					// 				img:'../../static/image/quyaofy.png',
+					// 				name:'取药服务',
+					// 				num:40,
+					// 			},
+					// 			{
+					// 				img:'https://aiwz.sdtyfy.com:8099/img/hospitalized4.png',
+					// 				name:'营养点餐',
+					// 				num:15,
+					// 			},
+					//     ]
+					// },
+					{
+						title:'便民服务',
 						list:[
-						    {
-						    	img:'https://aiwz.sdtyfy.com:8099/img/synthesize3.png',
-						    	name:'健康随访',
-						    	num:22,
-						    },
-						    {
-						    	img:'https://aiwz.sdtyfy.com:8099/img/synthesize1.png',
-						    	name:'家庭管理',
-						    	num:23,
-						    },
-						    {
-						    	img:'https://aiwz.sdtyfy.com:8099/img/synthesize4.png',
-						    	name:'在线建档',
-						    	num:24,
-						    },
+							{
+								img:'https://aiwz.sdtyfy.com:8099/img/synthesize1.png',
+								name:'家庭管理',
+								num:23,
+							},
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/synthesize4.png',
-								name:'互联网+护理',
-								num:25,
+								name:'在线建档',
+								num:24,
 							},
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/synthesize6.png',
 								name:'我的',
 								num:26,
 							},
-					    ]
+						]
 					},
 				],
 				urlList:[

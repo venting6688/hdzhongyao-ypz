@@ -19,7 +19,7 @@
 				</view>
 				<view class="wire"  v-if="siginData.patientName"></view>
 				<view class="foot-bar" :class="{'bar-w':!siginData.patientName}">
-					<view class="piece" :style="{ width: siginData ? '33.333%' : '50%' }" v-for="item in footList" :key="item.name" @click="footBtn(item)">
+					<view class="piece" :style="{ width: siginData.patientName ? '33.333%' : '50%' }" v-for="item in footList" :key="item.name" @click="footBtn(item)">
 						<view class="title">
 							<image v-if="item.type==footState" :src="item.selectedIconPath" mode="widthFix"></image>
 							<image v-else :src="item.iconPath" mode="widthFix"></image>
@@ -109,7 +109,7 @@
 				iosState:false,
 				cutPatientPopupState:true,
 				timer:null,
-				siginData: uni.getStorageSync('loginData')
+				siginData: {}
 			}
 		},
 		computed: { 
@@ -174,8 +174,9 @@
 			},
 		},
 		mounted() {
-			// console.log(JSON.stringify(this.siginData));
 			this.loginData()
+			let data = uni.getStorageSync('loginData');
+			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 		},
 	}
 </script>

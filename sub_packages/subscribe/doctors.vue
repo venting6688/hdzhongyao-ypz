@@ -52,7 +52,15 @@
 								<text>{{item.restNum < 0 ? 0 : item.restNum}}</text>
 							</view>
 						</view>
-						<view class="subscribe-btn" @click="doctorDetails(item)" v-if="item.restNum > 0">预约</view>
+						<button 
+							type="primary" 
+							size="mini" 
+							style="background-color: #007AFF; color: white;" 
+							@click="doctorDetails(item)" 
+						>
+							预约
+						</button>
+						<!-- <view   v-if="item.restNum > 0" disabled>预约</view> -->
 					</view>
 				</view>
 			</view>
@@ -105,7 +113,7 @@
 				doctorTimeList:[],
 				today:true,   //是否是当天的
 				nowDate:'',
-				siginData: uni.getStorageSync("loginData")
+				siginData: {}
 			}
 		},
 		computed: {
@@ -183,9 +191,10 @@
 						medAmPm: item.medAmPm,
 						scheduleId: item.scheduleId
 					}
+					
 					//锁号
 					let lockNumData = {
-						cardNo: this.siginData.cardNo,
+						cardNo: this.siginData.patientCard,
 						cardType: 1,
 						scheduleId: this.doctor.scheduleId,
 						docCode: this.doctor.scheduleItemCode,
@@ -225,6 +234,8 @@
 		},
 		mounted() {
 			this.getScheduleDates()
+			let data = uni.getStorageSync('loginData');
+			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 		},
 		
 	}

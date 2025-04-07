@@ -452,13 +452,12 @@
 			answer(msg){
 				let loginValue = uni.getStorageSync("loginData");
 				if(loginValue){
-					let data = JSON.parse(loginValue)
-					if(data.defaultArchives){
+					// let data = JSON.parse(loginValue)
+					if(loginValue){
 						this.msg = msg
 						this.sendMsg()
 					}else {
-						login.loginData().catch((error) => {
-                        });
+						login.loginData().catch((error) => {});
 					}
 					
 				}else {
