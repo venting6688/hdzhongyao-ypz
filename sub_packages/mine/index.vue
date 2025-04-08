@@ -3,7 +3,7 @@
 		<view class="content">
 			<view class="top">
 				<text>绑定手机号:</text>
-				<text>{{pixelateNumber(footData.phoneNum)}}</text>
+				<text>{{pixelateNumber(siginData.phoneNum)}}</text>
 			</view>
 			<view class="list">
 				<navigator url="/sub_packages/prescription/index">
@@ -62,7 +62,7 @@
 			
 		</view>
 		
-		<foot :footState="footState"/>
+		<!-- <foot :footState="footState"/> -->
 	</view>
 </template>
 
@@ -78,6 +78,7 @@
 		data(){
 			return {
 				footState:2,
+				siginData: {}
 			}
 		},
 		computed: {
@@ -87,7 +88,8 @@
 			
 		},
 		mounted() {
-			
+			let data = uni.getStorageSync('loginData');
+			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 		}
 	}
 </script>

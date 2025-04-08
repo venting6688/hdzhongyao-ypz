@@ -1,11 +1,5 @@
 <template>
 	<view class="information">
-		<!-- <view class="authorization">
-			一键授权，已有健康卡用户快速绑定
-		</view>
-		<view class="bar">
-			<view @click="relationBtn(i)" :class="{b:informationObj.relation===i}" v-for="(i,x) in barList" :key="x">{{i}}</view>
-		</view> -->
 		<form>
 			<view class="cu-form-group">
 				<view class="title">姓名</view>
@@ -14,42 +8,36 @@
 			<view class="cu-form-group">
 				<view class="title">性别</view>
 				<input v-model="informationObj.sex" placeholder="请输入" name="input" />
-				<!-- <text class="answer">{{informationObj.sex}}</text> -->
 			</view>
 			<view class="cu-form-group">
 				<view class="title">民族</view>
 				<input v-model="informationObj.nation" placeholder="请输入" name="input" />
-				<!-- <text class="answer">{{informationObj.nation}}</text> -->
 			</view>
 			<view class="cu-form-group">
 				<view class="title">出生日期</view>
-				<input v-model="informationObj.birthdayday" placeholder="年-月-日" name="input" />
-				<!-- <text class="answer">{{informationObj.birthdayday}}</text> -->
+				<picker mode="date" :value="informationObj.birthday" :start="startDate" :end="endDate" fields="day" @change="bindDateChange">
+				    <text class="picker birth">{{informationObj.birthday}}</text>
+				</picker>
 			</view>
 			<view class="cu-form-group">
-				<view class="title">家庭住址</view>
-				<input v-model="informationObj.address" placeholder="请输入" name="input" />
-				<!-- <text class="answer">{{informationObj.address}}</text> -->
+				<view class="title">省市区</view>
+				<picker mode="region" @change="chooseregion" :value="provincesAndMunicipalities">
+					<view class="picker">
+						<text>{{ provincesAndMunicipalities }}</text>
+					</view>
+				</picker>
+			</view>
+			<view class="cu-form-group">
+				<view class="title">详细地址</view>
+				<input v-model="address" name="input" />
 			</view>
 			<view class="cu-form-group">
 				<view class="title">身份证号</view>
 				<input v-model="informationObj.idNo" placeholder="请输入" name="input" />
-				<!-- <text class="answer">{{informationObj.idNo}}</text> -->
 			</view>
 			<view class="cu-form-group">
 				<view class="title">患者类型</view>
-				<text class="answer">自费</text>
-			</view>
-			<view class="cu-form-group">
-				<view class="x">
-					*
-				</view>
-				<view class="title">职业</view>
-				<picker @change="occupationPickerChange" :value="occupationPickerIndex" range-key="name" :range="occupationPicker">
-					<view class="picker">
-						{{occupationPickerIndex>-1?occupationPicker[occupationPickerIndex].name:'请选择'}}
-					</view>
-				</picker>
+				<input v-model="informationObj.patientType" placeholder="自费或医保" name="input" />
 			</view>
 			
 			<view class="cu-form-group" style="margin-top: 30rpx;">
@@ -59,19 +47,6 @@
 				<view class="title">手机号</view>
 				<input v-model="informationObj.phone"  type="number" placeholder="请输入手机号" name="input"></input>
 			</view>
-			<!-- <view class="cu-form-group">
-				<view class="x">
-					*
-				</view>
-				<view class="title">验证码</view>
-				<input v-model="informationObj.verificationCode" placeholder="请输入短信验证码" name="input" />
-				<view @click="verificationCodeBtn" v-if="!verificationCodeState" class="verificationCode">
-					获取验证码
-				</view>
-				<view class="answer" v-else>
-					{{time}}s
-				</view>
-			</view> -->
 		</form>
 		<view class="tips">
 			<view class="tips-title">
@@ -85,49 +60,32 @@
 		<view class="confirm" @click="Filing" :class="{unclickable:!informationObj.patientName ||!informationObj.idNo ||!informationObj.phone }">
 			确认建档
 		</view>
-		<!-- <view class="confirm" @click="Filing" :class="{unclickable:!informationObj.occupation ||!informationObj.patientType ||!informationObj.phone }">
-			确认建档
-		</view> -->
 	</view>
 </template>
 <script>
 	import filingApi from '@/api/filingApi.js'
+	import mixin from '@/mixins/mixin.js'
 	import {mapMutations} from 'vuex'
 	export default {
+		mixins: [mixin],
 		data(){
 			return {
 				informationObj:{
-					relation:'',
+					idNo:'',
+					idType:'1',
 					patientName:'',
+					patientType: '自费', //病人类型
+					guarderId: '', //监护人身份证id
 					sex:'',
-					nationality:'',
-					birthday:'',
-					address:'',
-					occupation:'',
-					patientType:'',
-					num:'',
+					birthday:'1995-01-01',
 					phone:'',
-					verificationCode:'',
+					address:'',
+					nation:'', //民族
 				},
+				provincesAndMunicipalities: ['山东省','济南市','历下区'],
+				address: '',
 				occupationPickerIndex: -1,
 				patientTypePickerIndex:-1,
-				occupationPicker: [
-					{name:'国家公务员',type:'11'},
-					{name:'专业技术人员',type:'13'},
-					{name:'职员',type:'17'},
-					{name:'企业管理人员',type:'21'},
-					{name:'工人', type:'24'},
-					{name:'农民', type:'27'},
-					{name:'学生', type:'31'},
-					{name:'现役军人', type:'37'},
-					{name:'自由职业者', type:'51'},
-					{name:'个体经营者', type:'54'},
-					{name:'无业人员', type:'70'},
-					{name:'退(离)休人员', type:'80'},
-					{name:'其他',type:'90'},
-					{name:'散居儿童',type:'97'},
-					{name:'幼托儿童',type:'98'},
-					],
 				patientTypePicker: [
 					{name:'自费', type:'01'},
 					{name:'本市职工慢病', type:'02'},
@@ -144,21 +102,16 @@
 					{name:'省外异地职工门诊', type:'13'},
 					{name:'省外异地居民慢病',type:'14'},
 					{name:'省外异地居民门诊',type:'15'},
-					],
+				],
 				barList:['本人','配偶','父母','子女','其他'],
 				countTimer:null,
 				time:60,
 				verificationCodeState:false,
 			}
 		},
-		onLoad(e) {
-			// this.informationObj = JSON.parse(decodeURIComponent(e.getIdCardInformation))
-			// this.$set(this.informationObj,'relation','本人')
-			// this.informationObj.patientType = '01'   //自费
-			// if(this.informationObj.name){
-			// 	this.informationObj.birthday = [this.informationObj.birthday.slice(0,4),this.informationObj.birthday.slice(4,6),this.informationObj.birthday.slice(6)].join('-')
-			// }
-			 
+		computed:{
+			startDate() { return this.getDate('start') },
+			endDate() { return this.getDate('end') }
 		},
 		mounted() {
 			this.$nextTick(()=>{
@@ -176,15 +129,13 @@
 			relationBtn(i){
 				this.informationObj.relation = i
 			},
-			// 获取验证码
-			verificationCodeBtn(){
-				this.verificationCodeState = true
-				this.count(60)
-				filingApi.sendVerificationCode(this.informationObj.phone).then(res => {
-				})
-				.catch(err => {
-					console.log('2：', err);
-				})
+			//选择日期
+			bindDateChange(e) { 
+				this.informationObj.birthday = e.detail.value
+			},
+			//省市区
+			chooseregion(event){
+				this.provincesAndMunicipalities = event.detail.value.toString();
 			},
 			Filing(){
 				if (!this.informationObj.patientName ||!this.informationObj.idNo ||!this.informationObj.phone) {
@@ -195,20 +146,22 @@
 					})
 				} else {
 					this.informationObj.patientType = '自费';
+					this.informationObj.address = this.provincesAndMunicipalities+this.address;
 					filingApi.archive(this.informationObj).then(res => {
-						let result = JSON.parse(res.data.msg);
-						if(result.success){
+						if(res.data.code === 200){
+							let result = res.data.data.defaultArchives;
 							uni.showToast({
 								title: '建档成功',
 								duration: 2000
 							});
-							uni.setStorageSync('loginData', result.data);
+							this.setFootData(result)
+							uni.setStorageSync('loginData', res.data.data);
 							wx.reLaunch({ url: '/pages/more/index' })
 						}else{
 							uni.showToast({
-							    title: result.msg,
-							    icon: 'none',   
-							    duration: 3000 
+								title: res.data.msg ? res.data.msg : '建档失败',
+								icon: 'none',   
+								duration: 3000 
 							})
 						}
 					}).catch(err => {
@@ -288,6 +241,13 @@
 					width: 160rpx;
 				}
 				.answer {
+					color: #999999;
+				}
+				.birth{
+					height: 86rpx;
+					display: inline-block;
+					text-align: left;
+					width: 420rpx;
 					color: #999999;
 				}
 				.verificationCode {

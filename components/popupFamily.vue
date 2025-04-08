@@ -49,14 +49,14 @@
 		},
 		watch: {
 			// 切换就诊人后重新渲染页面
-		    footData(newVal, oldVal) {
-			  if(oldVal && oldVal.patientUniquelyIdentifies && (newVal.patientUniquelyIdentifies!==oldVal.patientUniquelyIdentifies)){
-				this.setShowState(false)
-				this.$nextTick(() => {
-				    this.setShowState(true)
-				});
-			  }
-		    }
+			footData(newVal, oldVal) {
+				if(oldVal && oldVal.patientUniquelyIdentifies && (newVal.patientUniquelyIdentifies!==oldVal.patientUniquelyIdentifies)){
+					this.setShowState(false)
+					this.$nextTick(() => {
+						this.setShowState(true)
+					});
+				}
+			}
 		},
 		mounted() {
 			let loginValue = uni.getStorageSync("loginData");

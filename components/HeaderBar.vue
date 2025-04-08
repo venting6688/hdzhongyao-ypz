@@ -90,19 +90,19 @@ export default {
 	        bus.$on('refreshGetFirstVisit',(data)=>{
 				if(data.callingInterface){
 					// 取消挂号或取消预约后马上调用接口更新数据
-					this.getFirstVisit(data)
+					// this.getFirstVisit(data)
 				}else{
 					this.refreshData(data)
 				}
 	        	
 	        })
-			await this.getFirstVisit()
-			this.getTreatmentStageNew(3)
-			this.timer = setInterval(()=>{
-				this.getFirstVisit({},3)
-				this.getTreatmentStageNew(3)
-			},20000)
-			this.animateText()
+			// await this.getFirstVisit()
+			// this.getTreatmentStageNew(3)
+			// this.timer = setInterval(()=>{
+			// 	this.getFirstVisit({},3)
+			// 	this.getTreatmentStageNew(3)
+			// },20000)
+			// this.animateText()
 		}
 		
 		// await this.getSuggest()
@@ -182,152 +182,152 @@ export default {
 			bus.$emit('complex-data-passed',msg)
 		},
 		//获取今日挂号数据
-		async getFirstVisit(data,state) {
-			try{
-				let registrationList = []
-				let patientID = this.footData.patientUniquelyIdentifies
-				const res= await guideApi.getFirstVisit(patientID,state).then((res) => {
-					if(res.data.code===200){
-						registrationList = res.data.data.orders.order || []
-					}else {
-						registrationList = []
-					}
-				})
-				await this.getBookingRecord(data,registrationList)
+		// async getFirstVisit(data,state) {
+		// 	try{
+		// 		let registrationList = []
+		// 		let patientID = this.footData.patientUniquelyIdentifies
+		// 		const res= await guideApi.getFirstVisit(patientID,state).then((res) => {
+		// 			if(res.data.code===200){
+		// 				registrationList = res.data.data.orders.order || []
+		// 			}else {
+		// 				registrationList = []
+		// 			}
+		// 		})
+		// 		await this.getBookingRecord(data,registrationList)
 				
-			}catch(e){
-				console.log(e)
-				//TODO handle the exception
-			}
-		},
-		// 获取预约数据
-		async getBookingRecord (data,registrationList) {
-			try{
-				const time = await this.getWeek('下一周');
-				const msg = {
-				  patientID: this.footData.patientUniquelyIdentifies,
-				  startTime: time.startDate,
-				  endTime: time.endDate
-				};
-				const res= await guideApi.getBookingRecord(msg).then((res) => {
-					if(res.data.code===200){
-						let subscribeList = res.data.data.orders&&res.data.data.orders.order
-						.map(item => {
-							return {
-								...item,
-								queueName:item.department,
-								doctorName:item.doctor,
-							}
-						})||[]
-						this.departmentList =[...registrationList,...subscribeList]
-						if(this.departmentList.length){
-							let found = false
-							// 判断存下的visitNumber和数组中有没有匹配的如果没有重新赋值
-							this.departmentList.forEach(item=>{
-								if (item.visitNumber === this.headerEmit.visitNumber || item.orderCode === this.headerEmit.visitNumber) {
-								    found = true;
-								}
-							})
-							if(!found || !this.headerEmit.visitNumber || this.departmentList.length===1){
-							    	if(this.departmentList[0].orderCode){
-							    		this.headerEmit.orderCode = this.departmentList[0].orderCode
-							    	}else {
-										this.headerEmit.orderCode = ''
-									}
-									this.$set(this.headerEmit,'visitNumber',this.departmentList[0].visitNumber || this.departmentList[0].orderCode)
-							}
-						}else {
-							this.barList = []
-						}
-						if(data && data.firstState){
-							// 当初诊卡片创建后传值
-							let msg = {
-								data:this.departmentList,
-								effectState:data.effectState,
-							}
-							bus.$emit('complex-data-passed',msg)
-						}
-					}
+		// 	}catch(e){
+		// 		console.log(e)
+		// 		//TODO handle the exception
+		// 	}
+		// },
+		// // 获取预约数据
+		// async getBookingRecord (data,registrationList) {
+		// 	try{
+		// 		const time = await this.getWeek('下一周');
+		// 		const msg = {
+		// 		  patientID: this.footData.patientUniquelyIdentifies,
+		// 		  startTime: time.startDate,
+		// 		  endTime: time.endDate
+		// 		};
+		// 		const res= await guideApi.getBookingRecord(msg).then((res) => {
+		// 			if(res.data.code===200){
+		// 				let subscribeList = res.data.data.orders&&res.data.data.orders.order
+		// 				.map(item => {
+		// 					return {
+		// 						...item,
+		// 						queueName:item.department,
+		// 						doctorName:item.doctor,
+		// 					}
+		// 				})||[]
+		// 				this.departmentList =[...registrationList,...subscribeList]
+		// 				if(this.departmentList.length){
+		// 					let found = false
+		// 					// 判断存下的visitNumber和数组中有没有匹配的如果没有重新赋值
+		// 					this.departmentList.forEach(item=>{
+		// 						if (item.visitNumber === this.headerEmit.visitNumber || item.orderCode === this.headerEmit.visitNumber) {
+		// 						    found = true;
+		// 						}
+		// 					})
+		// 					if(!found || !this.headerEmit.visitNumber || this.departmentList.length===1){
+		// 					    	if(this.departmentList[0].orderCode){
+		// 					    		this.headerEmit.orderCode = this.departmentList[0].orderCode
+		// 					    	}else {
+		// 								this.headerEmit.orderCode = ''
+		// 							}
+		// 							this.$set(this.headerEmit,'visitNumber',this.departmentList[0].visitNumber || this.departmentList[0].orderCode)
+		// 					}
+		// 				}else {
+		// 					this.barList = []
+		// 				}
+		// 				if(data && data.firstState){
+		// 					// 当初诊卡片创建后传值
+		// 					let msg = {
+		// 						data:this.departmentList,
+		// 						effectState:data.effectState,
+		// 					}
+		// 					bus.$emit('complex-data-passed',msg)
+		// 				}
+		// 			}
 					
-			    })
-			}catch(e){
-				console.log('e',e)
-				this.toastObj = {
-					state:true,
-					type:'fail',
-					message:e,
-				}
-			}
-		},
-		//获取建议列表
-		async getSuggest() {
-			try{
-				const res = await HeaderbarApi
-				.getSuggest(
-					this.headerEmit.visitNumber
-				)
-				.then((data) => {
-					this.getSuggestText = data.data[0]? data.data[0]:''
-				})
-			}catch(e){
-				//TODO handle the exception
-			}
-		},
-		btns(i,num) {
-			if(i % 2 === 0 && num ==1){
-				this.barList.forEach((v,x)=>{
-				if(i==x){
-					v.state = v.name
-					if(v.name==='预约'){
-						this.headerEmit.state = '初诊'
-					}else{
-						this.headerEmit.state = v.name
-					}
-				}else {
-					v.state = false
-				}
-			})
-			this.$emit('handle',this.headerEmit)
-			}else {
-				return
-			}
-		},
-		//切换科室
-		departmentBtn(item,index){
-			if(item.visitNumber){
-				if(this.headerEmit.visitNumber !== item.visitNumber){
-					this.barListData=null
-					this.headerEmit.visitNumber = item.visitNumber
-					this.headerEmit.orderCode = ''
-					this.index = index
-				}
-			}else {
-				if(this.headerEmit.visitNumber !== item.orderCode){
-					this.barListData=null
-					this.headerEmit.visitNumber = item.orderCode
-					this.headerEmit.orderCode = item.orderCode
-					this.index = index
-				}
-			}
+		// 	    })
+		// 	}catch(e){
+		// 		console.log('e',e)
+		// 		this.toastObj = {
+		// 			state:true,
+		// 			type:'fail',
+		// 			message:e,
+		// 		}
+		// 	}
+		// },
+		// //获取建议列表
+		// async getSuggest() {
+		// 	try{
+		// 		const res = await HeaderbarApi
+		// 		.getSuggest(
+		// 			this.headerEmit.visitNumber
+		// 		)
+		// 		.then((data) => {
+		// 			this.getSuggestText = data.data[0]? data.data[0]:''
+		// 		})
+		// 	}catch(e){
+		// 		//TODO handle the exception
+		// 	}
+		// },
+		// btns(i,num) {
+		// 	if(i % 2 === 0 && num ==1){
+		// 		this.barList.forEach((v,x)=>{
+		// 		if(i==x){
+		// 			v.state = v.name
+		// 			if(v.name==='预约'){
+		// 				this.headerEmit.state = '初诊'
+		// 			}else{
+		// 				this.headerEmit.state = v.name
+		// 			}
+		// 		}else {
+		// 			v.state = false
+		// 		}
+		// 	})
+		// 	this.$emit('handle',this.headerEmit)
+		// 	}else {
+		// 		return
+		// 	}
+		// },
+		// //切换科室
+		// departmentBtn(item,index){
+		// 	if(item.visitNumber){
+		// 		if(this.headerEmit.visitNumber !== item.visitNumber){
+		// 			this.barListData=null
+		// 			this.headerEmit.visitNumber = item.visitNumber
+		// 			this.headerEmit.orderCode = ''
+		// 			this.index = index
+		// 		}
+		// 	}else {
+		// 		if(this.headerEmit.visitNumber !== item.orderCode){
+		// 			this.barListData=null
+		// 			this.headerEmit.visitNumber = item.orderCode
+		// 			this.headerEmit.orderCode = item.orderCode
+		// 			this.index = index
+		// 		}
+		// 	}
 			
-		},
-		animateText() {
-			if (this.interval) {
-				clearInterval(this.interval)
-			}
-			this.animatedText = ''
-			let index = 0
-			if(this.getSuggestText){
-				this.interval = setInterval(() => {
-				this.animatedText += this.getSuggestText[index]
-				index++
-				if (index === this.getSuggestText.length) {
-					clearInterval(this.interval)
-				}
-			}, 100)
-			}
+		// },
+		// animateText() {
+		// 	if (this.interval) {
+		// 		clearInterval(this.interval)
+		// 	}
+		// 	this.animatedText = ''
+		// 	let index = 0
+		// 	if(this.getSuggestText){
+		// 		this.interval = setInterval(() => {
+		// 		this.animatedText += this.getSuggestText[index]
+		// 		index++
+		// 		if (index === this.getSuggestText.length) {
+		// 			clearInterval(this.interval)
+		// 		}
+		// 	}, 100)
+		// 	}
 			
-		}
+		// }
 	},
 	
 }

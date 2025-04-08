@@ -31,151 +31,17 @@
 		    "inventory": "view"
 		}
 	  }
-	},
-	{
-	  "path": "pages/payAFee",
-	  "style": {
-	    "navigationBarTitleText": "处方缴费",
-	    "disableScroll": true,
-	    "enablePullDownRefresh": false
-	  }
 	}
   ],
   "subPackages": [{
   	"root": "sub_packages",
   	"pages": [
 			{
-				//入院申请
-				"path" : "beHospitalizedRegister/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "入院申请",
-					"disableScroll": true
-				}
-			},
-			{
-				//服务评价-列表
-				"path" : "evaluate/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "服务评价",
-					"disableScroll": true
-				}
-			},
-			{
-				//服务评价-详情
-				"path" : "evaluate/details",
-				"style" : 
-				{
-					"navigationBarTitleText": "服务评价",
-					"disableScroll": true
-				}
-			},
-			{
 				//我的
 				"path" : "mine/index",
 				"style" : 
 				{
 					"navigationBarTitleText": "我的",
-					"disableScroll": true
-				}
-			},
-			{
-				//门诊缴费-主页
-				"path" : "outpatientExpenditure/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "门诊缴费",
-					"disableScroll": true
-				}
-			},
-			{
-				//门诊缴费-费用明细
-				"path" : "outpatientExpenditure/particulars",
-				"style" : 
-				{
-					"navigationBarTitleText": "费用明细",
-					"disableScroll": true
-				}
-			},
-			{
-				//门诊病历-列表
-				"path" : "caseHistory/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "门诊病历",
-					"disableScroll": true
-				}
-			},
-			{
-				//门诊病历-详情
-				"path" : "caseHistory/details",
-				"style" : 
-				{
-					"navigationBarTitleText": "门诊病历",
-					"disableScroll": true
-				}
-			},
-			{
-				//门诊报告-列表
-				"path" : "report/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "门诊报告",
-					"disableScroll": true
-				}
-			},
-			{
-				//门诊报告-详情
-				"path" : "report/examine",
-				"style" : 
-				{
-					"navigationBarTitleText": "门诊报告",
-					"disableScroll": true
-				}
-			},
-			{
-				//门诊报告-详情
-				"path" : "report/checkout",
-				"style" : 
-				{
-					"navigationBarTitleText": "门诊报告",
-					"disableScroll": true
-				}
-			},
-			{
-				//就诊记录-列表
-				"path" : "record/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "就诊记录",
-					"disableScroll": true
-				}
-			},
-			{
-				//就诊记录-详情
-				"path" : "record/details",
-				"style" : 
-				{
-					"navigationBarTitleText": "就诊记录",
-					"disableScroll": true
-				}
-			},
-			{
-				//门诊充值
-				"path" : "outpatientTopUp/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "门诊充值",
-					"disableScroll": true
-				}
-			},
-			{
-				//充值记录
-				"path" : "outpatientTopUp/topUpRecord",
-				"style" : 
-				{
-					"navigationBarTitleText": "充值记录",
 					"disableScroll": true
 				}
 			},

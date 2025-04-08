@@ -1,9 +1,8 @@
 <template>
 	<view class="virtual">
-		
 		<view class=""   :animation="anData"  style="height:0rpx;"></view>
-		<!-- <web-view src="https://dandanxu123.github.io/"></web-view> -->
-		<image class="background" src="https://aiwz.sdtyfy.com:8099/img/virtualBg.png" ></image>	
+		<image class="background" src="../../static/image/virtualBg.png"></image>
+		<!-- <image class="background" src="https://aiwz.sdtyfy.com:8099/img/virtualBg.png" ></image>	 -->
 		<view class="head">
 			您好！“安好”  为您服务 
 		</view>
@@ -545,6 +544,7 @@
 							if(!data[j].includes('message') || data[j].includes('message_end')){
 								break
 							}
+							
 							i = JSON.parse(data[j])
 							this.conversation_id = i.conversation_id
 							// i.answer = i.answer&&i.answer.replace(/[ \r\n\u21B5]/g,'')

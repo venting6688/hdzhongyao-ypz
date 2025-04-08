@@ -16,7 +16,7 @@
 			<view class="cu-form-group">
 				<view class="title">出生日期</view>
 				<picker mode="date" :value="informationObj.dob" :start="startDate" :end="endDate" fields="day" @change="bindDateChange">
-				    <text class="picker birth">{{informationObj.dob}}</text>
+				  <text class="picker birth">{{informationObj.dob}}</text>
 				</picker>
 			</view>
 			<view class="cu-form-group">
@@ -53,9 +53,6 @@
 	import filingApi from '@/api/filingApi.js'
 	export default {
 		data(){
-			// const currentDate = this.getDate({
-			//             format: true
-			// })
 			return {
 				informationObj:{
 					relation:'',

@@ -62,7 +62,10 @@
             "urlCheck" : true
         },
         "optimization" : {
-            "subPackages" : true
+					"subPackages" : true,
+					"optimization": {
+							"treeShaking": true // 启用 Tree Shaking
+						}
         },
         "usingComponents" : true,
         "plugins" : {
@@ -70,10 +73,6 @@
                 "version" : "0.3.6",
                 "provider" : "wx069ba97219f66d99"
             }
-            // "healthCardPlugins" : {
-            //     "version" : "3.51.0",
-            //     "provider" : "wxee969de81bba9a45"
-            // }
         },
         "secureNetwork" : {
             "enable" : true

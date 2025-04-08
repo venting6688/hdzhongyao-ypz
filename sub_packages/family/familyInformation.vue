@@ -37,12 +37,6 @@
 				this.informationObj.relation = i
 			},
 			queueFilingInfo(){
-				// if(num===1){
-				// 	uni.navigateTo({
-				// 		url: `/sub_packages/filing/identityCard`
-				// 	})
-				// 	return
-				// }
 				if (!this.informationObj.name ||!this.informationObj.num) {
 				    uni.showToast({
 				        title: '请完善您的信息',
@@ -58,7 +52,18 @@
 					}
 					filingApi.archiveQuery(data).then(res => {
 						let result = res.data.data;
-						if (!result.defaultArchives) {
+						if (res.data.code === 500 && res.data.msg == -1) {
+							uni.showModal({
+								title: res.data.data,
+								success: res => {
+									if (res.confirm) {
+										uni.navigateTo({
+											url:"/sub_packages/filing/information"
+										})
+									} 
+								}
+							});
+						} else if (!result.defaultArchives) {
 							uni.showModal({
 								title: "未查询当建档信息，请先建档。",
 								success: res => {

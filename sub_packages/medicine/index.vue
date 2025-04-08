@@ -206,6 +206,7 @@
 		},
 		onShow() {
 			let loginValue = uni.getStorageSync("loginData");
+			loginValue = loginValue.defaultArchives ? loginValue.defaultArchives : false;
 			if (!loginValue.patientName) {
 				login.loginData()
 			} else {

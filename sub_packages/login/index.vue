@@ -54,8 +54,6 @@
 			},
 			onGetPhoneNumber(e){ 
 			    this.loginFn().then(res => {  // 微信登录&服务端获取openid
-					console.log("登录返回的信息：", JSON.stringify(res));
-					console.log('手机号动态令牌：',e.detail.code);
 					this.getPhoneNumberFn(e.detail.code, res.code).then(data => { // 服务端获取手机号
 					let phone = data.data.phoneNum;
 						if (!data.data.patientName) {

@@ -128,7 +128,7 @@
 				QRCodePopup: null,
 				isShowPay: false,
 				payUrl: '',
-				siginData: uni.getStorageSync("loginData")
+				siginData: {}
 			}
 		},
 		computed: { 
@@ -294,7 +294,8 @@
 		onLoad(e) {
 			wx.setNavigationBarTitle({title: e.title})
 			this.doctor = JSON.parse(decodeURIComponent(e.doctor));
-			
+			let data = uni.getStorageSync('loginData');
+			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 		},
 	}
 </script>

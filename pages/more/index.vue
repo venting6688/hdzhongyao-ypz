@@ -49,7 +49,7 @@
 							{
 							    img:'https://aiwz.sdtyfy.com:8099/img/outpatient3.png',
 							    name:'门诊缴费',
-								num:3,
+									num:3,
 							},
 							{
 							    img:'https://aiwz.sdtyfy.com:8099/img/outpatient7.png',
@@ -98,72 +98,6 @@
 							},
 						]
 					},
-					// {
-					// 	title:'便民服务',
-					// 	list: uni.getStorageSync("loginData") ?  [
-					// 		{
-					// 			img:'https://aiwz.sdtyfy.com:8099/img/person3.png',
-					// 			name:'疾病百科',
-					// 			num:10,
-					// 		},
-					// 	   {
-					// 	    	img:'https://aiwz.sdtyfy.com:8099/img/person2.png',
-					// 	    	name:'药品查询',
-					// 	    	num:11,
-					// 	    },
-					// 	    {
-					// 	    	img:'https://aiwz.sdtyfy.com:8099/img/electronicBills.png',
-					// 	    	name:'电子票据',
-					// 	    	num:12,
-					// 	    },
-					// 			{
-					// 				img:'https://aiwz.sdtyfy.com:8099/img/health.png',
-					// 				name:'医保凭证',
-					// 				num:13,
-					// 			},
-					// 			{
-					// 				img:'https://aiwz.sdtyfy.com:8099/img/medicalRecord.png',
-					// 				name:'病案通',
-					// 				num:14,
-					// 			},
-					// 			{
-					// 				img:'../../static/image/quyaofy.png',
-					// 				name:'智慧取药',
-					// 				num:40,
-					// 			},
-					// 			{
-					// 				img:'https://aiwz.sdtyfy.com:8099/img/hospitalized4.png',
-					// 				name:'营养点餐',
-					// 				num:15,
-					// 			},
-					//     ] : [
-					// 	    {
-					// 	    	img:'https://aiwz.sdtyfy.com:8099/img/electronicBills.png',
-					// 	    	name:'电子票据',
-					// 	    	num:12,
-					// 	    },
-					// 			{
-					// 				img:'https://aiwz.sdtyfy.com:8099/img/health.png',
-					// 				name:'医保凭证',
-					// 				num:13,
-					// 			},
-					// 			{
-					// 				img:'https://aiwz.sdtyfy.com:8099/img/medicalRecord.png',
-					// 				name:'病案通',
-					// 				num:14,
-					// 			},
-					// 			{
-					// 				img:'../../static/image/quyaofy.png',
-					// 				name:'取药服务',
-					// 				num:40,
-					// 			},
-					// 			{
-					// 				img:'https://aiwz.sdtyfy.com:8099/img/hospitalized4.png',
-					// 				name:'营养点餐',
-					// 				num:15,
-					// 			},
-					//     ]
-					// },
 					{
 						title:'便民服务',
 						list:[
@@ -188,12 +122,12 @@
 				urlList:[
 					'pages/virtualNurse/index',
 					'/sub_packages/subscribe/departments',
-					'/sub_packages/outpatientExpenditure/index',
-					'/sub_packages/outpatientTopUp/index',
-					'/sub_packages/record/index',
-					'/sub_packages/report/index',
 					'空',
-					'/sub_packages/caseHistory/index',
+					'空',
+					'空',
+					'空',
+					'空',
+					'空',
 					'空', 
 					'pages/virtualNurse/index',//10
 					'pages/virtualNurse/index',
@@ -206,7 +140,7 @@
 					'空',
 					'空',
 					'空',                      //20
-					'/sub_packages/evaluate/index',
+					'空',
 					'空',
 					'空',
 					'/sub_packages/filing/information', //23
@@ -215,7 +149,7 @@
 					'空',
 					'空',
 					'空',
-					'/sub_packages/beHospitalizedRegister/index', //30
+					'空', //30
 					'空',
 					'空',
 					'空',

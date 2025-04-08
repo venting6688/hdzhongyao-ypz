@@ -115,7 +115,7 @@
 		computed: { 
 			...mapState(['footData']),
 		},
-	    async created() {
+	  async created() {
 			uni.hideTabBar()
 			switch (uni.getSystemInfoSync().platform) {
 				case 'android':

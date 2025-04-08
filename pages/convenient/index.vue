@@ -3,11 +3,11 @@
 		<HeaderBar @handle="show" v-if="showState" :footState="footState" />
 		<!-- <report @handle="expandBtn" :expand="expand" v-if="visitNumber!=='1358799' && (headerEmit.state=='查验' || headerEmit.state=='回诊')" /> -->
 		<view v-if="showState" class="scroll-Y" :animation="animationData" @touchmove='touchMove'>
-			<first @handle="show" v-if="headerEmit.state=='初诊'" :headerEmit="headerEmit" />
+			<!-- <first @handle="show" v-if="headerEmit.state=='初诊'" :headerEmit="headerEmit" />
 		    <check @handle="show" v-if="headerEmit.state=='查验'" :headerEmit="headerEmit" />
 			<answer @handle="show" v-if="headerEmit.state=='回诊'" :headerEmit="headerEmit" />
-			<prescription @handle="show" v-if="headerEmit.state=='处方'" :headerEmit="headerEmit" />
-			<view class="img" v-if="!headerEmit.state">
+			<prescription @handle="show" v-if="headerEmit.state=='处方'" :headerEmit="headerEmit" /> -->
+			<view class="img">
 				<image src="https://aiwz.sdtyfy.com:8099/img/wu.png" mode="widthFix"></image>
 			</view>
 		</view>
@@ -18,26 +18,23 @@
 	import {mapState} from 'vuex'
 	import HeaderBar from '@/components/HeaderBar.vue';
 	import foot from '@/components/footer.vue'
-	import report from '../../sub_packages/convenientModule/components/report.vue'
-	import first from '../../sub_packages/convenientModule/components/outpatient/first.vue'
-	import check from '../../sub_packages/convenientModule/components/outpatient/check.vue'
-	import answer from '../../sub_packages/convenientModule/components/outpatient/answer.vue'
-	import prescription from '../../sub_packages/convenientModule/components/outpatient/prescription.vue'
-	import prepare from '../../sub_packages/convenientModule/components/beHospitalized/prepare.vue'
-	import doing from '../../sub_packages/convenientModule/components/beHospitalized/doing.vue'
-	import inventory from '../../sub_packages/convenientModule/components/beHospitalized/inventory.vue'
+	import login from '@/utils/login.js'
+	// import report from '../../sub_packages/convenientModule/components/report.vue'
+	// import prepare from '../../sub_packages/convenientModule/components/beHospitalized/prepare.vue'
+	// import doing from '../../sub_packages/convenientModule/components/beHospitalized/doing.vue'
+	// import inventory from '../../sub_packages/convenientModule/components/beHospitalized/inventory.vue'
 	export default {
 		components:{
 			HeaderBar,
 			foot,
-			report,
-			first,
-			check,
-			answer,
-			prescription,
-			prepare,
-			doing,
-			inventory,
+			// report,
+			// first,
+			// check,
+			// answer,
+			// prescription,
+			// prepare,
+			// doing,
+			// inventory,
 		},
 		data() {
 			return {
@@ -110,6 +107,13 @@
 			
 		},
 		mounted(){
+			let loginValue = uni.getStorageSync("loginData");
+			loginValue = loginValue.defaultArchives ? loginValue.defaultArchives : false;
+			if (!loginValue.patientName) {
+				login.loginData()
+			} else {
+				this.getPrescription()
+			}
 		},
 	}
 </script>
