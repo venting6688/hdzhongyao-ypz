@@ -7,11 +7,15 @@
 			</view>
 			<view class="cu-form-group">
 				<view class="title">性别</view>
-				<input v-model="informationObj.sex" placeholder="请输入" name="input" />
+				<picker mode="selector" :value="informationObj.sex" :range="sexs" @change="onSexChange">
+					<text class="picker birth">{{selectedSex}}</text>
+				</picker>
 			</view>
 			<view class="cu-form-group">
 				<view class="title">民族</view>
-				<input v-model="informationObj.nation" placeholder="请输入" name="input" />
+				<picker mode="selector" :value="informationObj.nation" :range="nations" @change="onNationChange">
+					<text class="picker birth">{{selectedNation}}</text>
+				</picker>
 			</view>
 			<view class="cu-form-group">
 				<view class="title">出生日期</view>
@@ -41,11 +45,8 @@
 			</view>
 			
 			<view class="cu-form-group" style="margin-top: 30rpx;">
-				<view class="x">
-					*
-				</view>
 				<view class="title">手机号</view>
-				<input v-model="informationObj.phone"  type="number" placeholder="请输入手机号" name="input"></input>
+				<text class="answer">{{siginData.phoneNum}}</text>
 			</view>
 		</form>
 		<view class="tips">
@@ -57,7 +58,7 @@
 				<view>★  手机号需要填写本人正在使用的手机号</view>
 			</view>
 		</view>
-		<view class="confirm" @click="Filing" :class="{unclickable:!informationObj.patientName ||!informationObj.idNo ||!informationObj.phone }">
+		<view class="confirm" @click="Filing" :class="{unclickable:!informationObj.patientName ||!informationObj.idNo}">
 			确认建档
 		</view>
 	</view>
@@ -76,13 +77,24 @@
 					patientName:'',
 					patientType: '自费', //病人类型
 					guarderId: '', //监护人身份证id
-					sex:'',
+					sex:['男'],
 					birthday:'1995-01-01',
 					phone:'',
 					address:'',
-					nation:'', //民族
+					nation:['汉族'], //民族
 				},
 				provincesAndMunicipalities: ['山东省','济南市','历下区'],
+				nations: [
+					'汉族', '壮族', '满族', '回族', '苗族', '维吾尔族', '土家族', '彝族', '蒙古族', '藏族',
+					'布依族', '侗族', '瑶族', '朝鲜族', '白族', '哈尼族', '哈萨克族', '黎族', '傣族', '畲族',
+					'傈僳族', '仡佬族', '东乡族', '高山族', '拉祜族', '水族', '佤族', '纳西族', '羌族', '土族',
+					'仫佬族', '锡伯族', '柯尔克孜族', '达斡尔族', '景颇族', '毛南族', '撒拉族', '布朗族', '塔吉克族',
+					'阿昌族', '普米族', '鄂温克族', '怒族', '京族', '基诺族', '德昂族', '保安族', '俄罗斯族', '裕固族',
+					'乌孜别克族', '门巴族', '鄂伦春族', '独龙族', '塔塔尔族', '赫哲族', '珞巴族'
+				],
+				selectedNation: '',
+				sexs: ['男', '女'],
+				selectedSex: '',
 				address: '',
 				occupationPickerIndex: -1,
 				patientTypePickerIndex:-1,
@@ -107,11 +119,12 @@
 				countTimer:null,
 				time:60,
 				verificationCodeState:false,
+				siginData: {}
 			}
 		},
 		computed:{
 			startDate() { return this.getDate('start') },
-			endDate() { return this.getDate('end') }
+			endDate() { return this.getDate('end') },
 		},
 		mounted() {
 			this.$nextTick(()=>{
@@ -137,8 +150,20 @@
 			chooseregion(event){
 				this.provincesAndMunicipalities = event.detail.value.toString();
 			},
+			//民族
+			onNationChange(e) {
+				const index = e.detail.value
+				this.selectedNation = this.nations[index]
+				this.informationObj.nation = this.selectedNation;
+			},
+			//性别
+			onSexChange(e) {
+				const index = e.detail.value
+				this.selectedSex = this.sexs[index]
+				this.informationObj.sex = this.selectedSex;
+			},
 			Filing(){
-				if (!this.informationObj.patientName ||!this.informationObj.idNo ||!this.informationObj.phone) {
+				if (!this.informationObj.patientName ||!this.informationObj.idNo ||!this.siginData.phoneNum) {
 					uni.showToast({
 						title: '请完善您的信息',
 						icon: 'none',   
@@ -147,6 +172,8 @@
 				} else {
 					this.informationObj.patientType = '自费';
 					this.informationObj.address = this.provincesAndMunicipalities+this.address;
+					this.informationObj.phone = this.siginData.phoneNum;
+
 					filingApi.archive(this.informationObj).then(res => {
 						if(res.data.code === 200){
 							let result = res.data.data.defaultArchives;
@@ -154,7 +181,7 @@
 								title: '建档成功',
 								duration: 2000
 							});
-							this.setFootData(result)
+							this.setFootData(res.data.data.defaultArchives);
 							uni.setStorageSync('loginData', res.data.data);
 							wx.reLaunch({ url: '/pages/more/index' })
 						}else{
@@ -185,6 +212,10 @@
 			        }, 1000)
 			    }
 			},
+		},
+		onShow() {
+			let data = uni.getStorageSync('loginData');
+			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 		}
 	}
 </script>

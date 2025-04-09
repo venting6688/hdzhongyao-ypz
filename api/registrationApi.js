@@ -75,12 +75,20 @@ const patient = {
 	   	return res
 	},
 	// 拉起支付
+	// async registrationPreOrder(data) {
+	//    	const res = await cjRequest({
+	//    		url: "createOrder ",
+	//    		method: "post",
+	// 			data,
+	//    	})
+	//    	return res
+	// },
 	async registrationPreOrder(data) {
-	   	const res = await cjRequest({
-	   		url: "createOrder ",
-	   		method: "post",
-				data,
-	   	})
+		const res = await cjRequest({
+			url: "wxPay",
+			method: "post",
+			data
+		})
 	   	return res
 	},
 	// 查询支付结果

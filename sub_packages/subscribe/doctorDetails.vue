@@ -171,28 +171,35 @@
 			today(data){
 				const timestamp = Date.now();
 				const dateStr = String(timestamp);
-				let msg = {
-					idNo: data.patientCard, 
-					patientName: data.patientName, 
-					patientId: '', //this.doctor.scheduleItemCode, 
-					billNo: dateStr, //this.doctor.scheduleItemCode, 
-					fee: String(this.doctor.Fee * 100),
-					optType: '3',
-					subject: '支付挂号费',
-					feeChannel: '2',
-					payWay: '',
-					vendor: '',
-					tradeMode: '',
-					deviceInfo: '001',
-					flowId: '',
-					operId: '',
-					terminalNo:'', 
-					deviceMac: '',
-					deviceIp: '',
-					tradeTime: '',
-					traceId: '',
+				// let msg = {
+				// 	idNo: data.patientCard, 
+				// 	patientName: data.patientName, 
+				// 	patientId: '', //this.doctor.scheduleItemCode, 
+				// 	billNo: dateStr, //this.doctor.scheduleItemCode, 
+				// 	fee: String(this.doctor.Fee * 100),
+				// 	optType: '3',
+				// 	subject: '支付挂号费',
+				// 	feeChannel: '2',
+				// 	payWay: '',
+				// 	vendor: '',
+				// 	tradeMode: '',
+				// 	deviceInfo: '001',
+				// 	flowId: '',
+				// 	operId: '',
+				// 	terminalNo:'', 
+				// 	deviceMac: '',
+				// 	deviceIp: '',
+				// 	tradeTime: '',
+				// 	traceId: '',
+				// }
+				let msg = { 
+					patientName: '张三',//data.patientName, 
+					patientID: this.doctor.scheduleItemCode, 
+					amount: String(this.doctor.Fee * 100),
+					accountID: '',
 				}
 				registrationApi.registrationPreOrder(msg).then(res => {
+					console.log(JSON.stringify(res));
 					if(res.data.code===200) {
 						let obj = JSON.parse(res.data.msg).data; 
 

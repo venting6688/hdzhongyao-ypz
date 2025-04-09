@@ -23,10 +23,14 @@
 	import foot from '@/components/footer.vue'
 	import bus from "@/utils/bus";
 	import HeaderBar from '@/components/HeaderBar.vue';
+	import {mapState} from 'vuex'
 	export default {
 		components:{
 			foot,
-			HeaderBar
+			HeaderBar,
+		},
+		computed: {
+			...mapState(['footData']),
 		},
 		data() {
 			return {
@@ -35,33 +39,12 @@
 				moduleList:[
 					{
 						title:'门诊服务',
-						list: uni.getStorageSync("loginData") ? [
+						list: [
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/outpatient.png',
 								name:'智能导诊',
 								num:1,
 							},
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/outpatient1.png',
-								name:'预约挂号',
-								num:2,
-							},
-							{
-							    img:'https://aiwz.sdtyfy.com:8099/img/outpatient3.png',
-							    name:'门诊缴费',
-									num:3,
-							},
-							{
-							    img:'https://aiwz.sdtyfy.com:8099/img/outpatient7.png',
-							    name:'就诊记录',
-									num:5,
-							},
-							{
-							    img:'https://aiwz.sdtyfy.com:8099/img/outpatient4.png',
-							    name:'门诊报告',
-									num:6,
-							},
-						] : [
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/outpatient1.png',
 								name:'预约挂号',
@@ -199,7 +182,6 @@
 				});
 			},
 			toast(num,url){
-				console.log(this.urlList[40-1]);
 				if(num==1 || num===10 ||num === 11){
 					if(num==1){
 						wx.reLaunch({
@@ -251,10 +233,11 @@
 			},
 			
 		},
-		mounted(){
-			// this.toggle()
+		onShow() {
+			let data = uni.getStorageSync('loginData');
+			data = data.defaultArchives ? data.defaultArchives : {};
 			
-		},
+		}
 	}
 </script>
 

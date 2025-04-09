@@ -2,7 +2,7 @@
 	<view>
 		<view class="foot" :class="{footPadding:iosState}">
 			<view class="content">
-				<view class="foot-name" v-if="siginData.patientName">
+				<view class="foot-name" v-if="footData.patientName || siginData.patientName">
 					<view class="patient-code">
 						<view class="code">
 							<image  src="@/static/image/Group 344.png" mode=""></image>
@@ -12,14 +12,14 @@
 					 <!-- <view class="patient-name" @click="cutPatient"> -->
 					 <view class="patient-name">
 						<view class="name">
-							 <text>{{siginData.patientName?pixelate(siginData.patientName):''}}</text>
+							 <text>{{footData.patientName || siginData.patientName ? pixelate(footData.patientName || siginData.patientName):''}}</text>
 							 <!-- <image src="@/static/image/Frame.png" mode="widthFix"></image> -->
 						</view>
 					 </view>
 				</view>
-				<view class="wire"  v-if="siginData.patientName"></view>
-				<view class="foot-bar" :class="{'bar-w':!siginData.patientName}">
-					<view class="piece" :style="{ width: siginData.patientName ? '33.333%' : '50%' }" v-for="item in footList" :key="item.name" @click="footBtn(item)">
+				<view class="wire"  v-if="footData.patientName || siginData.patientName"></view>
+				<view class="foot-bar" :class="{'bar-w':!footData.patientName || !siginData.patientName}">
+					<view class="piece" :style="{ width: footData.patientName || !siginData.patientName ? '33.333%' : '50%' }" v-for="item in footList" :key="item.name" @click="footBtn(item)">
 						<view class="title">
 							<image v-if="item.type==footState" :src="item.selectedIconPath" mode="widthFix"></image>
 							<image v-else :src="item.iconPath" mode="widthFix"></image>
@@ -59,44 +59,29 @@
 		// },
 		data() {
 			return {
-				footList: uni.getStorageSync("loginData") ? [
-					{
-						pagePath: "/pages/virtualNurse/index",
-						iconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation+.png',
-						selectedIconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation.png',
-						name:'虚拟护士',
-						type:1,
-					},
-					{
-						pagePath: "/pages/convenient/index",
-						iconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation1+.png',
-						selectedIconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation1.png',
-						name:'便捷导引',
-						type:2,
-					},
-					{
-						pagePath: "/pages/more/index",
-						iconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation2+.png',
-						selectedIconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation2.png',
-						name:'更多服务',
-						type:3,
-					},
-				] : [
-					{
-						pagePath: "/pages/convenient/index",
-						iconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation1+.png',
-						selectedIconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation1.png',
-						name:'便捷导引',
-						type:2,
-					},
-					{
-						pagePath: "/pages/more/index",
-						iconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation2+.png',
-						selectedIconPath:'https://aiwz.sdtyfy.com:8099/img/footNavigation2.png',
-						name:'更多服务',
-						type:3,
-					},
-				],
+				footList: [
+          {
+            pagePath: "/pages/virtualNurse/index",
+            iconPath: 'https://aiwz.sdtyfy.com:8099/img/footNavigation+.png',
+            selectedIconPath: 'https://aiwz.sdtyfy.com:8099/img/footNavigation.png',
+            name: '护士导诊',
+            type: 1,
+          },
+          {
+            pagePath: "/pages/convenient/index",
+            iconPath: 'https://aiwz.sdtyfy.com:8099/img/footNavigation1+.png',
+            selectedIconPath: 'https://aiwz.sdtyfy.com:8099/img/footNavigation1.png',
+            name: '便捷导引',
+            type: 2,
+          },
+          {
+            pagePath: "/pages/more/index",
+            iconPath: 'https://aiwz.sdtyfy.com:8099/img/footNavigation2+.png',
+            selectedIconPath: 'https://aiwz.sdtyfy.com:8099/img/footNavigation2.png',
+            name: '更多服务',
+            type: 3,
+          }
+        ],
 				registerData:{
 					archivesList:[]
 				},
@@ -174,7 +159,8 @@
 			},
 		},
 		mounted() {
-			this.loginData()
+			console.log(JSON.stringify(this.footData),'footdata------');
+			this.loginData();
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 		},

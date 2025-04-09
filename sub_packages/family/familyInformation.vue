@@ -17,6 +17,7 @@
 </template>
 <script>
 	import filingApi from '@/api/filingApi.js'
+	import {mapMutations} from 'vuex'
 	export default {
 		data(){
 			return {
@@ -33,6 +34,9 @@
 			}
 		},
 		methods: {
+			...mapMutations({
+				setFootData:'SET_FOOT_DATA',
+			}),
 			relationBtn(i){
 				this.informationObj.relation = i
 			},
@@ -74,7 +78,8 @@
 									} 
 								}
 							});
-						} else{
+						} else {
+							this.setFootData(result.defaultArchives);
 							uni.setStorageSync('loginData', result);
 							uni.switchTab({ url:"/pages/virtualNurse/index" })
 						}

@@ -704,43 +704,44 @@
 			  	}
 			  },
 		},
-		
-		 mounted() {
-			 const isLoggedIn = uni.getStorageSync("loginData") ? true : false;
-			 if (!isLoggedIn) {
+	  mounted() {
+			 let loginData = uni.getStorageSync("loginData");
+			 loginData = loginData.defaultArchives ? loginData.defaultArchives : false;
+			 if (!loginData) {
 				 uni.reLaunch({ url: '/pages/more/index' });
+			 } else  {
+				 // 监听键盘拉起
+				 // 因为无法控制键盘拉起的速度,所以这里尽量以慢速处理
+				 uni.onKeyboardHeightChange(res => {
+				 	const query = uni.createSelectorQuery().in(this);
+				 	query.select('#okk').boundingClientRect(data => {
+				 		// 若消息体没有超过2倍的键盘则向下移动差值,防止遮住消息体
+				 		var up=res.height*2-data.height-l*200     //110
+				 	  if(up>0){
+				 		  // 动态改变空盒子高度
+				 		 this.msgMove(up,100)
+				 		 // 记录改变的值,若不收回键盘且发送了消息用来防止消息过多被遮盖
+				 		 // mgUpHeight=up
+				 	  }
+				 	  // 收回
+				 	  if(res.height==0){
+				 		   this.msgMove(0,0)	
+				 	  }
+				 	  // this.goPag(res.height)
+				 	}).exec();
+				  })
+				 var query=uni.getSystemInfoSync()
+				 			
+				 l=query.screenWidth/750		
+				 wh=query.windowHeight								
+				 
+				 // 同声传译
+				 var plugin = requirePlugin("WechatSI")
+				 this.manager = plugin.getRecordRecognitionManager()
+				 this.setManagerLisener()
+				 this.msgGo()
+				 // this.$refs.agePopup.open('bottom')  
 			 }
-			// 监听键盘拉起
-			// 因为无法控制键盘拉起的速度,所以这里尽量以慢速处理
-			uni.onKeyboardHeightChange(res => {
-				const query = uni.createSelectorQuery().in(this);
-				query.select('#okk').boundingClientRect(data => {
-					// 若消息体没有超过2倍的键盘则向下移动差值,防止遮住消息体
-					var up=res.height*2-data.height-l*200     //110
-				  if(up>0){
-					  // 动态改变空盒子高度
-					 this.msgMove(up,100)
-					 // 记录改变的值,若不收回键盘且发送了消息用来防止消息过多被遮盖
-					 // mgUpHeight=up
-				  }
-				  // 收回
-				  if(res.height==0){
-					   this.msgMove(0,0)	
-				  }
-				  // this.goPag(res.height)
-				}).exec();
-			 })
-			var query=uni.getSystemInfoSync()
-						
-			l=query.screenWidth/750		
-			wh=query.windowHeight								
-			
-			// 同声传译
-			var plugin = requirePlugin("WechatSI")
-			this.manager = plugin.getRecordRecognitionManager()
-			this.setManagerLisener()
-			this.msgGo()
-			// this.$refs.agePopup.open('bottom')  
 		},
 	}
 </script>
