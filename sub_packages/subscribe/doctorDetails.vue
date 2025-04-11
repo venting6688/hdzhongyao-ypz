@@ -3,17 +3,13 @@
 		<view class="middle">
 			<view class="center">
 				<view class="datum">
-					<view class="img">
-						<image src="../../static/image/doctor.png" mode=""></image>
-					</view>
+					<view class="img"><image src="../../static/image/doctor.png" mode=""></image></view>
 					<view class="message">
 						<view class="name">
-						    <text>{{doctor.DoctorName||''}}</text>
-						    <text>{{doctor.DoctorSessType||''}}</text>
-					    </view>
-						<view class="synopsis">
-							
+							<text>{{doctor.DoctorName||''}}</text>
+							<text>{{doctor.DoctorSessType||''}}</text>
 						</view>
+						<view class="synopsis"></view>
 					</view>
 				</view>
 				<view class="information">
@@ -94,6 +90,7 @@
 </template>
 
 <script>
+	import moment from 'moment';
 	import { mapState } from 'vuex'
 	import Toast from '../components/toast.vue'
 	import registrationApi from '@/api/registrationApi.js'
@@ -128,7 +125,9 @@
 				QRCodePopup: null,
 				isShowPay: false,
 				payUrl: '',
-				siginData: {}
+				siginData: {},
+				doctorInfo: {},
+				lockId: '',
 			}
 		},
 		computed: { 
@@ -169,99 +168,72 @@
 				// }
 			},
 			today(data){
-				const timestamp = Date.now();
-				const dateStr = String(timestamp);
-				// let msg = {
-				// 	idNo: data.patientCard, 
-				// 	patientName: data.patientName, 
-				// 	patientId: '', //this.doctor.scheduleItemCode, 
-				// 	billNo: dateStr, //this.doctor.scheduleItemCode, 
-				// 	fee: String(this.doctor.Fee * 100),
-				// 	optType: '3',
-				// 	subject: '支付挂号费',
-				// 	feeChannel: '2',
-				// 	payWay: '',
-				// 	vendor: '',
-				// 	tradeMode: '',
-				// 	deviceInfo: '001',
-				// 	flowId: '',
-				// 	operId: '',
-				// 	terminalNo:'', 
-				// 	deviceMac: '',
-				// 	deviceIp: '',
-				// 	tradeTime: '',
-				// 	traceId: '',
-				// }
-				let msg = { 
-					patientName: '张三',//data.patientName, 
-					patientID: this.doctor.scheduleItemCode, 
-					amount: String(this.doctor.Fee * 100),
-					accountID: '',
+				let randNum = Math.floor(1000000 + Math.random() * 9000000);
+				let datas = { 
+					subOpenId: data.xcxOpenId,
+					totalAmount: '1',//String(this.doctor.Fee * 100), 
+					merOrderId: '157Q-'+moment().format('YYYYMMDDHHmmss')+'-'+randNum
 				}
-				registrationApi.registrationPreOrder(msg).then(res => {
-					console.log(JSON.stringify(res));
-					if(res.data.code===200) {
-						let obj = JSON.parse(res.data.msg).data; 
-
-						// let registrationPrePayResponse = res.data.data
-						// registrationPrePayResponse.patientCard = data.defaultArchives.patientCard
-						// registrationPrePayResponse.cardType = data.defaultArchives.cardTypeCode
-						// uni.requestPayment({
-						// 	provider: 'wxpay', // 服务提提供商
-						// 	timeStamp: obj.body.miniPayRequest.timeStamp, // 时间戳
-						// 	nonceStr: obj.body.miniPayRequest.nonceStr, // 随机字符串
-						// 	package: obj.body.miniPayRequest.pkg,
-						// 	signType: obj.body.miniPayRequest.signType, // 签名算法
-						// 	paySign: obj.body.miniPayRequest.paySign, // 签名
-						// 	success:(result)=> {
-						// 		console.log('支付成功',result);
-						// 		registrationApi.queryPayResult(registrationPrePayResponse).then(r => {
-						// 			console.log('r',r)
-						this.toastObj = {
-							state:true,
-							message:'预约成功',
-							url:'/pages/more/index',
+				registrationApi.registerOrder(datas).then(res => {
+					let {merOrderId} = res.data;
+					
+					uni.requestPayment({
+						provider: 'wxpay', // 服务提提供商
+						timeStamp: res.data.miniPayRequest.timeStamp, // 时间戳
+						nonceStr: res.data.miniPayRequest.nonceStr, // 随机字符串
+						package: res.data.miniPayRequest.package,
+						signType: res.data.miniPayRequest.signType, // 签名算法
+						paySign: res.data.miniPayRequest.paySign, // 签名
+						success:(result)=> {
+							let msg = {
+								targetOrderId: '',
+								merOrderId: res.data.merOrderId
+							}
+							registrationApi.queryPayResult(msg).then(r => {
+								if (r.data.code === 200) {
+									let resMsg = JSON.parse(r.data.msg);
+									let uploadOrder = {
+										cardNo: this.siginData.patientCard,
+										cardType: 1,
+										patientId: this.doctorInfo.deptCode,
+										medDate: this.doctorInfo.medDate,
+										scheduleId: this.doctor.scheduleId,
+										deptCode: this.doctor.deptCode,
+										doctCode: this.doctor.doctCode,
+										medAmPm: this.doctor.medAmPm,
+										tradeMode: 'wx',
+										outTradeNo: resMsg.targetOrderId,
+										transNo: resMsg.merOrderId,
+										accountNo: '',
+										lockId: this.lockId,
+										cash: resMsg.invoiceAmount,
+										version: '1',
+										isPayNow: '1',
+										deviceInfo: '',
+										operId: '',
+										deviceMac: '',
+										deviceIp: '',
+										tradeTime: '',
+										traceId: '',
+									}
+									registrationApi.registrationSettlement(uploadOrder).then(uploadRes => {
+										console.log(JSON.stringify(uploadRes));
+									});
+									this.toastObj = {
+										state:true,
+										message:'预约成功',
+										url:'/pages/more/index',
+									}
+								}
+							}).catch(err => {
+								console.log('errrrrr：', err);
+							})
 						}
-								// })
-						// 		.catch(err => {
-						// 			console.log('errrrrr：', err);
-						// 		})
-						// 	},
-						// 	fail:(err)=> {
-						// 		console.log('支付失败',err);
-						// 		let unLockNumData = {
-						// 			patientID:res.data.data.patientID,
-						// 			scheduleItemCode:res.data.data.lockNumResponse.scheduleItemCode,
-						// 			lockQueueNo:res.data.data.lockNumResponse.lockQueueNo,
-						// 			transactionId:res.data.data.lockNumResponse.transactionId,
-						// 		}
-						// 		registrationApi.unLockNum(unLockNumData).then(r => {
-						// 			console.log('取消锁号',r)
-						// 			this.toastObj = {
-						// 				state:true,
-						// 				type:'fail',
-						// 				message:'支付失败'
-						// 			}
-									
-						// 		})
-						// 	}
-						// });	
-						
-					}else {
-						this.toastObj = {
-							state:true,
-							type:'fail',
-							message:res.data.msg?res.data.msg:'',
-						}
-					}
-				})
-				.catch(err => {
-					console.log('errrrrr：', err);
+					})		
 				})
 			},
 			
 			otherTime(data){
-				console.log('data',data)
 				// 其他时间预约
 				let obj = {
 				    patientID: this.footData.patientUniquelyIdentifies,
@@ -303,6 +275,8 @@
 			this.doctor = JSON.parse(decodeURIComponent(e.doctor));
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
+			this.doctorInfo = JSON.parse(decodeURIComponent(e.detail));
+			this.lockId = e.lockId;
 		},
 	}
 </script>

@@ -37,6 +37,24 @@
   	"root": "sub_packages",
   	"pages": [
 			{
+				//门诊缴费-主页
+				"path" : "outpatientExpenditure/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "门诊缴费",
+					"disableScroll": true
+				}
+			},
+			{
+				//门诊缴费-费用明细
+				"path" : "outpatientExpenditure/particulars",
+				"style" : 
+				{
+					"navigationBarTitleText": "费用明细",
+					"disableScroll": true
+				}
+			},
+			{
 				//我的
 				"path" : "mine/index",
 				"style" : 
@@ -82,6 +100,15 @@
 			// 		"disableScroll": true
 			// 	}
 			// },
+			{
+				//查询档案
+				"path" : "filing/selectCard",
+				"style" : 
+				{
+					"navigationBarTitleText": "查询档案",
+					"disableScroll": true
+				}
+			},
 			{
 				//在线建档-上传身份证
 				"path" : "filing/identityCard",

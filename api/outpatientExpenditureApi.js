@@ -7,13 +7,12 @@ const patient = {
 	   		url: "cardContent/getToBePaid",
 	   		method: "get",
 	   		data:{
-				patientID:data.patientID,
-	   		    visitNumber:data.visitNumber, 
-	   		    startDate:data.startDate, 
-	   		    endDate:data.endDate, 
+					patientID:data.patientID,
+					visitNumber:data.visitNumber, 
+					startDate:data.startDate, 
+					endDate:data.endDate, 
 	   		}
-	   
-	   	},)
+	   	}, 2)
 	   	return res
 	   },
 	   // 待缴费就诊记录
@@ -23,11 +22,11 @@ const patient = {
 	   		method: "get",
 	   		data:{
 	   			patientID:data.patientID,
-	   		    startDate:data.startDate, 
-	   		    endDate:data.endDate, 
+					startDate:data.startDate, 
+					endDate:data.endDate, 
 	   		}
 	   
-	   	},)
+	   	}, 2)
 	   	return res
 	   },
 	   // 拉起缴费
@@ -73,7 +72,7 @@ const patient = {
 	      	const res = await cjRequest({
 	      		url: url,
 	      		method: "get",
-	      	})
+	      	}, 2)
 	      	return res
 	   },
 	   // 已缴费就诊记录明细

@@ -2,18 +2,17 @@
 	<view class="box">
 		<view class="header">
 			<view class="date">
-				<picker mode="date" header-text="选择年"  :start="startIndex" :end="endIndex" fields="year" :value="year" @change="bindDateChange">
-				    <view class="date">
-				        <text>{{year!=='无'?year+'年':year}}</text>
-				        <image src="../../static/image/Frame.png" mode=""></image>
-				    </view>
+				<picker 
+					:class="{'datePicker': true, 'blue': dateState === 0}"
+					mode="date" 
+					:value="selectDate" 
+					:start="startDate" 
+					:end="endDate" 
+					fields="month"
+					@change="dateChange"
+				>
+				    <text class="picker birth">{{selectDate}}</text>
 				</picker>
-				<picker @change="bindPickerdateChange" :value="index" :range="monthArr">
-				    <view class="date">
-				      <text>{{monthArr[index]}}</text>
-					  <image src="../../static/image/Frame.png" mode=""></image>
-				    </view>
-				  </picker>
 			</view>
 			<view class="date-btn">
 				<view :class="{blue:dateState===1}" @click="timeClick(1)">
@@ -28,101 +27,66 @@
 </template>
 
 <script>
+	import moment from 'moment';
+	
 	export default {
 		
 		data(){
 			return {
-				year: '无',
-				indexValue:'',
 				date:{},
 				index:0,
 				dateState:0,
-				startIndex:null,
-				endIndex:null,
-				monthArr:['无','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+				selectDate: moment().format('YYYY-MM'),
 			}
 		},
-
+		computed:{
+			startDate() {
+				return this.getDate('start');
+			},
+			endDate() {
+				return this.getDate('end');
+			}
+		},
 		methods: {
-			bindDateChange(e) {
-			      this.year = e.detail.value;
-				 
-				  this.dateState = 0
-				  this.dateFun()
-			},
-			bindPickerdateChange(e) {
-			    this.index = e.detail.value;
-				if(this.index.length===1){
-					this.indexValue = `0${this.index}`
-				}				
-				this.dateState = 0
-				this.dateFun()
-			},
 			timeClick(num){
 				this.dateState = num
-				this.year = '无'
-				this.index = 0
-				this.dateFun()
-			},
-			dateFun(){
-				if(!this.dateState){
-					this.date.startTime = `${this.year}-${this.indexValue}-01`
-				    this.date.endTime = `${this.year}-${this.indexValue}-31`
-				}else{
-					if(this.dateState === 1 ){
-						this.date = this.getLastMonth(6)
-					}else {
-						this.date = this.getLastMonth(3)
-					}
+				let monthNum = this.dateState === 1 ? 6 : 3;
+				this.date = {
+					startTime: moment().subtract(monthNum, 'months').format('YYYY-MM-DD'),
+					endTime: moment().format('YYYY-MM-DD'),
 				}
 				this.$emit('handle',this.date)
 			},
-			padDate(value) {
-			    return value < 10 ? '0' + value : value
+			dateChange: function(e) {
+				this.dateState = 0
+				this.selectDate = e.detail.value;
+				let year = this.selectDate.split('-')[0];
+				let month = this.selectDate.split('-')[1];
+				let startDate = moment({year: year, month: month - 1, day: 1}).startOf('month');
+				let endDate = moment(startDate).endOf('month');
+				this.date = {
+					startTime: moment(startDate).format('YYYY-MM-DD'),
+					endTime: moment(endDate).format('YYYY-MM-DD'),
+				}
+				this.$emit('handle',this.date)
 			},
-			// 获取近i月的时间段
-			getLastMonth(i) {
-			  const now = new Date()
-			  const year = now.getFullYear()
-			  let month = now.getMonth() + 1
-			  month = 2
-			  const day = now.getDate()
-			  let dateRange = {}
-			  dateRange.endTime = `${year}-${this.padDate(month)}-${this.padDate(day)}`;
-			  let nowMonthDay = new Date(year, month, 0).getDate() //当前月的总天数
-			  if (i == 12) {
-			    //如果是12月，年数往前推一年
-			    dateRange.startTime = `${year - 1}-${this.padDate(month)}-${this.padDate(day)}`;
-			  } else{
-			        let startYear = year;
-			        let startMonth = month - i;
-			        while (startMonth <= 0) {
-			            startYear--;
-			            startMonth += 12;
-			        }
-			        const startDate = new Date(startYear, startMonth - 1, 1); // 注意这里月份要减1，因为构造Date对象时月份是0-11范围
-			        const endDate = new Date(year, month - 1, 1);
-			
-			        const startMonthDays = new Date(startYear, startMonth, 0).getDate();
-			        const endMonthDays = new Date(year, month, 0).getDate();
-			
-			        // 计算起始时间的日期部分，考虑边界情况
-			        let startDay = Math.min(day, startMonthDays);
-			        if (startMonthDays < endMonthDays && day === endMonthDays) {
-			            startDay = startMonthDays;
-			        }
-			
-			        dateRange.startTime = `${startYear}-${this.padDate(startMonth)}-${this.padDate(startDay)}`;
+			getDate(type) { //年月日
+			    const date = new Date();
+			    let year = date.getFullYear();
+			    let month = date.getMonth() + 1;
+			    let day = date.getDate();
+			    			
+			    if (type === 'start') {
+			        year = year - 100;
+			    } else if (type === 'end') {
+			        year = year;
 			    }
-			  return dateRange
+			    month = month > 9 ? month : '0' + month;
+			    day = day > 9 ? day : '0' + day;
+			    return `${year}-${month}-${day}`;
 			},
-			
-
-			
 		},
 		mounted() {
-			this.endIndex= new Date().getFullYear();
-			this.startIndex = this.endIndex - 5;
 			this.timeClick(2)
 		},
 		
@@ -141,15 +105,26 @@
 			justify-content: space-between;
 			align-items: center;
 			padding: 24rpx 30rpx;
-			
+			.blue {
+				background: #4286ff !important;
+				color: #ffffff !important;
+			}
 			.date {
-				min-width: 208rpx;
-				height: 72rpx;
-				background: #ffffff;
-				border-radius: 12rpx;
-				display: flex;
-				justify-content: center;
-				align-items: center;
+				.datePicker {
+					height: 56rpx;
+					font-size: 28rpx;
+					line-height: 56rpx;
+					border: 2rpx solid #4286ff;
+					border-radius: 15rpx;
+					padding: 0 50rpx;
+					color: #076aff;
+					margin-left: 20rpx;
+				}
+				.birth{
+					height: 86rpx;
+					display: inline-block;
+					text-align: left;
+				}
 				.date {
 					display: flex;
 					justify-content: center;
@@ -176,15 +151,12 @@
 					font-size: 28rpx;
 					line-height: 28rpx;
 					border: 2rpx solid #4286ff;
-					border-radius: 42rpx;
+					border-radius: 15rpx;
 					padding: 0 20rpx;
 					color: #076aff;
 					margin-left: 20rpx;
 				}
-				.blue {
-					background: #4286ff !important;
-					color: #ffffff !important;
-				}
+				
 			}
 		}
 	}

@@ -4,7 +4,7 @@
 		<view class="" :animation="anData"  style="height:0rpx;"></view>
 		<image class="background" src="https://aiwz.sdtyfy.com:8099/img/virtualBg.png" ></image>	
 		<view class="head">
-			您好！“安好”  为您服务  
+			您好！“海豚禾禾”为您服务  
 		</view>
 		<view class="center">
 			<scroll-view scroll-y="true" :scroll-top="scrollTop" class="scroll-Y" scroll-with-animation>

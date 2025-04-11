@@ -159,7 +159,6 @@
 			},
 		},
 		mounted() {
-			console.log(JSON.stringify(this.footData),'footdata------');
 			this.loginData();
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};

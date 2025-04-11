@@ -63,54 +63,67 @@ const patient = {
 	},
 	// 获取医生号源
 	async getNumSource(data) {
-	   	const res = await cjRequest({
-	   		url: "getNumSource",
-	   		method: "get",
-			data:{
-			patientID: data.patientID,
-			dateStr: data.dateStr,
-			scheduleItemCode: data.scheduleItemCode,
-			},
-	   	})
-	   	return res
-	},
-	// 拉起支付
-	// async registrationPreOrder(data) {
-	//    	const res = await cjRequest({
-	//    		url: "createOrder ",
-	//    		method: "post",
-	// 			data,
-	//    	})
-	//    	return res
-	// },
-	async registrationPreOrder(data) {
 		const res = await cjRequest({
-			url: "wxPay",
+			url: "getNumSource",
+			method: "get",
+			data:{
+				patientID: data.patientID,
+				dateStr: data.dateStr,
+				scheduleItemCode: data.scheduleItemCode,
+			},
+		})
+		return res
+	},
+	//发起订单
+	async registerOrder(data) {
+		const res = await cjRequest({
+			url: "wxOrder",
 			method: "post",
 			data
 		})
 	   	return res
 	},
-	// 查询支付结果
-	async queryPayResult(registrationPrePayResponse) {
-	   	const res = await cjRequest({
-	   		url: "queryPayResult",
-	   		method: "post",
-			data:registrationPrePayResponse,
-	   	})
-	   	return res
+	//支付
+	async wxPay(data) {
+		const res = await cjRequest({
+			url: "wxPay",
+			method: "post",
+			data
+		})
+	  return res
 	},
+	// 查询支付结果
+	async queryPayResult(data) {
+		const queryParams = Object.keys(data).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
+		const res = await cjRequest({
+			url: `wxPayQuery?${queryParams}`,
+			method: "get",
+		})
+		return res
+	},
+	
+	//上传接口
+	async registrationSettlement(data) {
+		const res = await cjRequest({
+			url: `registrationSettlement`,
+			method: "post",
+			data
+		})
+		return res
+	},
+	
+	
 	// 取消锁号
 	async unLockNum(data) {
 		const queryParams = Object.keys(data)
 		.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
 		.join('&');
 		const url = `unLockNum?${queryParams}`;
-	   	const res = await cjRequest({
-	   		url: url,
-	   		method: "post",
-	   	})
-	   	return res
+		const res = await cjRequest({
+			url: url,
+			method: "post",
+		})
+		return res
 	},
 	// 锁号
 	async registrationLock(data) {

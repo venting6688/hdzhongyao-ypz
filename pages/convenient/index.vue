@@ -18,7 +18,6 @@
 	import {mapState} from 'vuex'
 	import HeaderBar from '@/components/HeaderBar.vue';
 	import foot from '@/components/footer.vue'
-	import login from '@/utils/login.js'
 	// import report from '../../sub_packages/convenientModule/components/report.vue'
 	// import prepare from '../../sub_packages/convenientModule/components/beHospitalized/prepare.vue'
 	// import doing from '../../sub_packages/convenientModule/components/beHospitalized/doing.vue'
@@ -106,13 +105,7 @@
 			},
 			
 		},
-		mounted(){
-			let loginValue = uni.getStorageSync('loginData');
-			loginValue = loginValue.defaultArchives ? loginValue.defaultArchives : false;
-			if (!loginValue.patientName) {
-				login.loginData()
-			}
-		},
+		
 	}
 </script>
 

@@ -29,37 +29,42 @@
 					</view>
 					<view class="message">
 						<view class="name">
-						    <text>{{item.doctName}}</text>
-						    <text>{{item.doctTech}}</text>
-					    	<text  class="expert" v-if="item.expert">{{item.expert}}</text>
-						    <text class="money">￥{{item.regAmount / 100}}</text>
-					    </view> 
-						<view class="synopsis">
-						</view>
+							<text>{{item.doctName}}</text>
+							<text>{{item.doctTech}}</text>
+							<!-- <text class="money">￥{{item.regAmount / 100}}</text> -->
+						</view> 
+						<view class="synopsis">{{item.doctSpec ? item.doctSpec : '暂无简介'}}</view>
 					</view>
 				</view>
 				<view class="footer">
-					<view class="subscribe">
+					<view class="subscribe" v-for="(i,x) in item.Scheduling" :key="x">
 						<view class="num">
-							<view class="subscribe-time">
-								{{item.medDate}}
-							</view>
-							<view class="subscribe-am">
-								{{item.medAmPmName}}
-							</view>
-							<view class="subscribe-number">
-								<text>剩余</text>
-								<text>{{item.restNum < 0 ? 0 : item.restNum}}</text>
-							</view>
+							<view class="subscribe-time">{{item.medDate}}</view>
+							<view class="subscribe-am">{{i.medAmPmName}}</view>
 						</view>
-						<button 
-							type="primary" 
-							size="mini" 
-							style="background-color: #007AFF; color: white;" 
-							@click="doctorDetails(item)" 
-						>
-							预约
-						</button>
+						<view>
+							<text class="money">￥{{item.regAmount / 100}}</text>
+						</view>
+						<view>
+							<button
+								v-if="i.restNum > 0"
+								type="primary" 
+								size="mini" 
+								style="background-color: #007AFF; color: white; margin-right: 10rpx;" 
+								@click="doctorDetails(item, i.restNum, i.medAmPm)" 
+							>
+								剩余{{i.restNum < 0 ? 0 : i.restNum}}
+							</button>
+							<button
+								v-else
+								type="primary" 
+								size="mini" 
+								style="background-color: #ccc; color: white; margin-right: 10rpx;" 
+							>
+								剩余0
+							</button>
+						</view>
+						
 						<!-- <view   v-if="item.restNum > 0" disabled>预约</view> -->
 					</view>
 				</view>
@@ -156,7 +161,7 @@
 				}).then(res => {
 					let result = JSON.parse(res.data.msg);
 					if (result.success) {
-						this.doctorList = JSON.parse(res.data.msg).data
+						this.doctorList = this.mergeDoctorSchedules(result.data);
 					} else {
 						uni.showToast({
 							title: result.msg,
@@ -170,12 +175,56 @@
 					console.log('2：', err);
 				})
 			},
+			//格式化医生排班信息
+			mergeDoctorSchedules(data) {
+			  const mergedDoctors = {};
+			  data.forEach(item => {
+			    // 如果医生不存在，创建基础信息
+			    if (!mergedDoctors[item.doctCode]) {
+			      mergedDoctors[item.doctCode] = {
+			        deptCode: item.deptCode,
+			        deptName: item.deptName,
+			        doctCode: item.doctCode,
+			        doctName: item.doctName,
+			        doctTech: item.doctTech,
+			        doctSpec: item.doctSpec,
+			        doctIntro: item.doctIntro,
+			        medDate: item.medDate,
+			        regFee: item.regFee,
+			        treatFee: item.treatFee,
+			        checkFee: item.checkFee,
+							regAmount: item.regAmount,
+							scheduleId: item.scheduleId,
+							limitNum: item.limitNum,
+							hosRegType: item.hosRegType,
+							doctPictureUrl: item.doctPictureUrl,
+							status: item.status,
+							pmOpenStartTime: item.pmOpenStartTime,
+							pmOpenEndTime: item.pmOpenEndTime,
+			        Scheduling: []
+			      };
+			    }
+					
+			    // 添加排班信息（排除已存在的属性）
+			    const scheduleItem = {
+			      medAmPm: item.medAmPm,
+			      medAmPmName: item.medAmPmName,
+			      waitNum: item.waitNum,
+			      restNum: item.restNum
+			    };
+					
+			    mergedDoctors[item.doctCode].Scheduling.push(scheduleItem);
+			  });
+			  
+			  return Object.values(mergedDoctors);
+			},
 			
 			onChange(detail) {
 				this.checked = detail.detail
 			},
 			//预约挂号
-			doctorDetails(item){
+			doctorDetails(item, restNum, medAmPm){
+				
 				this.doctor.StartTime = item.medDate
 				this.doctor.EndTime = item.medDate
 					this.doctor = {
@@ -188,10 +237,9 @@
 						clinic:this.title,
 						today:this.today,
 						scheduleItemCode: item.doctCode,
-						medAmPm: item.medAmPm,
+						medAmPm: medAmPm,
 						scheduleId: item.scheduleId
 					}
-					
 					//锁号
 					let lockNumData = {
 						cardNo: this.siginData.patientCard,
@@ -213,12 +261,10 @@
 							})
 						} else {
 							uni.navigateTo({
-								url: `/sub_packages/subscribe/doctorDetails?title=${this.title}&doctor=${encodeURIComponent(JSON.stringify(this.doctor))}`
+								url: `/sub_packages/subscribe/doctorDetails?title=${this.title}&doctor=${encodeURIComponent(JSON.stringify(this.doctor))}&lockId=${res.data.lockId}&detail=${encodeURIComponent(JSON.stringify(item))}`
 							})
 						}
 					})
-					
-				
 			},
 			close(){
 				this.$refs.popup.close()
@@ -309,52 +355,6 @@
 					}
 				}
 			}
-			// >ul{
-			// 	overflow: auto;
-			// 	// display: flex;
-			// 	white-space: nowrap;
-			// 	>li {
-			// 		display: inline-block;
-			// 		margin:18rpx 10rpx;
-			// 		width: 130rpx;
-			// 		height: 123rpx;
-			// 		background: #ffffff;
-			// 		border-radius: 11.45rpx;
-			// 		text-align: center;
-					
-					
-			// 		&:nth-of-type(1){
-			// 			margin-left: 30rpx;
-			// 		}
-			// 		&:last-of-type{
-			// 			margin-right: 30rpx;
-			// 		}
-					
-			// 		view {
-			// 			display: flex;
-			// 			justify-content: center;
-			// 			align-items: center;
-			// 			height: 33.33%;
-						
-			// 			&:nth-of-type(1){
-			// 				font-size: 23rpx;
-			// 				line-height: 23rpx;
-			// 				color: #666666;
-			// 			}
-			// 			&:nth-of-type(2){
-			// 				font-size: 27rpx;
-			// 				line-height: 26rpx;
-			// 			}
-			// 			&:nth-of-type(3){
-			// 				font-size: 23rpx;
-			// 				line-height: 23rpx;
-			// 				color: #4286ff;
-			// 			}
-						
-						
-			// 		}
-			// 	}
-			// }
 		}
 		
 		.head {
@@ -389,10 +389,11 @@
 			
 			.center {
 				width: 680rpx;
-				height: 350rpx;
+				// height: 350rpx;
 				background: #ffffff;
 				border-radius: 11.45rpx;
 				margin: 25rpx auto;
+				padding: 20rpx 0;
 				
 				&:nth-of-type(1){
 					margin-top: 5rpx;
@@ -418,6 +419,7 @@
 					}
 					.message {
 						margin-left:24rpx;
+						padding-top: 20rpx;
 						.name {
 							display: flex;
 							align-items: center;
@@ -451,14 +453,7 @@
 								justify-content: center;
 								align-items: center;
 							}
-							.money {
-								font-size: 36rpx;
-								line-height: 26.72rpx;
-								color: #ffc03d;
-								text-align: right;
-								position: absolute;
-								right: 10rpx;
-							}
+							
 							
 						}
 						.synopsis {
@@ -483,18 +478,17 @@
 						justify-content: space-between;
 						align-items: center;
 						height: 57.25rpx;
-						margin: 20rpx 10rpx;
-						
-						
+						margin: 20rpx;
+						.money {
+							font-size: 32rpx;
+							color: #FAAA03;
+						}
 						.num {
 							display: flex;
 							align-items: center;
 							
 							.subscribe-time{
-								margin-right: 30rpx;
-							}
-							.subscribe-am{
-								margin-right: 30rpx;
+								margin-right: 80rpx;
 							}
 							.subscribe-number{
 								text {
