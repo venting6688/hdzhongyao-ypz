@@ -1,12 +1,12 @@
 <template>
 	<view class="head" :class="{convenient:footState===2}">
-		<image class="background" src="https://aiwz.sdtyfy.com:8099/img/Group.png" mode="widthFix"></image>
-		<view class="text">
+		<image class="background" src="../static/image/Group 1001.png" mode="widthFix"></image>
+		<!-- <view class="text">
 			<view class="title">您好！"安好" 为您服务<image class="icon" src="@/static/image/Group308.png" mode="widthFix"></image></view>
 			<view class="news">
 				{{ animatedText.slice(0,39) }}
 			</view>
-		</view>
+		</view> -->
 		<view class="dist">
 			<ul  v-if="footState===2 && departmentList.length">
 				<li v-for="(item,index) in departmentList" :key="index">
@@ -338,7 +338,7 @@ export default {
 	position: relative;
 	flex: 0 0 auto;
 	width: 100%;
-	min-height: 325rpx;
+	min-height: 194rpx;
 	.text {
 		position: absolute;
 		width: 480rpx;

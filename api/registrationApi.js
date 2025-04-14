@@ -112,16 +112,12 @@ const patient = {
 		return res
 	},
 	
-	
 	// 取消锁号
-	async unLockNum(data) {
-		const queryParams = Object.keys(data)
-		.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
-		.join('&');
-		const url = `unLockNum?${queryParams}`;
+	async unRegistrationLock(data) {
 		const res = await cjRequest({
-			url: url,
+			url: 'unRegistrationLock',
 			method: "post",
+			data
 		})
 		return res
 	},
@@ -135,6 +131,16 @@ const patient = {
 	   	})
 	   	return res
 	},
+	
+	//退费
+	async refund(data) {
+		const res = await cjRequest({
+			url: 'refund',
+			method: "post",
+			data
+		})
+		return res
+	}
 }
  
 export default patient

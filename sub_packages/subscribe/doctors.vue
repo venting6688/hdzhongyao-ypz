@@ -224,7 +224,6 @@
 			},
 			//预约挂号
 			doctorDetails(item, restNum, medAmPm){
-				
 				this.doctor.StartTime = item.medDate
 				this.doctor.EndTime = item.medDate
 					this.doctor = {
@@ -240,30 +239,8 @@
 						medAmPm: medAmPm,
 						scheduleId: item.scheduleId
 					}
-					//锁号
-					let lockNumData = {
-						cardNo: this.siginData.patientCard,
-						cardType: 1,
-						scheduleId: this.doctor.scheduleId,
-						docCode: this.doctor.scheduleItemCode,
-						medAmPm: this.doctor.medAmPm,
-						patientName: this.siginData.patientName,
-						version: 1,
-						regMode: 2
-					}
-					registrationApi.registrationLock(lockNumData).then(r => {
-						let res = JSON.parse(r.data.msg);
-						if(!res.success) {
-							uni.showToast({
-								title: res.msg,
-								icon: 'none',   
-								duration: 2000 
-							})
-						} else {
-							uni.navigateTo({
-								url: `/sub_packages/subscribe/doctorDetails?title=${this.title}&doctor=${encodeURIComponent(JSON.stringify(this.doctor))}&lockId=${res.data.lockId}&detail=${encodeURIComponent(JSON.stringify(item))}`
-							})
-						}
+					uni.navigateTo({
+						url: `/sub_packages/subscribe/doctorDetails?title=${this.title}&doctor=${encodeURIComponent(JSON.stringify(this.doctor))}&detail=${encodeURIComponent(JSON.stringify(item))}`
 					})
 			},
 			close(){

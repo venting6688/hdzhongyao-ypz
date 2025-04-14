@@ -127,7 +127,7 @@
 				payUrl: '',
 				siginData: {},
 				doctorInfo: {},
-				lockId: '',
+				lockId: ''
 			}
 		},
 		computed: { 
@@ -168,69 +168,142 @@
 				// }
 			},
 			today(data){
-				let randNum = Math.floor(1000000 + Math.random() * 9000000);
-				let datas = { 
-					subOpenId: data.xcxOpenId,
-					totalAmount: '1',//String(this.doctor.Fee * 100), 
-					merOrderId: '157Q-'+moment().format('YYYYMMDDHHmmss')+'-'+randNum
+				//锁号
+				let lockNumData = {
+					cardNo: this.siginData.patientCard,
+					cardType: 1,
+					scheduleId: this.doctor.scheduleId,
+					docCode: this.doctor.scheduleItemCode,
+					medAmPm: this.doctor.medAmPm,
+					patientName: this.siginData.patientName,
+					version: 1,
+					regMode: 2
 				}
-				registrationApi.registerOrder(datas).then(res => {
-					let {merOrderId} = res.data;
-					
-					uni.requestPayment({
-						provider: 'wxpay', // 服务提提供商
-						timeStamp: res.data.miniPayRequest.timeStamp, // 时间戳
-						nonceStr: res.data.miniPayRequest.nonceStr, // 随机字符串
-						package: res.data.miniPayRequest.package,
-						signType: res.data.miniPayRequest.signType, // 签名算法
-						paySign: res.data.miniPayRequest.paySign, // 签名
-						success:(result)=> {
-							let msg = {
-								targetOrderId: '',
-								merOrderId: res.data.merOrderId
-							}
-							registrationApi.queryPayResult(msg).then(r => {
-								if (r.data.code === 200) {
-									let resMsg = JSON.parse(r.data.msg);
-									let uploadOrder = {
-										cardNo: this.siginData.patientCard,
-										cardType: 1,
-										patientId: this.doctorInfo.deptCode,
-										medDate: this.doctorInfo.medDate,
-										scheduleId: this.doctor.scheduleId,
-										deptCode: this.doctor.deptCode,
-										doctCode: this.doctor.doctCode,
-										medAmPm: this.doctor.medAmPm,
-										tradeMode: 'wx',
-										outTradeNo: resMsg.targetOrderId,
-										transNo: resMsg.merOrderId,
-										accountNo: '',
-										lockId: this.lockId,
-										cash: resMsg.invoiceAmount,
-										version: '1',
-										isPayNow: '1',
-										deviceInfo: '',
-										operId: '',
-										deviceMac: '',
-										deviceIp: '',
-										tradeTime: '',
-										traceId: '',
-									}
-									registrationApi.registrationSettlement(uploadOrder).then(uploadRes => {
-										console.log(JSON.stringify(uploadRes));
-									});
-									this.toastObj = {
-										state:true,
-										message:'预约成功',
-										url:'/pages/more/index',
-									}
-								}
-							}).catch(err => {
-								console.log('errrrrr：', err);
-							})
+				registrationApi.registrationLock(lockNumData).then(r => {
+					let res = JSON.parse(r.data.msg);
+					let lockId = res.data.lockId;
+					if(!res.success) {
+						uni.showToast({
+							title: res.msg,
+							icon: 'none',   
+							duration: 2000 
+						})
+					} else {
+						let randNum = Math.floor(1000000 + Math.random() * 9000000);
+						let datas = { 
+							patientId: this.siginData.patientCard,
+							patientName: this.siginData.patientName,
+							subOpenId: data.xcxOpenId,
+							totalAmount: String(this.doctor.Fee * 100), 
+							merOrderId: '157Q-'+moment().format('YYYYMMDDHHmmss')+'-'+randNum
 						}
-					})		
+						
+						registrationApi.registerOrder(datas).then(res => {
+							let { merOrderId, totalAmount } = res.data;
+							uni.requestPayment({
+								provider: 'wxpay', // 服务提提供商
+								timeStamp: res.data.miniPayRequest.timeStamp, // 时间戳
+								nonceStr: res.data.miniPayRequest.nonceStr, // 随机字符串
+								package: res.data.miniPayRequest.package,
+								signType: res.data.miniPayRequest.signType, // 签名算法
+								paySign: res.data.miniPayRequest.paySign, // 签名
+								success:(result)=> {
+									//支付成功
+									let msg = {
+										patientId: this.siginData.patientCard,
+										patientName: this.siginData.patientName,
+										orderSum: totalAmount,
+										targetOrderId: '',
+										merOrderId,
+									}
+									//查询支付记录
+									registrationApi.queryPayResult(msg).then(r => {
+										if (r.data.code === 200) {
+											let resMsg = JSON.parse(r.data.msg);
+											let uploadOrder = {
+												accountNo: '',
+												cardNo: this.siginData.patientCard,
+												cardType: '1',
+												cash: resMsg.invoiceAmount,
+												deptCode: this.doctor.deptCode,
+												doctCode: this.doctor.doctCode,
+												extend: this.doctorInfo.extend,
+												idNo: this.siginData.patientCard,
+												lockId,
+												medAmPm: this.doctor.medAmPm,
+												medDate: this.doctorInfo.medDate,
+												patientId: this.footData.patientUniquelyIdentifies,
+												patientName: this.siginData.patientName,
+												scheduleId: this.doctor.scheduleId,
+												tradeMode: 'CCBJRZYPLUS',
+												tradeTime: resMsg.responseTimestamp,
+												outTradeNo: resMsg.targetOrderld,
+												transNo: resMsg.targetOrderId,
+											}
+											//上传支付订单信息
+											registrationApi.registrationSettlement(uploadOrder).then(uploadRes => {
+												let uploadResult = JSON.parse(uploadRes.data.msg);
+												if (uploadResult.success) {
+													this.toastObj = {
+														state:true,
+														message:'预约成功',
+														url:'/pages/more/index',
+													}
+												} else {
+													//上传失败进行解锁+退款
+													let refundData = {
+														merOrderId: resMsg.merOrderId, 
+														refundAmount: resMsg.invoiceAmount, 
+														targerOrderId: resMsg.targetOrderld
+													}
+													//退款
+													registrationApi.refund(refundData).then(r => {
+														//支付失败，取消锁号
+														let unLockNumData = {
+															lockId,
+															version: 1,
+														}
+														registrationApi.unRegistrationLock(unLockNumData).then(r => {})
+													})
+													this.toastObj = {
+														state:true,
+														message: uploadResult.msg,
+														url:'/pages/more/index',
+													}
+												}
+											});
+											//退款
+											// registrationApi.refund({merOrderId: resMsg.merOrderId, refundAmount: resMsg.invoiceAmount, targerOrderId: resMsg.targetOrderld}).then(r => {
+											// 	console.log(JSON.stringify(r.data))
+											// })
+										}
+									}).catch(err => {
+										console.log('errrrrr：', err);
+									})
+								},fail:(err)=> {
+									//支付失败，取消锁号
+									let unLockNumData = {
+										lockId,
+										version: 1,
+									}
+									registrationApi.unRegistrationLock(unLockNumData).then(r => {
+										let res = JSON.parse(r.data.msg);
+										if (res.success) {
+											this.toastObj = {
+												state:true,
+												type:'fail',
+												message:'支付失败，取消锁号'
+											}
+										}
+									})
+								}
+							})		
+						})
+					}
 				})
+				
+				
+				
 			},
 			
 			otherTime(data){
@@ -276,7 +349,7 @@
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 			this.doctorInfo = JSON.parse(decodeURIComponent(e.detail));
-			this.lockId = e.lockId;
+			this.lockId = e.lockId
 		},
 	}
 </script>
