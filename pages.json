@@ -22,13 +22,14 @@
 		"disableScroll": true,
 		"componentPlaceholder": {
 			"first": "view",
-		    "check": "view",
-		    "answer": "view",
-		    "prescription": "view",
-		    "report": "view",
-		    "prepare": "view",
-		    "doing": "view",
-		    "inventory": "view"
+			"check": "view",
+			"answer": "view",
+			"prescription": "view",
+			"report": "view",
+			"prepare": "view",
+			"doing": "view",
+			"inventory": "view",
+			"zanwu": "view"
 		}
 	  }
 	}

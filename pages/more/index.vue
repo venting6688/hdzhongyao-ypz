@@ -84,11 +84,11 @@
 					{
 						title:'便民服务',
 						list:[
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/synthesize1.png',
-								name:'家庭管理',
-								num:23,
-							},
+							// {
+							// 	img:'https://aiwz.sdtyfy.com:8099/img/synthesize1.png',
+							// 	name:'家庭管理',
+							// 	num:23,
+							// },
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/synthesize4.png',
 								name:'在线建档',

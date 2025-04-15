@@ -1,6 +1,6 @@
 <template>
 	<view class="box" v-if="showState">
-		<bar />
+		<!-- <bar /> -->
 		<date @handle="show" />
 		<view class="head">
 			<view>

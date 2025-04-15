@@ -5,32 +5,20 @@
 				<view class="clinic">
 					{{callObj.deptName ?callObj.deptName :''}}
 				</view>
-				
 				<view class=" title-calling">
 					<view class="left">
 					   <view class="no">
 						    {{callObj.waitCallNo?callObj.waitCallNo+'号':''}}
 					    </view>
-						
-					    <view class="text">
-						    就诊序号
-					    </view>
+					    <view class="text">就诊序号</view>
 				    </view>
 					<view class="middle">
-					    <view class="call">
-							{{callObj.callNo?callObj.callNo+'号':''}}
-					    </view>
-					    <view class="text">
-						    正在呼叫
-					    </view>
+						<view class="call">{{callObj.callNo?callObj.callNo+'号':''}}</view>
+						<view class="text">正在呼叫</view>
 					</view>
 				    <view class="right">
-					    <view class="time">
-				    		{{callObj.queueWaitNum?callObj.queueWaitNum:''}}
-					    </view>
-					    <view class="text">
-						    等候人数
-					    </view>
+					    <view class="time">{{callObj.queueWaitNum?callObj.queueWaitNum:''}}</view>
+					    <view class="text">等候人数</view>
 				    </view>
 				</view>
 			</view>
@@ -46,21 +34,13 @@
 					<image src="@/static/image/Union2.png" mode="widthFix"></image>
 				</view>
 				<ul>
-					<li v-if="firstContent.queueName">
-						<view class="attribute">
-							挂号科室:
-						</view>
-						<view class="name">
-							{{firstContent.queueName}}
-						</view>
+					<li v-if="firstContent.deptName">
+						<view class="attribute">挂号科室:</view>
+						<view class="name">{{firstContent.deptName}}</view>
 					</li>
-					<li v-if="firstContent.doctorName">
-						<view class="attribute">
-							挂号医生:
-						</view>
-						<view class="name">
-							{{firstContent.doctorName}}
-						</view>
+					<li v-if="firstContent.doctName">
+						<view class="attribute">挂号医生:</view>
+						<view class="name">{{firstContent.doctName}}</view>
 					</li>
 					<!-- <li v-if="firstContent.callState=='已签到' && callObj.medicalTreatmentNumber">
 						<view class="attribute">
@@ -70,26 +50,16 @@
 							{{callObj.medicalTreatmentNumber}}号
 						</view>
 					</li> -->
-					<li v-if="firstContent.appointmentTime">
-						<view class="attribute">
-							预约时间:
-						</view>
-						<view class="name">
-							{{firstContent.appointmentTime}}
-						</view>
+					<li v-if="firstContent.medDate">
+						<view class="attribute">预约时间:</view>
+						<view class="name">{{firstContent.medDate}} {{firstContent.medTime}}</view>
 					</li>
-					<li v-if="firstContent.queueLocation">
-						<view class="attribute">
-							科室位置:
-						</view>
-						<view class="name">
-							{{firstContent.queueLocation}}
-						</view>
+					<li v-if="firstContent.address">
+						<view class="attribute">科室位置:</view>
+						<view class="name">{{firstContent.address}}</view>
 					</li>
 					<li v-if="firstContent.precautions">
-						<view class="attribute">
-							注意事项:
-						</view>
+						<view class="attribute">注意事项:</view>
 						<view class="name">
 							{{firstContent.precautions}}
 						</view>
@@ -126,9 +96,9 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="subscribeObj.department">
+		<view v-if="subscribeObj.deptName">
 			<view class="center">
-				<view class="head" v-if="subscribeObj.days && subscribeObj.days!=='0'">
+				<view class="head" v-if="subscribeObj.days || subscribeObj.days !== '0'">
 					<view class="">
 						距离您的就诊日还有 {{subscribeObj.days}} 天
 					</view>
@@ -141,37 +111,23 @@
 						<image v-if="subscribeObj.days && subscribeObj.days!=='0'" src="@/static/image/Union2.png" mode="widthFix"></image>
 					</view>
 					<ul>
-						<li v-if="subscribeObj.department">
-							<view class="attribute">
-								挂号科室:
-							</view>
-							<view class="name">
-								{{subscribeObj.department}}
-							</view>
+						<li v-if="subscribeObj.deptName">
+							<view class="attribute">挂号科室:</view>
+							<view class="name">{{subscribeObj.deptName}}</view>
 						</li>
-						<li v-if="subscribeObj.doctor">
-							<view class="attribute">
-								挂号医生:
-							</view>
-							<view class="name">
-								{{subscribeObj.doctor}}
-							</view>
+						<li v-if="subscribeObj.doctName">
+							<view class="attribute">挂号医生:</view>
+							<view class="name">{{subscribeObj.doctName}}</view>
 						</li>
-						
-						<li v-if="subscribeObj.admitDate">
-							<view class="attribute">
-								预约时间:
-							</view>
-							<view class="name">
-								{{subscribeObj.admitDate}}
-							</view>
+						<li v-if="subscribeObj.medDate">
+							<view class="attribute">预约时间:</view>
+							<view class="name">{{subscribeObj.medDate}} {{subscribeObj.medTime}}</view>
 						</li>
-						
 					</ul>
 					<view class="btn">
 						<view>
 							<button  v-if="subscribeObj.days>='0'" class="cu-btn" @click="cancelAppointmentRegister(subscribeObj.orderCode)">取消预约</button>
-							<button v-if="subscribeObj.days==='0'" class="cu-btn" @click="takeANumberPrePay(subscribeObj)">预约取号</button>
+							<!-- <button v-if="subscribeObj.days==='0'" class="cu-btn" @click="takeANumberPrePay(subscribeObj)">预约取号</button> -->
 						</view>
 					</view>
 					
@@ -184,6 +140,7 @@
 </template>
 
 <script>
+	import moment from 'moment';
 	import guideApi from '@/api/guideApi.js'
 	import mixin from '@/mixins/mixin'
 	import bus from '@/utils/bus.js'
@@ -216,25 +173,32 @@
 			}
 		},
 		created() {
+			let nowDate = moment().format('YYYY-MM-DD');
 			bus.$on('complex-data-passed',(data)=>{
 				if(data.data.length){
-					data.data.forEach(e => {
-						console.log(e.visitNumber,'======',this.department.visitNumber)
-						if(e.visitNumber===this.department.visitNumber){
-							console.log('-----');
-							this.firstContent = e
-							this.getQueueingMessage()
-						}else if(e.orderNo === this.department.visitNumber){
-							console.log('000000')
-							this.subscribeObj = e;
-						}
-					})
+					let allData = data.data;
+					this.subscribeObj = allData.find(x=> x.orderNo == this.department.visitNumber);
+					let medDate = moment(this.subscribeObj.medDate);
+					this.subscribeObj.days = medDate.diff(nowDate, 'days')
+					
+					// data.data.forEach(e => {
+					// 	if(e.visitNumber===this.department.visitNumber){
+					// 		this.firstContent = e
+					// 		this.getQueueingMessage()
+					// 	}else if(e.orderNo === this.department.visitNumber){
+					// 		if (nowDate != e.medDate && e.medDate > nowDate) {
+					// 			let medDate = moment(e.medDate);
+					// 			e.days = medDate.diff(nowDate, 'days')
+					// 		}
+					// 		this.subscribeObj = e;
+							
+					// 	}
+					// })
 				}else{
 					this.firstContent = {}
 					this.subscribeObj = {}
 					this.$set(this.headerEmiter,'state','')
 					this.$emit('handle',this.headerEmiter)
-					
 				}
 				// 回传的effectState  渐入效果渲染
 				if(data.effectState){
@@ -260,7 +224,6 @@
 			clearTimeout(this.timer2)
 			clearInterval(this.timer3)
 			this.timer3 = null
-			
 		},
 		computed: {
 			...mapState(['footData','department']),

@@ -7,9 +7,10 @@
 		  <!--  <check @handle="show" v-if="headerEmit.state=='查验'" :headerEmit="headerEmit" />
 			<answer @handle="show" v-if="headerEmit.state=='回诊'" :headerEmit="headerEmit" />
 			<prescription @handle="show" v-if="headerEmit.state=='处方'" :headerEmit="headerEmit" /> -->
-			<!-- <view class="img">
-				<image src="https://aiwz.sdtyfy.com:8099/img/wu.png" mode="widthFix"></image>
-			</view> -->
+			<view class="img" v-if="!headerEmit.visitNumber">
+				<zanwu v-if="!headerEmit.visitNumber" />
+				<!-- <image src="https://aiwz.sdtyfy.com:8099/img/wu.png" mode="widthFix"></image> -->
+			</view>
 		</view>
 		<foot :footState="footState"/>
 	</view>
@@ -19,6 +20,7 @@
 	import HeaderBar from '@/components/HeaderBar.vue';
 	import foot from '@/components/footer.vue'
 	import first from '../../sub_packages/convenientModule/components/outpatient/first.vue'
+	import zanwu from '../../sub_packages/components/zanwu.vue'
 	// import report from '../../sub_packages/convenientModule/components/report.vue'
 	// import prepare from '../../sub_packages/convenientModule/components/beHospitalized/prepare.vue'
 	// import doing from '../../sub_packages/convenientModule/components/beHospitalized/doing.vue'
@@ -35,6 +37,7 @@
 			// prepare,
 			// doing,
 			// inventory,
+			zanwu
 		},
 		data() {
 			return {
@@ -49,6 +52,7 @@
 				expand:false,
 				timer:null,
 				convenientState:true,
+				signData: {}
 			}
 		},
 		computed: {

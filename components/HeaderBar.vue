@@ -19,7 +19,7 @@
 				</li>
 			</ul>
 		</view>
-		<view class="bar" v-if="footState===2">
+		<view class="bar" v-if="footState===2 && headerEmit.visitNumber">
 			<view v-for="(item,index) in barList" @click="throttle_btns(index,item.number)" class="barList" :key="index">
 				<view  class="bar-name"  :class="{ barColor:item.number==1 }">
 					<view>
@@ -46,7 +46,13 @@ export default {
 	data() {
 		return {
 			barListData:null,
-			barList: [],
+			barList: [
+				{
+					name:'预约',
+					number:'1',
+					state:'预约'
+				},
+			],
 			hospitalizedBarList:[],
 			headerEmit:{
 				visitNumber:'',
@@ -100,10 +106,10 @@ export default {
 				})
 			await this.getBookingRecord()
 			// this.getTreatmentStageNew(3)
-			// this.timer = setInterval(()=>{
-			// 	this.getFirstVisit({},3)
-			// 	this.getTreatmentStageNew(3)
-			// },20000)
+			this.timer = setInterval(()=>{
+				this.getBookingRecord({},3)
+				// this.getTreatmentStageNew(3)
+			},15000)
 			this.animateText()
 		}
 		
@@ -207,7 +213,7 @@ export default {
 			let siginData = data.defaultArchives;
 			try{
 				const time = {
-					startDate: moment().format('YYYY-MM'),
+					startDate: moment().format('YYYY-MM-DD'),
 					endDate: moment().add(7, 'days').format('YYYY-MM-DD')
 				};
 				const msg = {
@@ -232,7 +238,6 @@ export default {
 						}) || [];
 						
 						this.departmentList =[...subscribeList];
-						// console.log(JSON.stringify(this.departmentList))
 						if(this.departmentList.length){
 							let found = false
 							// 判断存下的visitNumber和数组中有没有匹配的如果没有重新赋值
@@ -307,6 +312,11 @@ export default {
 		// },
 		//切换科室
 		departmentBtn(item,index){
+			this.loading = true
+			uni.showLoading({
+				title: '加载中...',
+				mask: true
+			})
 			if(item.visitNumber){
 				if(this.headerEmit.visitNumber !== item.visitNumber){
 					this.barListData=null
@@ -315,13 +325,16 @@ export default {
 					this.index = index
 				}
 			}else {
-				console.log(this.headerEmit.visitNumber,'====',item.orderNo);
 				if(this.headerEmit.visitNumber !== item.orderNo){
 					this.barListData=null
 					this.headerEmit.visitNumber = item.orderNo
 					this.headerEmit.orderNo = item.orderNo
 					this.index = index
 				}
+				setTimeout(()=> {
+					this.loading = false
+					uni.hideLoading()
+				},15000)
 			}
 			
 		},
@@ -349,7 +362,7 @@ export default {
 
 <style lang="less">
 	.convenient {
-		height: 397rpx !important;
+		height: 350rpx !important;
 	}
 .head {
 	position: relative;
@@ -389,15 +402,17 @@ export default {
 	}
 	.dist {
 		width: 100%;
-		transform: translate(0,232rpx);
+		transform: translate(0,193rpx);
 		display: flex;
 		overflow: auto;
 		white-space: nowrap;
 		padding:0 30rpx 10rpx 30rpx;
+		background: linear-gradient(to right, #46DAFB, #55A0F9);
 		>ul {
 			display: flex;
 			align-items: center;
 			margin:0 6rpx;
+			border-radius: 15rpx;
 			
 			li {
 				background: #edfeff;
