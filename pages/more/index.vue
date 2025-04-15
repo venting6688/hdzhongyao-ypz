@@ -103,12 +103,12 @@
 					},
 				],
 				urlList:[
-					'pages/virtualNurse/index',
-					'/sub_packages/subscribe/departments',
-					'/sub_packages/outpatientExpenditure/index',
-					'空',
-					'空',
-					'空',
+					'pages/virtualNurse/index',  //0
+					'/sub_packages/subscribe/departments', //1
+					'/sub_packages/outpatientExpenditure/index', //2
+					'空', //3
+					'/sub_packages/record/index', //4
+					'/sub_packages/report/index', //5
 					'空',
 					'空',
 					'空', 

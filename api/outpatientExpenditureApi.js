@@ -64,16 +64,16 @@ const patient = {
 	      	return res
 	   },
 	   // 已缴费就诊记录
-	   async getPaymentRecord(data) {
+	   async getQueryFeeRecord(data) {
 	   	const queryParams = Object.keys(data)
 	   	.map(key => `${key}=${data[key]}`)
 	   	.join('&');
-	   	const url = `cardContent/getPaymentRecord?${queryParams}`;
-	      	const res = await cjRequest({
-	      		url: url,
-	      		method: "get",
-	      	}, 2)
-	      	return res
+	   	const url = `QueryFeeRecord?${queryParams}`;
+			const res = await cjRequest({
+				url: url,
+				method: "get",
+			}, 2)
+			return res
 	   },
 	   // 已缴费就诊记录明细
 	   async getPaymentDetails(data) {

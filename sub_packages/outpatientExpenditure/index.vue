@@ -91,9 +91,7 @@
 					</li>
 				</template>
 			</ul>
-			
 			<zanwu v-if="headIndex===2 && !alreadyList.length && !loading.loadingState" />
-			
 		</view>
 		<Toast v-if="toastObj.state" @back="closeToast" :type="toastObj.type" :message="toastObj.message"/>
 	</view>
@@ -169,7 +167,6 @@
 				num === 1 ? this.queryMedicalRecords() : this.getPaymentRecord();
 			},
 			//未交费
-			
 			async queryMedicalRecords() {
 				if (this.footData.patientUniquelyIdentifies) {
 					let data = {
@@ -201,11 +198,13 @@
 			async getPaymentRecord(){
 				try {
 					let data = {
-						patientID: this.footData.patientUniquelyIdentifies,
+						userId: '',
+						cardNo:  '370223197110243910',//this.siginData.patientCard,
+						patientID: '370223197110243910',//this.siginData.patientCard,
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
 					}
-					outpatientExpenditureApi.getPaymentRecord(data).then(res => {
+					outpatientExpenditureApi.getQueryFeeRecord(data).then(res => {
 						if(res.data.code===200){
 							this.alreadyList = res.data.data||[]
 						}

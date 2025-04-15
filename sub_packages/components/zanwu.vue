@@ -1,8 +1,8 @@
 <template>
 	<view class="box">
 		<view class="without">
-			<image src="../static/image/zanwu.png" mode="aspectFit"></image>
-			<text>暂无您所需要的数据</text>
+			<image src="../static/image/zanwu.png" mode="widthFix" style="width: 300rpx;"></image>
+			<text>暂无数据</text>
 		</view>
 	</view>
 </template>
@@ -21,13 +21,13 @@
 			background: #ffffff;
 			margin: 0 auto;
 			border-radius: 15.27rpx;
+			display: grid;
+			justify-content: center;
+			align-items: center;
 			text {
-				margin-top: -50rpx;
-				justify-content: center;
-				align-items: center;
-				display: flex;
 				color: #797979;
 				font-size: 32rpx;
+				text-align: center;
 			}
 		}
 	}

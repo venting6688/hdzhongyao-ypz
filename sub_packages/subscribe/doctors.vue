@@ -51,7 +51,7 @@
 								type="primary" 
 								size="mini" 
 								style="background-color: #007AFF; color: white; margin-right: 10rpx;" 
-								@click="doctorDetails(item, i.restNum, i.medAmPm)" 
+								@click="today ? doctorReserve(item, i.medAmPm, {}) : doctorDetails(item, i.restNum, i.medAmPm)" 
 							>
 								剩余{{i.restNum < 0 ? 0 : i.restNum}}
 							</button>
@@ -71,7 +71,7 @@
 			</view>
 		</view>
 		<!-- 选择时间 -->
-		<!-- <uni-popup class="Dialog" :mask-click="false" ref="popup" type="bottom"  :safeArea="false" >
+		<uni-popup class="Dialog" :mask-click="false" ref="popup" type="bottom"  :safeArea="false" >
 		  <view class="center">
 			  <view class="Dialog-title">
 			  	<view class="title-time">
@@ -81,25 +81,28 @@
 			  		<image src="@/static/image/icon-close.png" mode=""></image>
 			  	</view>
 			  </view>
-			  <view class="Dialog-m_a">
-			  	<text  v-for="(i,x) in optList" :key="x" :class="{colour:doctor.SessionName===i.SessionName}" @click="getNumSource(i,optList,x)">{{i.SessionName}}</text>
-			  </view>
+			  <!-- <view class="Dialog-m_a">
+			  	<text  v-for="(i,x) in optList.Scheduling" :key="x" :class="{colour:doctor.medAmPmName===i.medAmPmName}" @click="doctorDetails(optList,i.restNum,i.medAmPm)">
+						{{i.medAmPmName}}
+					</text>
+			  </view> -->
 			<scroll-view class="scroll" :enhanced="true" :scroll-y="true" :show-scrollbar="true">
 			<view class="middle">
-				<view @click="doctorDetails(item)" class="list" hover-class="is-hover" hover-stay-time="200" v-for="(item,index) in doctorTimeList" :key="index">
-					{{item.StartTime}} - {{item.EndTime}}
+				<view @click="doctorReserve(doctorInfo, medAmPm, item)" class="list" hover-class="is-hover" hover-stay-time="200" v-for="(item,index) in doctorTimeList" :key="index">
+					{{item.medBegTime}} - {{item.medEndTime}}
 				</view>
 			</view>
 			</scroll-view>
 			
 		  </view>
 		  
-		</uni-popup> -->
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-	import registrationApi from '@/api/registrationApi.js'
+import registrationApi from '@/api/registrationApi.js'
+	import login from '@/utils/login.js'
 	import {mapState} from 'vuex'
 	export default {
 		data() {
@@ -118,7 +121,11 @@
 				doctorTimeList:[],
 				today:true,   //是否是当天的
 				nowDate:'',
-				siginData: {}
+				siginData: {},
+				regMode: 1,
+				doctorInfo: {},
+				medAmPm: '',
+				restNum: '',
 			}
 		},
 		computed: {
@@ -154,9 +161,13 @@
 				}else{
 					this.today = false
 				}
+				this.optList = item;
+				this.regMode = this.today ? 2 : 1; //1 预约  2  挂号
 				registrationApi.getScheduleDetail({
+					regMode: this.regMode, 
+					regType: '',
 					deptCode:this.deptCode,
-					startDate:item.date,
+					startDate: item.date,
 					endDate:item.date
 				}).then(res => {
 					let result = JSON.parse(res.data.msg);
@@ -224,8 +235,45 @@
 			},
 			//预约挂号
 			doctorDetails(item, restNum, medAmPm){
-				this.doctor.StartTime = item.medDate
-				this.doctor.EndTime = item.medDate
+				if (!this.siginData.patientName) {
+					login.loginData().catch((error) => {});
+				} else {
+					//获取医生详细号源
+					registrationApi.getNumSource({
+						regMode: this.regMode,
+						regType: '',
+						scheduleId: item.scheduleId,
+						medDate: item.medDate,
+						medAmPm,
+						deptCode: item.deptCode,
+						secondDeptCode: '',
+						doctCode: item.doctCode,
+					}).then(res => {
+						let result = JSON.parse(res.data.msg);
+						if (result.success) {
+							this.doctorTimeList = result.data;
+							this.doctorInfo = item;
+							this.medAmPm = medAmPm;
+						} else {
+							uni.showToast({
+								title: result.msg,
+								icon: 'none',  
+								duration: 2000
+							});
+						}
+					}).catch(err => {
+						console.log('2：', err);
+					})
+					this.$refs.popup.open('bottom')
+					
+				}
+			},
+			
+			doctorReserve(item, medAmPm, reserveItem) {
+				console.log(reserveItem);
+				if (!this.siginData.patientName) {
+					login.loginData().catch((error) => {});
+				} else {
 					this.doctor = {
 						DoctorName: item.doctName,
 						DoctorSessType: item.doctTech,
@@ -237,12 +285,17 @@
 						today:this.today,
 						scheduleItemCode: item.doctCode,
 						medAmPm: medAmPm,
-						scheduleId: item.scheduleId
+						scheduleId: item.scheduleId,
+						StartTime: reserveItem.medBegTime !== undefined ? reserveItem.medBegTime : '',
+						EndTime: reserveItem.medEndTime !== undefined ? reserveItem.medEndTime : '',
+						appoNo: reserveItem.appoNo !== undefined ? reserveItem.appoNo : '',
 					}
 					uni.navigateTo({
-						url: `/sub_packages/subscribe/doctorDetails?title=${this.title}&doctor=${encodeURIComponent(JSON.stringify(this.doctor))}&detail=${encodeURIComponent(JSON.stringify(item))}`
+						url: `/sub_packages/subscribe/doctorDetails?title=${this.title}&doctor=${encodeURIComponent(JSON.stringify(this.doctor))}&detail=${encodeURIComponent(JSON.stringify(item))}&regMode=${this.regMode}`
 					})
+				}
 			},
+			
 			close(){
 				this.$refs.popup.close()
 			},

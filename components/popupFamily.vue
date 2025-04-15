@@ -61,7 +61,7 @@
 		mounted() {
 			let loginValue = uni.getStorageSync("loginData");
 			if(loginValue){
-				this.registerData = JSON.parse(loginValue)
+				this.registerData = loginValue
 				this.refreshUserInfo(this.registerData.phoneNum)
 			}
 		},

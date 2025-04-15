@@ -20,9 +20,12 @@ const patient = {
 	/**
 		 * 获取预约卡片数据
 	*/
-		async getBookingRecord(data) {
+		async registrationRecord(data) {
+			const queryParams = Object.keys(data)
+			.map(key => `${key}=${data[key]}`)
+			.join('&');
 			const res = await cjRequest({
-				url: `cardContent/getBookingRecord?patientID=${data.patientID}&startTime=${data.startTime}&endTime=${data.endTime}`,
+				url: `registrationRecord?${queryParams}`,
 				method: "get",
 			},1)
 			return res
@@ -30,9 +33,12 @@ const patient = {
 	/**
 		 * 取消预约
 	*/
-		async cancelAppointmentRegister(orderCode) {
+		async cancelAppointmentRegister(data) {
+			const queryParams = Object.keys(data)
+			.map(key => `${key}=${data[key]}`)
+			.join('&');
 			const res = await cjRequest({
-				url: `cancelAppointmentRegister?orderCode=${encodeURIComponent(orderCode)}`,
+				url: `cancelAppointmentRegister?${queryParams}`,
 				method: "post",
 			})
 			return res

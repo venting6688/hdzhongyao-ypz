@@ -17,35 +17,44 @@ const patient = {
 	},
 	
 	// 就诊记录列表
-	async getVisitRecord(data) {
+	async queryCostSummary(data) {
 		const queryParams = Object.keys(data)
 		.map(key => `${key}=${data[key]}`)
 		.join('&');
-		const url = `MedicalRecords/getVisitRecord?${queryParams}`;
+		const url = `queryCostSummary?${queryParams}`;
 	   	const res = await cjRequest({
 	   		url: url,
 	   		method: "get",
 	   	})
 	   	return res
 	},
-	// 就诊记录详情列表
-	async getDocumentRetrieval(data) {
+	// 获取就诊报告 —— 检查报告
+	async queryPacsInfo(data) {
+		const res = await cjRequest({
+			url: "queryPacsInfo",
+			method: "post",
+			data,
+		})
+		return res
+	},
+	// 获取就诊报告 —— 检验报告
+	async queryLisBaseInfo(data) {
 		const queryParams = Object.keys(data)
 		.map(key => `${key}=${data[key]}`)
 		.join('&');
-		const url = `MedicalRecords/getDocumentRetrieval?${queryParams}`;
-	   	const res = await cjRequest({
-	   		url: url,
-	   		method: "get",
-	   	})
-	   	return res
+		const url = `queryLisBaseInfo?${queryParams}`;
+		const res = await cjRequest({
+			url: "queryLisBaseInfo",
+			method: "get",
+		})
+		return res
 	},
 	// 获取报告详情
 	async documentReview(data) {
 		const queryParams = Object.keys(data)
 		.map(key => `${key}=${data[key]}`)
 		.join('&');
-		const url = `MedicalRecords/documentReview?${queryParams}`;
+		const url = `queryPacsInfo`;
 	   	const res = await cjRequest({
 	   		url: url,
 	   		method: "get",

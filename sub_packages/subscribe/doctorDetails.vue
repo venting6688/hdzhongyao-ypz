@@ -28,7 +28,6 @@
 					<view>
 						<text>就诊日期</text>
 						<view class="time">
-							<!-- <text class="twoDays">两天后</text> -->
 						    <text>{{doctor.ServiceDate||''}} {{doctor.SessionName||''}}</text>
 						</view>
 					</view>
@@ -127,7 +126,8 @@
 				payUrl: '',
 				siginData: {},
 				doctorInfo: {},
-				lockId: ''
+				lockId: '',
+				regMode: ''
 			}
 		},
 		computed: { 
@@ -159,29 +159,28 @@
 				} else {
 					uni.navigateTo({ url:"/sub_packages/family/familyInformation" })
 				}
-				// if(this.doctor.today){
-				// 	// 当天预约
-				// 	this.today(data)
-				// }else{
-				// 	// 其他时间预约
-				// 	this.otherTime(data)
-				// }
 			},
 			today(data){
+				
 				//锁号
 				let lockNumData = {
 					cardNo: this.siginData.patientCard,
 					cardType: 1,
 					scheduleId: this.doctor.scheduleId,
-					docCode: this.doctor.scheduleItemCode,
+					doctCode: this.doctor.scheduleItemCode,
 					medAmPm: this.doctor.medAmPm,
+					medDate: this.doctor.ServiceDate,
+					deptCode: this.doctorInfo.deptCode,
 					patientName: this.siginData.patientName,
 					version: 1,
-					regMode: 2
+					regMode: this.regMode,
+					appoNo: this.doctor.appoNo,
+					medBegTime: this.doctor.StartTime,
+					medEndTime: this.doctor.EndTime,
 				}
 				registrationApi.registrationLock(lockNumData).then(r => {
 					let res = JSON.parse(r.data.msg);
-					let lockId = res.data.lockId;
+					console.log(res.success);
 					if(!res.success) {
 						uni.showToast({
 							title: res.msg,
@@ -189,6 +188,7 @@
 							duration: 2000 
 						})
 					} else {
+						let lockId = res.data.lockId;
 						let randNum = Math.floor(1000000 + Math.random() * 9000000);
 						let datas = { 
 							patientId: this.siginData.patientCard,
@@ -301,40 +301,6 @@
 						})
 					}
 				})
-				
-				
-				
-			},
-			
-			otherTime(data){
-				// 其他时间预约
-				let obj = {
-				    patientID: this.footData.patientUniquelyIdentifies,
-				    idTypeCode: data.defaultArchives.idTypeCode,
-				    cardNo: data.defaultArchives.patientCard,
-				    cardType: data.defaultArchives.cardTypeCode,
-				    scheduleItemCode:this.doctor.scheduleItemCode,
-				    timeFrame: `${this.doctor.StartTime}-${this.doctor.EndTime}`,
-				}
-				registrationApi.appointmentRegister(obj).then(res => {
-					if(res.data.code===200){
-						this.toastObj = {
-							state:true,
-							message:'预约成功',
-							url:'/pages/convenient/index',
-							tips:'秒自动为您切换便捷导引',
-						}
-					}else {
-						this.toastObj = {
-							state:true,
-							type:'fail',
-							message:res.data.msg?res.data.msg:'',
-						}
-					}
-				})
-				.catch(err => {
-					console.log('2：', err);
-				})
 			},
 			timeBtn(item){
 				this.timevisitTable = item
@@ -349,7 +315,7 @@
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 			this.doctorInfo = JSON.parse(decodeURIComponent(e.detail));
-			this.lockId = e.lockId
+			this.regMode = e.regMode;
 		},
 	}
 </script>

@@ -11,26 +11,19 @@
 					   <view class="no">
 						    {{callObj.waitCallNo?callObj.waitCallNo+'号':''}}
 					    </view>
-						
-					    <view class="text">
-						    就诊序号
-					    </view>
+					    <view class="text">就诊序号</view>
 				    </view>
 					<view class="middle">
 					    <view class="call">
 							{{callObj.callNo?callObj.callNo+'号':''}}
 					    </view>
-					    <view class="text">
-						    正在呼叫
-					    </view>
+					    <view class="text">正在呼叫</view>
 					</view>
 				    <view class="right">
 					    <view class="time">
 				    		{{callObj.queueWaitNum?callObj.queueWaitNum:''}}
 					    </view>
-					    <view class="text">
-						    等候人数
-					    </view>
+					    <view class="text">等候人数</view>
 				    </view>
 				</view>
 			</view>
@@ -41,8 +34,8 @@
 				</view>
 			</view>
 			<view class="content">
-				<view class="icon" v-if="firstContent.queueName">
-					<text>已签到</text>
+				<view class="icon">
+					<text>已预约</text>
 					<image src="@/static/image/Union2.png" mode="widthFix"></image>
 				</view>
 				<ul>
@@ -78,12 +71,12 @@
 							{{firstContent.appointmentTime}}
 						</view>
 					</li>
-					<li v-if="firstContent.queueLocation">
+					<li v-if="firstContent.address">
 						<view class="attribute">
 							科室位置:
 						</view>
 						<view class="name">
-							{{firstContent.queueLocation}}
+							{{firstContent.address}}
 						</view>
 					</li>
 					<li v-if="firstContent.precautions">
@@ -98,8 +91,8 @@
 				</ul>
 				<view class="btn" v-if="firstContent.queueName">
 					<view>
-						<button class="cu-btn" @click="getQueueingMessage">刷新信息</button>
-						<button class="cu-btn" @click="cancelRegistration">退号</button>
+						<!-- <button class="cu-btn" @click="getQueueingMessage">刷新信息</button>
+						<button class="cu-btn" @click="cancelRegistration">退号</button> -->
 					    <!-- <button class="cu-btn" >更改预约</button>
 					    <button class="cu-btn" >预约车位</button>
 					    <button class="cu-btn" @click="navigation">导航到院</button> -->
@@ -126,7 +119,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="subscribeObj.department">
+		<view v-if="subscribeObj.queueName">
 			<view class="center">
 				<view class="head" v-if="subscribeObj.days && subscribeObj.days!=='0'">
 					<view class="">
@@ -141,40 +134,37 @@
 						<image v-if="subscribeObj.days && subscribeObj.days!=='0'" src="@/static/image/Union2.png" mode="widthFix"></image>
 					</view>
 					<ul>
-						<li v-if="subscribeObj.department">
+						<li v-if="subscribeObj.queueName">
 							<view class="attribute">
 								挂号科室:
 							</view>
 							<view class="name">
-								{{subscribeObj.department}}
+								{{subscribeObj.queueName}}
 							</view>
 						</li>
-						<li v-if="subscribeObj.doctor">
+						<li v-if="subscribeObj.doctorName">
 							<view class="attribute">
 								挂号医生:
 							</view>
 							<view class="name">
-								{{subscribeObj.doctor}}
+								{{subscribeObj.doctorName}}
 							</view>
 						</li>
-						
-						<li v-if="subscribeObj.admitDate">
+						<li v-if="subscribeObj.medDate">
 							<view class="attribute">
 								预约时间:
 							</view>
 							<view class="name">
-								{{subscribeObj.admitDate}}
+								{{subscribeObj.medDate}}
 							</view>
 						</li>
-						
 					</ul>
-					<view class="btn">
+					<!-- <view class="btn">
 						<view>
-							<button  v-if="subscribeObj.days>='0'" class="cu-btn" @click="cancelAppointmentRegister(subscribeObj.orderCode)">取消预约</button>
+							<button  v-if="subscribeObj.days>='0'" class="cu-btn" @click="cancelAppointmentRegister(subscribeObj.orderNo)">取消预约</button>
 							<button v-if="subscribeObj.days==='0'" class="cu-btn" @click="takeANumberPrePay(subscribeObj)">预约取号</button>
 						</view>
-					</view>
-					
+					</view> -->
 				</view>
 			</view>
 		</view>
@@ -204,7 +194,7 @@
 				subscribeObj:{},
 				callObj:{
 					calling:'',
-					departmentName:'',
+					queueNameName:'',
 					expectToWait:'',
 					medicalTreatmentNumber:''
 				},
@@ -223,10 +213,10 @@
 			bus.$on('complex-data-passed',(data)=>{
 				if(data.data.length){
 					data.data.forEach(e => {
-						if(e.visitNumber===this.department.visitNumber){
+						if(e.visitNumber === this.department.visitNumber) {
 							this.firstContent = e
 							this.getQueueingMessage()
-						}else if(e.orderCode === this.department.visitNumber){
+						}else if(e.orderNo === this.department.visitNumber){
 							this.subscribeObj = e
 						}
 					})
@@ -235,7 +225,6 @@
 					this.subscribeObj = {}
 					this.$set(this.headerEmiter,'state','')
 					this.$emit('handle',this.headerEmiter)
-					
 				}
 				// 回传的effectState  渐入效果渲染
 				if(data.effectState){
@@ -264,7 +253,7 @@
 			
 		},
 		computed: {
-			...mapState(['footData','department']),
+			...mapState(['footData','queueName']),
 		},
 		
 		methods: {
@@ -275,17 +264,17 @@
 				let latitude = 36.183242794928994
 				let longitude = 117.07709640617486
 				wx.openLocation({
-				          latitude: latitude,//目的地的纬度
-				          longitude: longitude,//目的地的经度
-				          name: '青岛西海岸新区第二中医医院', 
-				        })
+					latitude: latitude,//目的地的纬度
+					longitude: longitude,//目的地的经度
+					name: '青岛西海岸新区第二中医医院', 
+				})
 			},
 			navigateToPage() {
 				let data = JSON.stringify(this.firstContent)
-			      uni.navigateTo({
-			        url: '/sub_packages/convenientModule/inquiry?params='+data
-			      });
-			    },
+				uni.navigateTo({
+					url: '/sub_packages/convenientModule/inquiry?params='+data
+				});
+			},
 			// 退号
 			async cancelRegistration() {
 				try{
@@ -323,9 +312,9 @@
 				}
 			},
 			// 取消预约
-			async cancelAppointmentRegister(orderCode) {
+			async cancelAppointmentRegister(orderNo) {
 				try{
-					const res= await guideApi.cancelAppointmentRegister(orderCode).then((res) => {
+					const res= await guideApi.cancelAppointmentRegister(orderNo).then((res) => {
 						if(res.data.code===200){ 
 							this.toastObj = {
 								state:true,
@@ -366,7 +355,7 @@
 					  patientID: this.footData.patientUniquelyIdentifies,
 					  patientName: this.footData.patientName,
 					  patientOpenid:data.xcxOpenId,
-					  orderCode:item.orderCode,
+					  orderNo:item.orderNo,
 					  amount:item.regFee,
 					};
 					const res= await guideApi.takeANumberPrePay(msg).then((result) => {
@@ -442,29 +431,29 @@
 			},
 			// 刷新信息
 			async getQueueingMessage() {
-				try{
-					let data = {
-						patientID:this.footData.patientUniquelyIdentifies,
-						DepartmentCode:this.firstContent.queueId,
-			        }
-					const res= await guideApi.getQueueingMessage(data).then((res) => {
-						if(res.data.code===200){
-							this.callObj = res.data.data.queLists.queList[0] || {}
-						}else{
-							// this.toastObj = {
-							// 	state:true,
-							// 	type:'fail',
-							// 	message:res.data.msg,
-							// }
-						}
-			                })
-				}catch(e){
-					this.toastObj = {
-						state:true,
-						type:'fail',
-						message:e,
-					}
-				}
+				// try{
+				// 	let data = {
+				// 		patientID:this.footData.patientUniquelyIdentifies,
+				// 		queueNameCode:this.firstContent.queueId,
+				// 	}
+				// 	const res= await guideApi.getQueueingMessage(data).then((res) => {
+				// 		if(res.data.code===200){
+				// 			this.callObj = res.data.data.queLists.queList[0] || {}
+				// 		}else{
+				// 			// this.toastObj = {
+				// 			// 	state:true,
+				// 			// 	type:'fail',
+				// 			// 	message:res.data.msg,
+				// 			// }
+				// 		}
+			 //                })
+				// }catch(e){
+				// 	this.toastObj = {
+				// 		state:true,
+				// 		type:'fail',
+				// 		message:e,
+				// 	}
+				// }
 			},
 			
 		},

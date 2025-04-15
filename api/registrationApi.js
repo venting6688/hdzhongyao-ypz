@@ -12,36 +12,14 @@ const patient = {
 		}, 2)
 		return res
 	},
-	// 获取所有专业组(小科室)
-	// async getSpecialtyGroup(cliSerGroupID) {
-	//    	const res = await cjRequest({
-	//    		url: "getSpecialtyGroup",
-	//    		method: "get",
-	// 		data:{
-	// 		cliSerGroupID: cliSerGroupID,
-	// 		},
-	//    	})
-	//    	return res
-	// },
-	// 获取7天号源
-	// async getScheduleDates(data) {
-	//    	const res = await cjRequest({
-	//    		url: "getDoctorQueues",
-	//    		method: "get",
-	// 			data:{
-	// 				deptCode: data.patientID,
-	// 				startDate: data.days,
-	// 				endDate: data.specialtyGroupId,
-	// 			},
-	//    	})
-	//    	return res
-	// },
 	// 获取医生
 	async getScheduleDetail(data) {
 	   	const res = await cjRequest({
 	   		url: "getDoctorQueues",
 	   		method: "get",
 				data:{
+					regMode: data.regMode,
+					regType: data.regType,
 					deptCode: data.deptCode,
 					startDate: data.startDate,
 					endDate: data.endDate,
@@ -63,14 +41,12 @@ const patient = {
 	},
 	// 获取医生号源
 	async getNumSource(data) {
+		const queryParams = Object.keys(data)
+		.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+		.join('&');
 		const res = await cjRequest({
-			url: "getNumSource",
+			url: `registrationSources?${queryParams}`,
 			method: "get",
-			data:{
-				patientID: data.patientID,
-				dateStr: data.dateStr,
-				scheduleItemCode: data.scheduleItemCode,
-			},
 		})
 		return res
 	},

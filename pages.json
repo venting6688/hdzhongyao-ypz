@@ -55,6 +55,51 @@
 				}
 			},
 			{
+				//门诊报告-列表
+				"path" : "report/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "门诊报告",
+					"disableScroll": true
+				}
+			},
+			{
+				//门诊报告-详情
+				"path" : "report/examine",
+				"style" : 
+				{
+					"navigationBarTitleText": "门诊报告",
+					"disableScroll": true
+				}
+			},
+			{
+				//门诊报告-详情
+				"path" : "report/checkout",
+				"style" : 
+				{
+					"navigationBarTitleText": "门诊报告",
+					"disableScroll": true
+				}
+			},
+			{
+				//就诊记录-列表
+				"path" : "record/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "就诊记录",
+					"disableScroll": true
+				}
+			},
+			{
+				//就诊记录-详情
+				"path" : "record/details",
+				"style" : 
+				{
+					"navigationBarTitleText": "就诊记录",
+					"disableScroll": true
+				}
+			},
+			{
 				//我的
 				"path" : "mine/index",
 				"style" : 
