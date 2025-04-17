@@ -1,7 +1,7 @@
 <template>
 	<view class="box">
 		<view class="without">
-			<image src="../static/image/zanwu.png" mode="widthFix" style="width: 300rpx;"></image>
+			<image src="@/sub_packages/static/image/no-data.png" mode="widthFix" style="width: 300rpx;"></image>
 			<text>暂无数据</text>
 		</view>
 	</view>
@@ -16,7 +16,7 @@
 		flex-direction: column;
 		.without {
 			font-size: 40rpx;
-			width: 681.3rpx;
+			width: 700rpx;
 			padding-bottom: 35rpx;
 			background: #ffffff;
 			margin: 0 auto;

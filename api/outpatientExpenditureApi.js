@@ -2,33 +2,19 @@ import { cjRequest } from '@/utils/service.js'
  
 const patient = {
 	// 待缴费结算单
-	   async getToBePaid(data) {
-	   	const res = await cjRequest({
-	   		url: "cardContent/getToBePaid",
-	   		method: "get",
-	   		data:{
-					patientID:data.patientID,
-					visitNumber:data.visitNumber, 
-					startDate:data.startDate, 
-					endDate:data.endDate, 
-	   		}
-	   	}, 2)
-	   	return res
-	   },
-	   // 待缴费就诊记录
-	   async queryMedicalRecords(data) {
-	   	const res = await cjRequest({
-	   		url: "cardContent/queryMedicalRecords",
-	   		method: "get",
-	   		data:{
-	   			patientID:data.patientID,
-					startDate:data.startDate, 
-					endDate:data.endDate, 
-	   		}
-	   
-	   	}, 2)
-	   	return res
-	   },
+	 async getToBePaid(data) {
+		const res = await cjRequest({
+			url: "queryCostSummary",
+			method: "get",
+			data:{
+				patientId:data.patientId,
+				cardNo:data.cardNo, 
+				startDate:data.startDate, 
+				endDate:data.endDate, 
+			}
+		}, 2)
+		return res
+	 },
 	   // 拉起缴费
 	   async toBePaidPreOrder(data) {
 	   	const queryParams = Object.keys(data)
@@ -68,25 +54,26 @@ const patient = {
 	   	const queryParams = Object.keys(data)
 	   	.map(key => `${key}=${data[key]}`)
 	   	.join('&');
-	   	const url = `QueryFeeRecord?${queryParams}`;
+	   	const url = `queryFeeRecord?${queryParams}`;
 			const res = await cjRequest({
 				url: url,
 				method: "get",
 			}, 2)
 			return res
 	   },
-	   // 已缴费就诊记录明细
-	   async getPaymentDetails(data) {
-	   	const queryParams = Object.keys(data)
-	   	.map(key => `${key}=${data[key]}`)
-	   	.join('&');
-	   	const url = `cardContent/getPaymentDetails?${queryParams}`;
-	      	const res = await cjRequest({
-	      		url: url,
-	      		method: "get",
-	      	})
-	      	return res
-	   },
+		// 已缴费就诊记录明细
+	 async queryFeeDetailRecord(data) {
+			const queryParams = Object.keys(data)
+			.map(key => `${key}=${data[key]}`)
+			.join('&');
+			const url = `queryFeeDetailRecord?${queryParams}`;
+			const res = await cjRequest({
+				url: url,
+				method: "get",
+			})
+			return res
+	 },
+		 
 }
  
 export default patient

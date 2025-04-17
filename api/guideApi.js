@@ -34,26 +34,41 @@ const patient = {
 		 * 取消预约
 	*/
 		async cancelAppointmentRegister(data) {
-			const queryParams = Object.keys(data)
-			.map(key => `${key}=${data[key]}`)
-			.join('&');
 			const res = await cjRequest({
-				url: `cancelAppointmentRegister?${queryParams}`,
+				url: `cancelRegistration`,
 				method: "post",
+				data,
 			})
 			return res
 		},
-		
-	/**
-		 * 退号
-	*/
-		async cancelRegistration(visitNum) {
-			const res = await cjRequest({
-				url: `cancelRegistration?visitNum=${encodeURIComponent(visitNum)}`,
-				method: "post",
-			})
-			return res
-		},
+	//获取支付订单号
+	async getTradeNo(data) {
+		const res = await cjRequest({
+			url: `getTradeNo?lockId=${data.lockId}`,
+			method: "get",
+		})
+		return res
+	},
+	// 查询患者
+	async queryPatient(data) {
+		const queryParams = Object.keys(data)
+		.map(key => `${key}=${data[key]}`)
+		.join('&');
+		const res = await cjRequest({
+			url: `queryPatient?${queryParams}`,
+			method: "get",
+		})
+		return res
+	},
+	// 退号
+	async cancelAppointOrRegister(data) {
+		const res = await cjRequest({
+			url: `cancelAppointOrRegister`,
+			method: "post",
+			data
+		})
+		return res
+	},
 	/**
 		 * 预约取号
 	*/

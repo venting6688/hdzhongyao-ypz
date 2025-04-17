@@ -46,7 +46,7 @@
 			
 			<view class="cu-form-group" style="margin-top: 30rpx;">
 				<view class="title">手机号</view>
-				<text class="answer">{{siginData.phoneNum}}</text>
+				<input v-model="informationObj.phone" placeholder="请输入院内预留手机号" type="number" maxlength="11" name="input" />
 			</view>
 		</form>
 		<view class="tips">
@@ -172,8 +172,7 @@
 				} else {
 					this.informationObj.patientType = '自费';
 					this.informationObj.address = this.provincesAndMunicipalities+this.address;
-					this.informationObj.phone = this.siginData.phoneNum;
-
+					this.informationObj.isDefault = true;
 					filingApi.archive(this.informationObj).then(res => {
 						if(res.data.code === 200){
 							let result = res.data.data.defaultArchives;

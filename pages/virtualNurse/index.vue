@@ -22,6 +22,9 @@
 					<!-- AI消息 -->
 					<view class="robot" v-else>
 						<view class="robot-box"  v-if="x.type!==2">
+							<view class="tubiao">
+								<image src="../../static/image/Group 998.png" mode="widthFix"></image>
+							</view>
 							<view class="triangle"></view>
 							<view class="center">
 								<view class="loading" v-if="x.msgLoad">
@@ -380,6 +383,7 @@
 				this.Focus = false
 			},
 			footType(item){
+				console.log(item)
 				uni.navigateTo({
 					url: `/sub_packages/subscribe/doctors?title=${item.name}&CLGRPRowId=${item.id}`
 				})
@@ -843,12 +847,16 @@
 						
 						
 						.robot-box {
-						display: flex;
-						justify-content: flex-start;
-						align-items: center;
-						width: 680rpx;
-						margin: 20rpx 0 20rpx 25rpx;
-						
+							display: flex;
+							justify-content: flex-start;
+							align-items: center;
+							width: 680rpx;
+							margin: 20rpx 0 20rpx 25rpx;
+						.tubiao {
+						  image {
+							 width: 84rpx;
+						  }
+						}
 						.triangle {
 						    width: 0;
 						 	height: 0;

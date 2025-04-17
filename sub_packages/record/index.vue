@@ -1,24 +1,24 @@
 <template>
 	<view class="box">
-		<!-- <bar /> -->
+		<bar />
 		<date @handle="show" />
 		<view class="information">
 			<ul v-if="list.length">
-				<li @click="information(item)" v-for="(item,index) in list" :key="index">
+				<li v-for="(item,index) in list" :key="index">
 					<view class="title">
 						<view class="name">
-							<text>{{item.appointmentTime?item.appointmentTime.split(' ')[0]:''}}</text>
+							<text>{{item.billDate ? item.billDate : ''}}</text>
 						    <!-- <image src="../static/image/icon-edit.png" mode=""></image> -->
 						</view>
-						<view class="delete">
+						<!-- <view class="delete">
 							<text>查看详情</text>
 							<image src="../static/image/Vector@2x.png" mode=""></image>
-						</view>
+						</view> -->
 					</view>
 					<view class="center">
 						<view class="no">
 							<text>就诊人：</text>
-							<text>{{this.siginData.patientName}}</text>
+							<text>{{siginData.patientName}}</text>
 						</view>
 						<view class="no">
 							<text>就诊科室：</text>
@@ -27,6 +27,10 @@
 						<view class="no">
 							<text>就诊医生：</text>
 							<text>{{item.doctName}}</text>
+						</view>
+						<view class="no">
+							<text>消费金额：</text>
+							<text>￥{{item.billFee / 100}}</text>
 						</view>
 					</view>
 				</li>
@@ -62,15 +66,15 @@
 			getVisitRecord(){
 				try {
 					let data = {
-						cardNo:  '371325199604023713', //this.siginData.patientCard,
+						cardNo: this.siginData.patientCard,
 						patientId: '',
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
 					}
 					elseApi.queryCostSummary(data).then(res => {
-						let result = JSON.stringify(res.data);
+						let result = res.data;
 						if(result.code === 200){
-							this.list.push(result.data.Response.ResultData.RecordList.RecordInfo);
+							this.list = result.data.Response.ResultData.RecordList;
 						}else {
 							this.list = []
 						}
@@ -97,6 +101,7 @@
 		mounted(){
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
+			this.getVisitRecord()
 		}
 	}
 </script>

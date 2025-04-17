@@ -52,8 +52,13 @@
 			// 获取科室所有信息
 			getServiceGroup() {
 				registrationApi.getServiceGroup().then(res => {
-					if(res.data.code===200) {
+					if(res.data.code === 200) {
 						let data =  res.data.data;
+						data.map(v => {
+							if (v.parentDeptName == null) {
+								v.parentDeptName = '其他'
+							}
+						})
 						let filterFirst = data.filter(x => x.parentDeptName != null);
 						filterFirst.map(v => {
 							if (!this.firstDepartment.includes(v.parentDeptName)) {

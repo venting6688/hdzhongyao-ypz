@@ -118,7 +118,6 @@
 					border-radius: 15rpx;
 					padding: 0 50rpx;
 					color: #076aff;
-					margin-left: 20rpx;
 				}
 				.birth{
 					height: 86rpx;

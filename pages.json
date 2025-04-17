@@ -3,7 +3,7 @@
 	{
 		"path": "pages/virtualNurse/index",
 		"style": {
-		    "navigationBarTitleText": "虚拟护士",
+			"navigationBarTitleText": "HeHeAccompany",
 			"disableScroll": true
 		}
 	},
@@ -18,19 +18,19 @@
 	{
 	  "path": "pages/convenient/index",
 	  "style": {
-	    "navigationBarTitleText": "便捷导引",
-		"disableScroll": true,
-		"componentPlaceholder": {
-			"first": "view",
-			"check": "view",
-			"answer": "view",
-			"prescription": "view",
-			"report": "view",
-			"prepare": "view",
-			"doing": "view",
-			"inventory": "view",
-			"zanwu": "view"
-		}
+	    "navigationBarTitleText": "HeHeAccompany",
+			"disableScroll": true,
+			"componentPlaceholder": {
+				"first": "view",
+				"check": "view",
+				"answer": "view",
+				"prescription": "view",
+				"report": "view",
+				"prepare": "view",
+				"doing": "view",
+				"inventory": "view",
+				"zanwu": "view"
+			}
 	  }
 	}
   ],

@@ -1,6 +1,6 @@
 <template>
 	<view class="box">
-		<!-- <bar /> -->
+		<bar />
 		<date @handle="show" />
 		<view class="head">
 			<view>
@@ -20,17 +20,17 @@
 		</view>
 		<view class="information">
 			<ul v-if="List.length">
-				<li @click="information(item)" v-for="(item,index) in List" :key="index">
+				<li v-for="(item,index) in List" :key="index">
 					<view class="content">
 						<view class="title">
 							<view class="name">
 								<!-- <text>{{item.departmentName}}</text>
 							    <image src="../static/image/icon-edit.png" mode=""></image> -->
 							</view>
-							<view class="delete">
+							<!-- <view class="delete">
 								<text>查看报告</text>
 								<image src="../static/image/Vector@2x.png" mode=""></image>
-							</view>
+							</view> -->
 						</view>
 						<view class="center">
 							<view class="no">
@@ -100,25 +100,27 @@
 			getVisitRecord(type){
 				try {
 					let data = {
-						idNo: '370223197110243910',//this.siginData.patientCard,
-						cardNo:  '370223197110243910',//this.siginData.patientCard,
+						cardNo: '370223197110243910', //this.siginData.patientCard,
 						patientId: '370223197110243910',//this.siginData.patientCard,
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
-						patientName: '丁源宗',//this.siginData.patientName,
+						patientName: '',//this.siginData.patientName,
 					}
 					if (type == 'jiancha') {
 						elseApi.queryPacsInfo(data).then(res => {
-							if(res.data.code===200){
-								this.List = res.data.data;
+							let result = res.data;
+							console.log(JSON.stringify(result));
+							if(result.code===200){
+								this.List = result.data.Response.ResultData.RecordList;
 							}else {
 								this.List = []
 							}
 						})
 					} else {
 						elseApi.queryLisBaseInfo(data).then(res => {
-							if(res.data.code===200){
-								this.List = res.data.data;
+							let result = res.data;
+							if(result.code===200){
+								this.List = result.data.Response.ResultData.RecordList;
 							}else {
 								this.List = []
 							}
@@ -156,20 +158,18 @@
 		flex-direction: column;
 		
 		.head {
-			width: 681.3rpx;
+			width: 700rpx;
 			margin: 0 auto;
 			background: #ffffff;
 			// height: 120rpx;
 			
 			border-radius: 12rpx 12rpx 0 0;
 			>view{
-				padding-top: 20rpx;
-				margin: 0 20rpx;
+				// padding-top: 20rpx;
+				padding: 20rpx 10rpx 0;
 				display: flex;
 				align-items: center;
 				border-bottom: 2rpx solid #eeeeee;
-				
-				
 				.name {
 					display: flex;
 					align-items: center;
@@ -180,9 +180,7 @@
 					font-size: 32rpx;
 					line-height: 32rpx;
 					color: #8a8a8a;
-										
 				}
-				
 				.wire {
 					width: 92rpx;
 					height: 8rpx;
@@ -196,9 +194,6 @@
 					color: #000000;
 				}
 			}
-			
-			
-			
 		}
 		.information {
 			width: 100%;
@@ -215,24 +210,20 @@
 							border: 0 !important;
 						}
 					}
-					
 					>.content{
 						padding-bottom: 20rpx;
 						margin: 0 20rpx;
 						border-bottom: 2rpx solid #eeeeee;
-						
 						.title {
 							height: 70rpx;
 							display: flex;
 							justify-content: space-between;
 							align-items: center;
-							
 							image {
 								width: 12rpx;
 								height: 18rpx;
 								margin-left:20rpx;
 							}
-							
 							.name {
 								display: flex;
 								align-items: center;
@@ -277,7 +268,7 @@
 		}
 		.without {
 			font-size: 40rpx;
-			width: 681.3rpx;
+			width: 700rpx;
 			height: 500rpx;
 			background: #ffffff;
 			margin: 0 auto;

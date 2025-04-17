@@ -161,7 +161,6 @@
 				}
 			},
 			today(data){
-				
 				//锁号
 				let lockNumData = {
 					cardNo: this.siginData.patientCard,
@@ -215,6 +214,7 @@
 										orderSum: totalAmount,
 										targetOrderId: '',
 										merOrderId,
+										lockId
 									}
 									//查询支付记录
 									registrationApi.queryPayResult(msg).then(r => {

@@ -30,7 +30,7 @@
 			</view>
 			<view class="content">
 				<view class="icon" v-if="firstContent.queueName">
-					<text>已签到</text>
+					<text>已预约</text>
 					<image src="@/static/image/Union2.png" mode="widthFix"></image>
 				</view>
 				<ul>
@@ -68,8 +68,8 @@
 				</ul>
 				<view class="btn" v-if="firstContent.queueName">
 					<view>
-						<button class="cu-btn" @click="getQueueingMessage">刷新信息</button>
-						<button class="cu-btn" @click="cancelRegistration">退号</button>
+						<!-- <button class="cu-btn" @click="getQueueingMessage">刷新信息</button> -->
+						<button class="cu-btn" @click="cancelRegistration(firstContent)">退号</button>
 					    <!-- <button class="cu-btn" >更改预约</button>
 					    <button class="cu-btn" >预约车位</button>
 					    <button class="cu-btn" @click="navigation">导航到院</button> -->
@@ -126,7 +126,7 @@
 					</ul>
 					<view class="btn">
 						<view>
-							<button  v-if="subscribeObj.days>='0'" class="cu-btn" @click="cancelAppointmentRegister(subscribeObj.orderCode)">取消预约</button>
+							<button  v-if="subscribeObj.days>='0'" class="cu-btn" @click="cancelRegistration(subscribeObj)">退号</button>
 							<!-- <button v-if="subscribeObj.days==='0'" class="cu-btn" @click="takeANumberPrePay(subscribeObj)">预约取号</button> -->
 						</view>
 					</view>
@@ -173,27 +173,23 @@
 			}
 		},
 		created() {
-			let nowDate = moment().format('YYYY-MM-DD');
 			bus.$on('complex-data-passed',(data)=>{
+				console.log(JSON.stringify(data.data),'datadatadatadata')
 				if(data.data.length){
-					let allData = data.data;
-					this.subscribeObj = allData.find(x=> x.orderNo == this.department.visitNumber);
-					let medDate = moment(this.subscribeObj.medDate);
-					this.subscribeObj.days = medDate.diff(nowDate, 'days')
-					
-					// data.data.forEach(e => {
-					// 	if(e.visitNumber===this.department.visitNumber){
-					// 		this.firstContent = e
-					// 		this.getQueueingMessage()
-					// 	}else if(e.orderNo === this.department.visitNumber){
-					// 		if (nowDate != e.medDate && e.medDate > nowDate) {
-					// 			let medDate = moment(e.medDate);
-					// 			e.days = medDate.diff(nowDate, 'days')
-					// 		}
-					// 		this.subscribeObj = e;
-							
-					// 	}
-					// })
+					let nowDate = moment().format('YYYY-MM-DD');
+					data.data.forEach(e => {
+						if (nowDate != e.medDate && e.medDate > nowDate) {
+							let medDate = moment(e.medDate);
+							e.days = medDate.diff(nowDate, 'days')
+						}
+						if(e.visitNumber === this.department.visitNumber){
+							this.firstContent = e
+							console.log(JSON.stringify(this.firstContent),'》》》》》');
+						}else if(e.orderCode === this.department.visitNumber){
+							this.subscribeObj = e;
+							console.log(JSON.stringify(this.subscribeObj),'《《《《《《《《《《');
+						}
+					})
 				}else{
 					this.firstContent = {}
 					this.subscribeObj = {}
@@ -207,15 +203,46 @@
 			})
 		},
 		mounted() {
+			console.log('eeeee')
 			// 只有初次创建需要渐入效果  effectState为true
 			bus.$emit('refreshGetFirstVisit',{firstState:true,effectState:true})
 			if(this.timer3){
+			console.log('ffff')
 				clearInterval(this.timer3)
 				this.timer3 = null
 			}
 			this.timer3 = setInterval(()=>{
+			console.log('hhhhh')
 				bus.$emit('refreshGetFirstVisit',{firstState:true,effectState:false})
 			},20000)
+			
+			// bus.$on('complex-data-passed',(data)=>{
+			// 	console.log(JSON.stringify(data.data),'++++++++--------');
+			// 	if(data.data.length){
+			// 		let nowDate = moment().format('YYYY-MM-DD');
+			// 		data.data.forEach(e => {
+			// 			if (nowDate != e.medDate && e.medDate > nowDate) {
+			// 				let medDate = moment(e.medDate);
+			// 				e.days = medDate.diff(nowDate, 'days')
+			// 			}
+			// 			if(e.visitNumber === this.department.visitNumber){
+			// 				this.firstContent = e
+			// 			}else if(e.orderCode === this.department.visitNumber){
+			// 				this.subscribeObj = e;
+			// 				console.log(JSON.stringify(this.subscribeObj));
+			// 			}
+			// 		})
+			// 	}else{
+			// 		this.firstContent = {}
+			// 		this.subscribeObj = {}
+			// 		this.$set(this.headerEmiter,'state','')
+			// 		this.$emit('handle',this.headerEmiter)
+			// 	}
+			// 	// 回传的effectState  渐入效果渲染
+			// 	if(data.effectState){
+			// 		this.$emit('handle')
+			// 	}
+			// })
 			
 		},
 		beforeDestroy(){
@@ -224,6 +251,7 @@
 			clearTimeout(this.timer2)
 			clearInterval(this.timer3)
 			this.timer3 = null
+			
 		},
 		computed: {
 			...mapState(['footData','department']),
@@ -244,14 +272,21 @@
 			},
 			navigateToPage() {
 				let data = JSON.stringify(this.firstContent)
-				console.log(data);
 				uni.navigateTo({
 					url: '/sub_packages/convenientModule/inquiry?params='+data
 				});
 			},
 			// 退号
-			async cancelRegistration() {
+			async cancelRegistration(item) {
 				try{
+					let data = {
+						cardNo: siginData.patientCard,
+						cardType: 1,
+						regMode: 2,
+						appoNo: item.appoNo,
+						version: 1,
+						lockld: item.lockId,
+					}
 					const res= await guideApi.cancelRegistration(this.firstContent.visitNumber).then((res) => {
 						if(res.data.code===200){ 
 							this.toastObj = {
@@ -267,41 +302,6 @@
 								bus.$emit('refreshGetFirstVisit',msg)
 								clearTimeout(this.timer2)
 								
-							},4000)
-						}else {
-							this.toastObj = {
-								state:true,
-								type:'fail',
-								message:res.data.msg,
-							}
-						}
-						
-				            })
-				}catch(e){
-					this.toastObj = {
-						state:true,
-						type:'fail',
-						message:e.toString(),
-					}
-				}
-			},
-			// 取消预约
-			async cancelAppointmentRegister(orderCode) {
-				try{
-					const res= await guideApi.cancelAppointmentRegister(orderCode).then((res) => {
-						if(res.data.code===200){ 
-							this.toastObj = {
-								state:true,
-								message:'取消预约成功',
-							}
-							this.timer2 = setTimeout(()=>{
-								let msg = {
-									callingInterface:true,   //调用接口
-									firstState:true,     //初诊组件
-									effectState:false,   //动态效果
-								}
-								bus.$emit('refreshGetFirstVisit',msg)
-								clearTimeout(this.timer2)
 							},4000)
 						}else {
 							this.toastObj = {
@@ -404,31 +404,31 @@
 				}
 			},
 			// 刷新信息
-			async getQueueingMessage() {
-				// try{
-				// 	let data = {
-				// 		patientID:this.footData.patientUniquelyIdentifies,
-				// 		DepartmentCode:this.firstContent.queueId,
-			 //        }
-				// 	const res= await guideApi.getQueueingMessage(data).then((res) => {
-				// 		if(res.data.code===200){
-				// 			this.callObj = res.data.data.queLists.queList[0] || {}
-				// 		}else{
-				// 			// this.toastObj = {
-				// 			// 	state:true,
-				// 			// 	type:'fail',
-				// 			// 	message:res.data.msg,
-				// 			// }
-				// 		}
-			 //                })
-				// }catch(e){
-				// 	this.toastObj = {
-				// 		state:true,
-				// 		type:'fail',
-				// 		message:e,
-				// 	}
-				// }
-			},
+			// async getQueueingMessage() {
+			// 	try{
+			// 		let data = {
+			// 			patientID:this.footData.patientUniquelyIdentifies,
+			// 			DepartmentCode:this.firstContent.queueId,
+			//         }
+			// 		const res= await guideApi.getQueueingMessage(data).then((res) => {
+			// 			if(res.data.code===200){
+			// 				this.callObj = res.data.data.queLists.queList[0] || {}
+			// 			}else{
+			// 				// this.toastObj = {
+			// 				// 	state:true,
+			// 				// 	type:'fail',
+			// 				// 	message:res.data.msg,
+			// 				// }
+			// 			}
+			//                 })
+			// 	}catch(e){
+			// 		this.toastObj = {
+			// 			state:true,
+			// 			type:'fail',
+			// 			message:e,
+			// 		}
+			// 	}
+			// },
 			
 		},
 		
@@ -577,15 +577,13 @@
 						z-index: 1;
 						color: #ffffff;
 						font-size: 25rpx;
-						
+						margin-left: 17rpx;
 					}
 					image {
 						position: absolute;
 						top: -10rpx;
 						width: 110rpx;
 						height: 52rpx;
-						
-						
 					}
 				}
 				

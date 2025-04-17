@@ -166,7 +166,7 @@ import registrationApi from '@/api/registrationApi.js'
 				registrationApi.getScheduleDetail({
 					regMode: this.regMode, 
 					regType: '',
-					deptCode:this.deptCode,
+					deptCode: this.deptCode,
 					startDate: item.date,
 					endDate:item.date
 				}).then(res => {
@@ -174,13 +174,18 @@ import registrationApi from '@/api/registrationApi.js'
 					if (result.success) {
 						this.doctorList = this.mergeDoctorSchedules(result.data);
 					} else {
+						this.doctorList = [];
+						this.timeList.map(v => {
+							if (v.date == item.date) {
+								v.status = '无号'
+							}
+						})
 						uni.showToast({
 							title: result.msg,
 							icon: 'none',  
 							duration: 2000
 						});
 					}
-					
 				})
 				.catch(err => {
 					console.log('2：', err);
@@ -215,21 +220,22 @@ import registrationApi from '@/api/registrationApi.js'
 			        Scheduling: []
 			      };
 			    }
-					
-			    // 添加排班信息（排除已存在的属性）
-			    const scheduleItem = {
-			      medAmPm: item.medAmPm,
-			      medAmPmName: item.medAmPmName,
+					//将上午/下午的号源添加到 Scheduling 数组
+					mergedDoctors[item.doctCode].Scheduling.push({
+						medAmPm: item.medAmPm,
+						medAmPmName: item.medAmPmName,
+						restNum: item.restNum,
 			      waitNum: item.waitNum,
-			      restNum: item.restNum
-			    };
-					
-			    mergedDoctors[item.doctCode].Scheduling.push(scheduleItem);
+					});
 			  });
-			  
-			  return Object.values(mergedDoctors);
+				
+				//将对象转换为数组，并确保上午排在下午前面
+				let result = Object.values(mergedDoctors).map(doctor => {
+					doctor.Scheduling.sort((a, b) => a.medAmPm - b.medAmPm);
+					return doctor;
+				});
+			  return result;
 			},
-			
 			onChange(detail) {
 				this.checked = detail.detail
 			},
@@ -268,9 +274,7 @@ import registrationApi from '@/api/registrationApi.js'
 					
 				}
 			},
-			
 			doctorReserve(item, medAmPm, reserveItem) {
-				console.log(reserveItem);
 				if (!this.siginData.patientName) {
 					login.loginData().catch((error) => {});
 				} else {
@@ -306,7 +310,7 @@ import registrationApi from '@/api/registrationApi.js'
 			wx.setNavigationBarTitle({
 				title: e.title
 			})
-			this.deptCode = e.deptCode
+			this.deptCode = e.deptCode ? e.deptCode : e.CLGRPRowId
 		},
 		mounted() {
 			this.getScheduleDates()

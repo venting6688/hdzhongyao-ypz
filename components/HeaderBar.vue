@@ -1,12 +1,6 @@
 <template>
 	<view class="head" :class="{convenient:footState===2}">
 		<image class="background" src="../static/image/Group 1001.png" mode="widthFix"></image>
-		<!-- <view class="text">
-			<view class="title">您好！"安好" 为您服务<image class="icon" src="@/static/image/Group308.png" mode="widthFix"></image></view>
-			<view class="news">
-				{{ animatedText.slice(0,39) }}
-			</view>
-		</view> -->
 		<view class="dist">
 			<ul  v-if="footState===2 && departmentList.length">
 				<li v-for="(item,index) in departmentList" :key="index">
@@ -19,7 +13,7 @@
 				</li>
 			</ul>
 		</view>
-		<view class="bar" v-if="footState===2 && headerEmit.visitNumber">
+		<view class="bar" v-if="footState===2">
 			<view v-for="(item,index) in barList" @click="throttle_btns(index,item.number)" class="barList" :key="index">
 				<view  class="bar-name"  :class="{ barColor:item.number==1 }">
 					<view>
@@ -51,7 +45,7 @@ export default {
 					name:'预约',
 					number:'1',
 					state:'预约'
-				},
+				}
 			],
 			hospitalizedBarList:[],
 			headerEmit:{
@@ -71,7 +65,6 @@ export default {
 			throttle_btns:null,
 			index:0,
 			timer:null,
-			siginData: {},
 		}
 	},
 	watch: {
@@ -94,24 +87,36 @@ export default {
 		...mapState(['footData','department']),
 	},
 	async created() {
-		let data = uni.getStorageSync("loginData");
-		if(this.footState===2 && uni.getStorageSync("loginData") != ''){
-				bus.$on('refreshGetFirstVisit',(data)=>{
-					if(data.callingInterface){
-						// 取消挂号或取消预约后马上调用接口更新数据
-						// this.getFirstVisit(data)
-					}else{
-						this.refreshData(data)
-					}
-				})
-			await this.getBookingRecord()
+			console.log('666')
+		let loginData = uni.getStorageSync("loginData");
+		loginData = loginData.defaultArchives ? loginData.defaultArchives : '';
+		if(this.footState===2 && loginData != ''){
+			bus.$on('refreshGetFirstVisit',(data)=>{
+				if(data.callingInterface){
+					// 取消挂号或取消预约后马上调用接口更新数据
+					this.getFirstVisit()
+					console.log('777')
+				}else{
+					this.refreshData(data)
+					console.log('刷刷刷刷11111')
+				}
+			})
+			
+			await this.getFirstVisit()
+			console.log('9999')
+			
 			// this.getTreatmentStageNew(3)
+			
 			this.timer = setInterval(()=>{
-				this.getBookingRecord({},3)
+				console.log('aaaaa')
+				this.getFirstVisit()
 				// this.getTreatmentStageNew(3)
-			},15000)
+			},20000)
+			
 			this.animateText()
 		}
+		
+		// await this.getSuggest()
 		
 	},
 	beforeDestroy() {
@@ -121,202 +126,118 @@ export default {
 			clearInterval(this.timer)
 			this.timer = null
 		}
+		
 	},
 	mounted() {
 		this.throttle_btns = this.throttle(this.btns, 1200)
-		let data = uni.getStorageSync('loginData');
-		this.siginData = data.defaultArchives ? data.defaultArchives : {};
 	},
 	methods: {
 		...mapMutations({
 			setDepartment:'SET_DEPARTMENT',
 		}),
-		//获取就诊阶段(上方横条)
-		// async getTreatmentStageNew(state) {
-		// 	try{
-		// 		if(!this.headerEmit.orderNo){
-		// 			let data = {
-		// 				visitNumber:this.headerEmit.visitNumber,
-		// 				patientID:this.footData.patientUniquelyIdentifies,
-		// 				departmentCode:(this.department.data && this.department.data.queueId)||'',
-		// 			}
-		// 			const res = await HeaderbarApi
-		// 			.getTreatmentStageNew(data,state)
-		// 			.then((data) => {
-		// 				if(data.data.code===200){
-		// 					if (this.barListData===null || JSON.stringify(data.data.data) !== JSON.stringify(this.barListData)) {
-		// 					    this.barListData = data.data.data;
-		// 						this.barList = []
-		// 						for (let key in data.data.data) {
-		// 						  this.barList.push({name: '》》', number: data.data.data[key],state:false},{name: key, number: data.data.data[key],state:false});
-		// 						}
-		// 						this.barList.shift()
-		// 						let lastIndex = this.barList.findLastIndex(item => item.number === '1');
-		// 						if(lastIndex>=0){
-		// 							this.barList[lastIndex].state=this.barList[lastIndex].name
-		// 							this.$set(this.headerEmit,'state',this.barList[lastIndex].name)
-		// 						}
-		// 						this.$emit('handle',this.headerEmit)
-		// 					} 
-		// 				}
-		// 			})
-		// 		}else {
-		// 			let data = [
-		// 					{
-		// 						name:'预约',
-		// 						number:'1',
-		// 						state:'预约'
-		// 					}
-		// 				]
-		// 			if (this.barListData===null || JSON.stringify(data) !== JSON.stringify(this.barListData)) {
-		// 				this.barListData = data
-		// 				this.barList = data
-		// 				this.$set(this.headerEmit,'state','初诊')
-		// 				this.$emit('handle',this.headerEmit)
-		// 			}
-					
-					
-		// 		}
-		// 	}catch(e){
-		// 		console.log(e);
-		// 	}
-		// },
 		refreshData(data){
+			console.log('4444')
+			console.log(JSON.stringify(data),'departmentListdepartmentList');
 			let msg = {
 				data:this.departmentList,
 				effectState:data.effectState,
 			}
+			
 			bus.$emit('complex-data-passed',msg)
 		},
-		//获取今日挂号数据
-		// async getFirstVisit(data,state) {
-		// 	try{
-		// 		let registrationList = []
-		// 		let patientID = this.footData.patientUniquelyIdentifies
-		// 		const res= await guideApi.getFirstVisit(patientID,state).then((res) => {
-		// 			if(res.data.code===200){
-		// 				registrationList = res.data.data.orders.order || []
-		// 			}else {
-		// 				registrationList = []
-		// 			}
-		// 		})
-		// 		await this.getBookingRecord(data,registrationList)
-				
-		// 	}catch(e){
-		// 		console.log(e)
-		// 		//TODO handle the exception
-		// 	}
-		// },
-		// 获取预约数据
-		async getBookingRecord () {
+		//获取挂号数据
+		async getFirstVisit() {
+			console.log('3333')
 			let data = uni.getStorageSync('loginData');
 			let siginData = data.defaultArchives;
-			try{
-				const time = {
-					startDate: moment().format('YYYY-MM-DD'),
-					endDate: moment().add(7, 'days').format('YYYY-MM-DD')
-				};
-				const msg = {
-				  cardNo: siginData.patientCard,
-					cardType: 1,
-				  startDate: time.startDate,
-				  endDate: time.endDate,
-					version: 1,
-					status: 1,
-				};
-				const res= await guideApi.registrationRecord(msg).then((res) => {
-					let result = JSON.parse(res.data.msg);
+			const time = {
+				startDate: moment().format('YYYY-MM-DD'),
+				endDate: moment().add(7, 'days').format('YYYY-MM-DD')
+			};
+			const msg = {
+			  cardNo: siginData.patientCard,
+				cardType: 1,
+			  startDate: time.startDate,
+			  endDate: time.endDate,
+				version: 1,
+				status: 1,
+			};
+			await guideApi.registrationRecord(msg).then(res => {
+				let result = JSON.parse(res.data.msg);
+				if(result.success){
+					let subscribeList = result.data.map(item => {
+						return {
+							...item,
+							queueName:item.deptName,
+							doctorName:item.doctName,
+						}
+					}) || []
+					this.departmentList =[...subscribeList]
 					
-					if(result.success){
-						let subscribeList = result.data
-						.map(item => {
-							return {
-								...item,
-								queueName:item.deptName,
-								doctorName:item.doctName,
+					console.log(JSON.stringify(this.departmentList),'-----')
+					
+					if(this.departmentList.length){
+						console.log(this.departmentList[0].visitNumber,'vvvvv');
+						let found = false
+						// 判断存下的visitNumber和数组中有没有匹配的如果没有重新赋值
+						this.departmentList.forEach(item=>{
+							if (item.visitNumber === this.headerEmit.visitNumber || item.orderNo === this.headerEmit.visitNumber) {
+							    found = true;
 							}
-						}) || [];
-						
-						this.departmentList =[...subscribeList];
-						if(this.departmentList.length){
-							let found = false
-							// 判断存下的visitNumber和数组中有没有匹配的如果没有重新赋值
-							this.departmentList.forEach(item=>{
-								if (item.visitNumber === this.headerEmit.visitNumber || item.orderNo === this.headerEmit.visitNumber) {
-									found = true;
-								}
-							})
-							if(!found || !this.headerEmit.visitNumber || this.departmentList.length===1){
-								if(this.departmentList[0].orderNo){
-									this.headerEmit.orderNo = this.departmentList[0].orderNo
-								}else {
+						})
+					
+						if(!found || !this.headerEmit.visitNumber || this.departmentList.length===1){
+						    	if(this.departmentList[0].orderNo){
+						    		this.headerEmit.orderNo = this.departmentList[0].orderNo
+						    	}else {
 									this.headerEmit.orderNo = ''
 								}
 								this.$set(this.headerEmit,'visitNumber',this.departmentList[0].visitNumber || this.departmentList[0].orderNo)
-							}
-						} else {
-							this.barList = []
 						}
-						if(data && data.firstState){
-							// 当初诊卡片创建后传值
-							let msg = {
-								data:this.departmentList,
-								effectState:data.effectState,
-							}
-							bus.$emit('complex-data-passed',msg)
-						}
+					}else {
+						this.barList = []
 					}
 					
-			    })
-			}catch(e){
-				console.log('e',e)
-				this.toastObj = {
-					state:true,
-					type:'fail',
-					message:e,
+					// if(data && data.firstState){
+						// 当初诊卡片创建后传值
+						let msg = {
+							data:this.departmentList,
+							effectState:data.effectState,
+						}
+						bus.$emit('complex-data-passed',msg)
+					// }
 				}
+				
+			}).catch(err => {
+				console.log('errrrrr：', err);
+			})
+		},
+		btns(i,num) {
+			if(i % 2 === 0 && num ==1){
+				this.barList.forEach((v,x)=>{
+				if(i==x){
+					v.state = v.name
+					if(v.name==='预约'){
+						this.headerEmit.state = '初诊'
+					}else{
+						this.headerEmit.state = v.name
+					}
+				}else {
+					v.state = false
+				}
+			})
+			this.$emit('handle',this.headerEmit)
+			}else {
+				return
 			}
 		},
-		// //获取建议列表
-		// async getSuggest() {
-		// 	try{
-		// 		const res = await HeaderbarApi
-		// 		.getSuggest(
-		// 			this.headerEmit.visitNumber
-		// 		)
-		// 		.then((data) => {
-		// 			this.getSuggestText = data.data[0]? data.data[0]:''
-		// 		})
-		// 	}catch(e){
-		// 		//TODO handle the exception
-		// 	}
-		// },
-		// btns(i,num) {
-		// 	if(i % 2 === 0 && num ==1){
-		// 		this.barList.forEach((v,x)=>{
-		// 		if(i==x){
-		// 			v.state = v.name
-		// 			if(v.name==='预约'){
-		// 				this.headerEmit.state = '初诊'
-		// 			}else{
-		// 				this.headerEmit.state = v.name
-		// 			}
-		// 		}else {
-		// 			v.state = false
-		// 		}
-		// 	})
-		// 	this.$emit('handle',this.headerEmit)
-		// 	}else {
-		// 		return
-		// 	}
-		// },
 		//切换科室
 		departmentBtn(item,index){
-			this.loading = true
-			uni.showLoading({
-				title: '加载中...',
-				mask: true
-			})
+			// this.loading = true
+			// uni.showLoading({
+			// 	title: '加载中...',
+			// 	mask: true
+			// })
 			if(item.visitNumber){
 				if(this.headerEmit.visitNumber !== item.visitNumber){
 					this.barListData=null
@@ -331,29 +252,18 @@ export default {
 					this.headerEmit.orderNo = item.orderNo
 					this.index = index
 				}
-				setTimeout(()=> {
-					this.loading = false
-					uni.hideLoading()
-				},15000)
+				// setTimeout(()=> {
+				// 	this.loading = false
+				// 	uni.hideLoading()
+				// },15000)
 			}
 			
 		},
 		animateText() {
+			console.log('1111')
 			if (this.interval) {
 				clearInterval(this.interval)
 			}
-			this.animatedText = ''
-			let index = 0
-			if(this.getSuggestText){
-				this.interval = setInterval(() => {
-				this.animatedText += this.getSuggestText[index]
-				index++
-				if (index === this.getSuggestText.length) {
-					clearInterval(this.interval)
-				}
-			}, 100)
-			}
-			
 		}
 	},
 	

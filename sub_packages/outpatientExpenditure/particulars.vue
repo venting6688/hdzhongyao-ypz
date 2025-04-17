@@ -4,23 +4,23 @@
 			<view class="personal personal-1">
 				<view class="title1">
 					<view class="name">
-						<text>{{footData.patientName}}</text>
-						<text>{{footData.sex}}</text>
+						<text>{{siginData.patientName}}</text>
+						<text>{{siginData.sex}}</text>
 					</view>
 				</view>
 				<view class="center">
 					<view class="no">
 						<text>就诊科室：</text>
-						<text>{{detail.admDept}}</text>
+						<text>{{detail.itemName}}</text>
 					</view>
-					<view class="no doctor">
+					<!-- <view class="no doctor">
 						<text>就诊医生：</text>
 						<text>{{detail.admDoctor}}</text>
 					</view>
 					<view class="no">
 						<text>就诊时间：</text>
 						<text>{{detail.admDate}} {{detail.admTime}}</text>
-					</view>
+					</view> -->
 				</view>
 				<view class="tips">
 					温馨提示：本次诊疗仅针对目前病情，如有病情变化，请及时复诊。
@@ -28,7 +28,7 @@
 			</view>
 			<view class="personal personal-2">
 				<view class="center">
-					<view class="word" v-for="(item,index) in List" :key="index">
+					<!-- <view class="word" v-for="(item,index) in List" :key="index">
 						<text></text>
 						<view>
 							{{item.itemCategory}}
@@ -44,13 +44,13 @@
 								</view>
 							</view>
 						</view>
-					</view>
+					</view> -->
 					
 				</view>
 				<view class="totalMoney">
 					<view>
 						<text>合计：</text>
-						<text>{{detail.totalAmt}}元</text>
+						<text>{{detail.billFee / 100}}元</text>
 					</view>
 				</view>
 			</view>
@@ -67,13 +67,10 @@
 			return {
 				List:[],
 				detail:{
-					admDept:'',
-					admDoctor:'',
-					admDate:'',
-					admTime:'',
-					totalAmt:'',
-					invoiceNo:'',
+					itemName:'',
+					billFee:'',
 				},
+				siginData: {}
 			}
 		},
 		computed: {
@@ -81,18 +78,24 @@
 		},
 		onLoad(e) {
 			this.detail = JSON.parse(decodeURIComponent(e.detail))
+			let data = uni.getStorageSync('loginData');
+			this.siginData = data.defaultArchives ? data.defaultArchives : {}
 			this.getPaymentDetails()
 		},
 		methods: {
 			getPaymentDetails(){
 				try {
 					let data = {
-						patientID:this.footData.patientUniquelyIdentifies,
-						invoiceNo:this.detail.invoiceNo,
+						billNo: this.detail.billNo,
+						patientId: this.siginData.patientCard,
+						startDate: '',
+						endDate: '',
 					}
-					outpatientExpenditureApi.getPaymentDetails(data).then(res => {
+					outpatientExpenditureApi.queryFeeDetailRecord(data).then(res => {
+						let result = res.data;
 						if(res.data.code===200){
-							this.List = res.data.data || []
+							this.detail = result.data.Response.ResultData.RecordList[0]
+							console.log(JSON.stringify(this.detail))
 						}
 					})
 				} catch (error) {

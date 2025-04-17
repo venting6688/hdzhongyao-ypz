@@ -1,8 +1,7 @@
 <template>
 	<view class="inquiry">
-		
 		<view class="" :animation="anData"  style="height:0rpx;"></view>
-		<image class="background" src="https://aiwz.sdtyfy.com:8099/img/virtualBg.png" ></image>	
+		<image class="background" src="../../static/image/virtualBg.png"></image>
 		<view class="head">
 			您好！“海豚禾禾”为您服务  
 		</view>
@@ -22,6 +21,9 @@
 					<!-- AI消息 -->
 					<view class="robot" v-else>
 						<view class="robot-box"  v-if="x.type!==2">
+							<view class="tubiao">
+								<image src="../../static/image/Group 998.png" mode="widthFix"></image>
+							</view>
 							<view class="triangle"></view>
 							<view class="center">
 								<view v-if="x.msgLoad" class="cuIcon-loading turn-load" style="font-size: 50rpx;color: #60B6FE;"></view>
@@ -774,13 +776,13 @@
 							align-items: center;
 							width: 460rpx;
 							margin: 20rpx 25rpx 20rpx 0;
-							
 							.triangle {
-							    width: 0;
+								width: 0;
 							 	height: 0;
 							 	border-style: solid;
 							 	border-width: 15rpx 0 15rpx 18rpx;
 							 	border-color: transparent transparent transparent #076aff;
+								// background: url("../../static/image/Group 998.png") center/cover;
 							}
 							
 							.center {
@@ -806,18 +808,23 @@
 						
 						
 						.robot-box {
-						display: flex;
-						justify-content: flex-start;
-						align-items: center;
-						width: 490rpx;
-						margin: 20rpx 0 20rpx 25rpx;
-						
+							display: flex;
+							justify-content: flex-start;
+							align-items: center;
+							width: 574rpx;
+							margin: 20rpx 0 20rpx 25rpx;
+						 .tubiao {
+							 image {
+								 width: 84rpx;
+							 }
+						 }
 						.triangle {
-						    width: 0;
+							width: 0;
 						 	height: 0;
 						 	border-style: solid;
 						 	border-width: 15rpx 18rpx 15rpx 0;
 						 	border-color: transparent rgba(255,255,255,0.80) transparent transparent;
+							// background: url("../../static/image/Group 998.png") center/cover;
 						}
 							
 							.center{

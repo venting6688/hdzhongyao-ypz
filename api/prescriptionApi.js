@@ -9,7 +9,7 @@ const prescription = {
 		const res = await cjRequest({
 			url: "getPrescription?cardNo="+cardNo,
 			method: "get",
-		}, '', true)
+		}, 2)
 		return res
 	}
 }

@@ -1,6 +1,6 @@
 <template>
 	<view class="box" v-if="showState">
-		<!-- <bar /> -->
+		<bar />
 		<date @handle="show" />
 		<view class="head">
 			<view>
@@ -24,28 +24,27 @@
 				<li v-for="(item,index) in billList" :key="index">
 					<view class="middle">
 						<view class="title">
-							<view class="clinic"><text>就诊时间：{{item.admDate}}</text></view>
-							<view class="clinic"><text>就诊科室：{{item.admLoc}}</text></view>
-							<view class="clinic"><text>就诊医生：{{item.admDoc}}</text></view>
+							<view class="clinic"><text>就诊时间：{{item.billDate}}</text></view>
+							<view class="clinic"><text>就诊科室：{{item.deptName}}</text></view>
+							<view class="clinic"><text>就诊医生：{{item.doctName}}</text></view>
 						</view>
-						<view class="center"  v-for="(i,x) in item.itemList.item" :key="x">
+						<!-- <view class="center"  v-for="(i,x) in item.itemList.item" :key="x">
 							<view class="no">
 								<view class="name">{{i.itemName}}</view>
 								<view class="price">
-									<text>单价：{{i.itemPrice}}</text>
-									<text>￥{{i.itemSum}}</text>
+									<text>单价：{{i.billFee}}</text>
+									<text>￥{{i.billFee / 100}}</text>
 								</view>
 							</view>
-						</view>
+						</view> -->
 					</view>
 					<view class="totalMoney">
 						<view class="">
 							<text>待缴费金额：</text>
-							<text>{{item.orderSum}}元</text>
+							<text>￥{{item.billFee / 100}}元</text>
 						</view>
 					</view>
 					<view class="btn">
-						<!-- <view class="medical">医保支付</view> -->
 						<view class="self-paying" @click="pay(item)">立即缴费</view>
 					</view>
 				</li>
@@ -63,7 +62,7 @@
 							<view class="title">
 								<view class="header">
 									<view class="time">
-									    {{item.admDate}}
+									    {{item.tradeTime}}
 								    </view>
 									<view class="delete">
 										<text>费用明细</text>
@@ -71,7 +70,7 @@
 									</view>
 								</view>
 							</view>
-							<view class="list">
+							<!-- <view class="list">
 								<view>
 									<text>就诊科室：</text>
 									<text>{{item.admDept}}</text>
@@ -80,12 +79,12 @@
 									<text>就诊医生：</text>
 									<text>{{item.admDoctor}}</text>
 								</view>
-							</view>
+							</view> -->
 						</view>
 						<view class="totalMoney">
 							<view>
 								<text>费用合计：</text>
-								<text class="black">{{item.totalAmt}}元</text>
+								<text class="black">￥{{item.billFee / 100}}元</text>
 							</view>
 						</view>
 					</li>
@@ -98,6 +97,7 @@
 </template>
 
 <script>
+	import moment from 'moment';
 	import mixin from '@/mixins/mixin'
 	import bar from '../components/bar.vue'
 	import date from '../components/date.vue'
@@ -106,6 +106,8 @@
 	import { mapState } from 'vuex'
 	import bus from '@/utils/bus.js'
 	import outpatientExpenditureApi from '@/api/outpatientExpenditureApi.js'
+	import registrationApi from '@/api/registrationApi.js'
+	
 	export default {
 		mixins: [mixin],
 		components:{
@@ -132,14 +134,16 @@
 				},
 				checkState:false,
 				date: {},
+				siginData: {}
 			}
 		},
 		computed: {
 			...mapState(['footData','showState']),
 		},
-		// mounted(){
-		// 	this.queryMedicalRecords()
-		// },
+		mounted(){
+			let data = uni.getStorageSync('loginData');
+			this.siginData = data.defaultArchives ? data.defaultArchives : {}
+		},
 		onLoad(option) {
 			this.loading.loadingState = false
 			if(option.checkState){
@@ -168,25 +172,18 @@
 			},
 			//未交费
 			async queryMedicalRecords() {
-				if (this.footData.patientUniquelyIdentifies) {
+				if (this.siginData.patientCard) {
 					let data = {
-					    patientID: this.footData.patientUniquelyIdentifies,
-					    visitNumber: '',
+					    cardNo: this.siginData.patientCard,
+					    patientId: '',
 					    startDate: this.date.startTime,
 					    endDate: this.date.endTime,
 					};
 					outpatientExpenditureApi.getToBePaid(data).then(res => {
-						if (res.data.code === 200 && res.data.data.payOrdList != null) {
-							let data = res.data.data.payOrdList.payOrder;
-							this.billList = data;
-						} 
-						// else {
-						// 	this.toastObj = {
-						// 		state: true,
-						// 		type:'fail',
-						// 		message: res.data.data.resultMsg,
-						// 	};
-						// }
+						let result = res.data;
+						if (result.code === 200) {
+							this.billList = result.data.Response.ResultData.RecordList;
+						}
 					}).catch(err => {
 						console.log('error：', err);
 					});
@@ -198,15 +195,15 @@
 			async getPaymentRecord(){
 				try {
 					let data = {
-						userId: '',
-						cardNo:  '370223197110243910',//this.siginData.patientCard,
-						patientID: '370223197110243910',//this.siginData.patientCard,
+						cardNo:  this.siginData.patientCard,
+						patientId: '',//this.siginData.patientCard,
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
 					}
 					outpatientExpenditureApi.getQueryFeeRecord(data).then(res => {
-						if(res.data.code===200){
-							this.alreadyList = res.data.data||[]
+						let result = res.data;
+						if(result.code=== 200){
+							this.alreadyList = result.data.Response.ResultData.RecordList;
 						}
 					})
 				} catch (error) {
@@ -218,26 +215,27 @@
 			//支付
 			pay(item){
 				let loginValue = uni.getStorageSync("loginData");
-				let data = JSON.parse(loginValue)
-				let msg = {
-					patientID:this.footData.patientUniquelyIdentifies,
-					patientName:this.footData.patientName,
-					patientOpenid:data.xcxOpenId,
-					visitNumber:item.adm,
-					orderNo:item.orderNo,
-					orderSum:item.orderSum,
+				let randNum = Math.floor(1000000 + Math.random() * 9000000);
+				let msg = { 
+					patientId: this.siginData.patientCard,
+					patientName: this.siginData.patientName,
+					subOpenId: loginValue.xcxOpenId,
+					totalAmount: String(item.billFee), 
+					merOrderId: '157Q-'+moment().format('YYYYMMDDHHmmss')+'-'+randNum
 				}
+				
 				try {
-					outpatientExpenditureApi.toBePaidPreOrder(msg).then(result => {
-						if(result.data.code===200){
-							let obj = result.data.data.prePayResponse
+					registrationApi.registerOrder(msg).then(result => {
+						console.log(JSON.stringify(result.data));
+						if(result.data.errCode){
+							let { merOrderId, totalAmount, miniPayRequest } = result.data;
 							uni.requestPayment({
 								provider: 'wxpay', // 服务提提供商
-								timeStamp: obj.body.miniPayRequest.timeStamp, // 时间戳
-								nonceStr: obj.body.miniPayRequest.nonceStr, // 随机字符串
-								package: obj.body.miniPayRequest.pkg,
-								signType: obj.body.miniPayRequest.signType, // 签名算法
-								paySign: obj.body.miniPayRequest.paySign, // 签名
+								timeStamp: miniPayRequest.timeStamp, // 时间戳
+								nonceStr: miniPayRequest.nonceStr, // 随机字符串
+								package: miniPayRequest.package,
+								signType: miniPayRequest.signType, // 签名算法
+								paySign: miniPayRequest.paySign, // 签名
 								success: (res)=> {
 									this.loading = {
 										loadingState:true,
@@ -246,6 +244,7 @@
 									this.queryPayResultForToBePaid(result.data.data)
 								},
 								fail:(err)=> {
+									console.log('sksksksksks');
 									let cancelPreSettlementData = {
 										patientID:result.data.data.patientID,
 										visitNumber:item.adm,
@@ -266,10 +265,11 @@
 								}
 							});
 						}else {
+							console.log('00000');
 							this.toastObj = {
 							  state: true,
 							  type:'fail',
-							  message: res.data.msg
+							  message: result.data.msg
 							};
 						}
 						
@@ -284,25 +284,21 @@
 				}
 			},
 			queryPayResultForToBePaid(data){
-				outpatientExpenditureApi.queryPayResultForToBePaid(data).then(res => {
+				registrationApi.queryPayResult(data).then(res => {
 					try {
-						if(res.data.code===999){
-							this.queryPayResultForToBePaid(data)
-						}else if(res.data.code===200){
+						if(res.data.code===200){
 							this.toastObj = {
 								state:true,
 								message:res.data.msg,
 							}
 							if(this.checkState){
 								this.timer = setTimeout(()=>{
-								bus.$emit('refreshGetcheckVisit')
-								clearTimeout(this.timer)
-								uni.navigateBack()
-							},4000)
+									bus.$emit('refreshGetcheckVisit')
+									clearTimeout(this.timer)
+									uni.navigateBack()
+								},4000)
 							}
-							
 							this.queryMedicalRecords()
-							console.log('结果',res)
 						}else {
 							this.toastObj = {
 							  state: true,
