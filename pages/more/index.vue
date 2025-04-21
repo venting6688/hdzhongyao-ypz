@@ -41,29 +41,24 @@
 						title:'门诊服务',
 						list: [
 							{
-								img:'https://aiwz.sdtyfy.com:8099/img/outpatient.png',
-								name:'智能导诊',
-								num:1,
-							},
-							{
 								img:'https://aiwz.sdtyfy.com:8099/img/outpatient1.png',
 								name:'预约挂号',
-								num:2,
+								num:1, //2,
 							},
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/outpatient3.png',
 								name:'门诊缴费',
-								num:3,
+								num:2, //3,
 							},
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/outpatient7.png',
 								name:'就诊记录',
-								num:5,
+								num:3, //5,
 							},
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/outpatient4.png',
 								name:'门诊报告',
-								num:6,
+								num:4, //6,
 							},
 						],
 					},
@@ -77,7 +72,7 @@
 							{
 								img:'../../static/image/quyaofy.png',
 								name:'智慧取药',
-								num:40,
+								num:5,
 							},
 						]
 					},
@@ -92,57 +87,24 @@
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/synthesize4.png',
 								name:'在线建档',
-								num:24,
+								num:6,
 							},
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/synthesize6.png',
 								name:'我的',
-								num:26,
+								num:7,
 							},
 						]
 					},
 				],
 				urlList:[
-					'pages/virtualNurse/index',  //0
 					'/sub_packages/subscribe/departments', //1
 					'/sub_packages/outpatientExpenditure/index', //2
-					'空', //3
-					'/sub_packages/record/index', //4
-					'/sub_packages/report/index', //5
-					'空',
-					'空',
-					'空', 
-					'pages/virtualNurse/index',//10
-					'pages/virtualNurse/index',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',                      //20
-					'空',
-					'空',
-					'空',
-					'/sub_packages/filing/information', //23
-					'空',
+					'/sub_packages/record/index', //3
+					'/sub_packages/report/index', //4
+					'/sub_packages/medicine/index', //5
+					'/sub_packages/filing/information',
 					'/sub_packages/mine/index',
-					'空',
-					'空',
-					'空',
-					'空', //30
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'空',
-					'/sub_packages/medicine/index', //40
 				],
 			}
 		},
@@ -182,17 +144,7 @@
 				});
 			},
 			toast(num,url){
-				if(num==1 || num===10 ||num === 11){
-					if(num==1){
-						wx.reLaunch({
-						    url: `/pages/virtualNurse/index?pattern=1`,
-						})
-					}else {
-						wx.reLaunch({
-						    url: `/pages/virtualNurse/index?pattern=2`,
-						})
-					}
-				}else if(num===12 || num===13 || num===14 || num===15 || num===22 || num===25){
+				if(num===12 || num===13 || num===14 || num===15 || num===22 || num===25){
 					this.skip(num)
 				}else if(url==='空'){
 					uni.showToast({

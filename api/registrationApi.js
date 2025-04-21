@@ -88,6 +88,16 @@ const patient = {
 		return res
 	},
 	
+	// 结算上传
+	async opPay(data) {
+		const res = await cjRequest({
+			url: 'opPay',
+			method: "post",
+			data
+		})
+		return res
+	},
+	
 	// 取消锁号
 	async unRegistrationLock(data) {
 		const res = await cjRequest({
@@ -117,6 +127,7 @@ const patient = {
 		})
 		return res
 	}
+	
 }
  
 export default patient

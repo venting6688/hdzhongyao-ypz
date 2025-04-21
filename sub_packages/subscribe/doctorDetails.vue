@@ -93,7 +93,7 @@
 	import { mapState } from 'vuex'
 	import Toast from '../components/toast.vue'
 	import registrationApi from '@/api/registrationApi.js'
-	import UQRCode from 'uqrcodejs'
+	import guideApi from '@/api/guideApi.js'
 	
 	export default {
 		components:{
@@ -179,7 +179,6 @@
 				}
 				registrationApi.registrationLock(lockNumData).then(r => {
 					let res = JSON.parse(r.data.msg);
-					console.log(res.success);
 					if(!res.success) {
 						uni.showToast({
 							title: res.msg,
@@ -247,7 +246,7 @@
 													this.toastObj = {
 														state:true,
 														message:'预约成功',
-														url:'/pages/more/index',
+														url:'/pages/convenient/index',
 													}
 												} else {
 													//上传失败进行解锁+退款
@@ -313,6 +312,7 @@
 			wx.setNavigationBarTitle({title: e.title})
 			this.doctor = JSON.parse(decodeURIComponent(e.doctor));
 			let data = uni.getStorageSync('loginData');
+			console.log(JSON.stringify(data));
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 			this.doctorInfo = JSON.parse(decodeURIComponent(e.detail));
 			this.regMode = e.regMode;

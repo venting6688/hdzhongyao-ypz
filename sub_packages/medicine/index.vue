@@ -163,10 +163,11 @@
 			getPrescription(){
 				try {
 					let loginValue = uni.getStorageSync("loginData");
-					let idCardNum = loginValue.idNo != null ? loginValue.idNo : loginValue.patientCard
+					loginValue = loginValue.defaultArchives;
+					let idCardNum = loginValue.patientCard; // 370911199507194418
 					
 					prescriptionApi.getPrescription(idCardNum).then(res => {
-						if(res.data.code===200){
+						if(res.data.code === 200){
 							let arr = res.data.data ? res.data.data.mstvws || [] : [];
 							if (arr.length) {
 								this.prescriptionList = arr

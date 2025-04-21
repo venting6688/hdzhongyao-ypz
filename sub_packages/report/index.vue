@@ -20,30 +20,47 @@
 		</view>
 		<view class="information">
 			<ul v-if="List.length">
-				<li v-for="(item,index) in List" :key="index">
+				<li @click="information(item)" v-for="(item,index) in List" :key="index">
 					<view class="content">
 						<view class="title">
 							<view class="name">
-								<!-- <text>{{item.departmentName}}</text>
-							    <image src="../static/image/icon-edit.png" mode=""></image> -->
+								<text>{{item.auditDoctName}}</text>
 							</view>
-							<!-- <view class="delete">
+							<view class="delete">
 								<text>查看报告</text>
 								<image src="../static/image/Vector@2x.png" mode=""></image>
-							</view> -->
+							</view>
 						</view>
-						<view class="center">
+						<view class="center" v-if="headIndex === 1">
 							<view class="no">
-								<text>文档ID：</text>
-								<text>{{item.documentID}}</text>
+								<text>医生：</text>
+								<text>{{item.inspecDoctName}}</text>
 							</view>
 							<view class="no">
-								<text>{{headIndex===1?'检查':'检验'}}项目：</text>
-								<text>{{item.documentTitle}}</text>
+								<text>检查科室：</text>
+								<text>{{item.inspecDeptName}}</text>
 							</view>
 							<view class="no">
-								<text>{{headIndex===1?'检查':'检验'}}时间：</text>
-								<text>{{item.updateDate}} {{item.updateTime}}</text>
+								<text>检查项目：</text>
+								<text>{{item.checkItem}}</text>
+							</view>
+							<view class="no">
+								<text>检查时间：</text>
+								<text>{{item.inspecTime}}</text>
+							</view>
+							<view class="no">
+								<text>诊断：</text>
+								<text>{{item.diagnosis}}</text>
+							</view>
+						</view>
+						<view class="center" v-else>
+							<view class="no">
+								<text>检查项目：</text>
+								<text>{{item.examType}}</text>
+							</view>
+							<view class="no">
+								<text>检查时间：</text>
+								<text>{{item.sendTime}}</text>
 							</view>
 						</view>
 					</view>
@@ -87,7 +104,6 @@
 				if(datePattern){
 					this.date = time
 					let type = this.headIndex === 1 ? 'jiancha' : 'jianyan';
-					console.log(type);
 					this.getVisitRecord(type)
 				}
 			},
@@ -97,19 +113,19 @@
 				this.getVisitRecord(type)
 			},
 			//检查报告
-			getVisitRecord(type){
+			getVisitRecord(type) {
 				try {
 					let data = {
-						cardNo: '370223197110243910', //this.siginData.patientCard,
-						patientId: '370223197110243910',//this.siginData.patientCard,
+						cardNo: this.siginData.patientCard, //370911199507194418 370223195107021525
+						patientId: '', //this.siginData.patientCard,
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
-						patientName: '',//this.siginData.patientName,
+						patientName: this.siginData.patientName,
+						verslon: 1,
 					}
 					if (type == 'jiancha') {
 						elseApi.queryPacsInfo(data).then(res => {
 							let result = res.data;
-							console.log(JSON.stringify(result));
 							if(result.code===200){
 								this.List = result.data.Response.ResultData.RecordList;
 							}else {
@@ -119,7 +135,7 @@
 					} else {
 						elseApi.queryLisBaseInfo(data).then(res => {
 							let result = res.data;
-							if(result.code===200){
+							if(result.code === 200){
 								this.List = result.data.Response.ResultData.RecordList;
 							}else {
 								this.List = []
@@ -200,10 +216,9 @@
 			overflow: auto;
 			margin-bottom: 50rpx;
 			ul {
-				width: 681.3rpx;
+				width: 700rpx;
 				margin: 0 auto;
 				> li {
-					width: 681.3rpx;
 					background: #ffffff;
 					&:last-child{
 						.content{
@@ -246,12 +261,12 @@
 							}
 						}
 						.center {
-							height: 140rpx;
 							display: flex;
 							flex-direction: column;
 							justify-content: space-between;
 							.no {
 								font-size: 24rpx;
+								padding: 8rpx 0;
 								text {
 									&:nth-child(1){
 										color: #999999;

@@ -56,29 +56,19 @@
 					}
 					filingApi.archiveQuery(data).then(res => {
 						let result = res.data.data;
-						if (res.data.code === 500 && res.data.msg == -1) {
-							uni.showModal({
-								title: res.data.data,
-								success: res => {
-									if (res.confirm) {
-										uni.navigateTo({
-											url:"/sub_packages/filing/information"
-										})
-									} 
-								}
-							});
-						} else if (!result.defaultArchives) {
+						if (!result.defaultArchives) {
 							uni.showModal({
 								title: "未查询当建档信息，请先建档。",
 								success: res => {
 									if (res.confirm) {
 										uni.navigateTo({
-											url:"/sub_packages/filing/information"
+											url:"/sub_packages/filing/information?phone="+this.phoneNum
 										})
 									} 
 								}
 							});
 						} else {
+							console.log(JSON.stringify(result));
 							this.setFootData(result.defaultArchives);
 							uni.setStorageSync('loginData', result);
 							uni.switchTab({ url:"/pages/virtualNurse/index" })

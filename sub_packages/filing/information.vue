@@ -65,6 +65,7 @@
 </template>
 <script>
 	import filingApi from '@/api/filingApi.js'
+	import registrationApi from '@/api/registrationApi.js'
 	import mixin from '@/mixins/mixin.js'
 	import {mapMutations} from 'vuex'
 	export default {
@@ -119,7 +120,8 @@
 				countTimer:null,
 				time:60,
 				verificationCodeState:false,
-				siginData: {}
+				siginData: {},
+				loginPhoneNum: ''
 			}
 		},
 		computed:{
@@ -130,6 +132,9 @@
 			this.$nextTick(()=>{
 				uni.$emit('pageNavigated');
 			})
+		},
+		onLoad(e) {
+			this.loginPhoneNum = e.phone
 		},
 		methods: {
 			...mapMutations({
@@ -163,7 +168,7 @@
 				this.informationObj.sex = this.selectedSex;
 			},
 			Filing(){
-				if (!this.informationObj.patientName ||!this.informationObj.idNo ||!this.siginData.phoneNum) {
+				if (!this.informationObj.patientName ||!this.informationObj.idNo ||!this.informationObj.phone) {
 					uni.showToast({
 						title: '请完善您的信息',
 						icon: 'none',   
@@ -173,6 +178,9 @@
 					this.informationObj.patientType = '自费';
 					this.informationObj.address = this.provincesAndMunicipalities+this.address;
 					this.informationObj.isDefault = true;
+					this.informationObj.loginPhoneNum = this.loginPhoneNum;
+					this.informationObj.cardType = '1';
+					this.informationObj.cardNo = this.informationObj.idNo;
 					filingApi.archive(this.informationObj).then(res => {
 						if(res.data.code === 200){
 							let result = res.data.data.defaultArchives;
@@ -180,7 +188,10 @@
 								title: '建档成功',
 								duration: 2000
 							});
-							this.setFootData(res.data.data.defaultArchives);
+							if (!result.patientCard) {
+								result.patientCard = result.idNum;
+							}
+							this.setFootData(result);
 							uni.setStorageSync('loginData', res.data.data);
 							wx.reLaunch({ url: '/pages/more/index' })
 						}else{
@@ -212,10 +223,6 @@
 			    }
 			},
 		},
-		onShow() {
-			let data = uni.getStorageSync('loginData');
-			this.siginData = data.defaultArchives ? data.defaultArchives : {};
-		}
 	}
 </script>
 

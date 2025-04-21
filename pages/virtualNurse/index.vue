@@ -387,29 +387,6 @@
 				uni.navigateTo({
 					url: `/sub_packages/subscribe/doctors?title=${item.name}&CLGRPRowId=${item.id}`
 				})
-				// const appId = 'wx6334d37b051ec074';
-				// const data = {
-				//   checkedDep: {
-				//     departmentld:item.id,
-				//     departmentCode:item.id,
-				//     departmentName: item.name,
-				//     typeFlag: "cliGroup"
-				//   },
-				//   checkedFirDep: ""
-				// };
-				// const jsonString = JSON.stringify(data);
-				// const encodedData = encodeURIComponent(jsonString);
-				// const targetUrl = `/pages/outpatient-doctor-list/main?dep=${encodedData}`;
-				// wx.navigateToMiniProgram({
-				//   appId: appId,
-				//   path: targetUrl,
-				//   envVersion: 'release',
-				//   success: function(res) {
-				//   },
-				//   fail: function(err) {
-				//     console.log('跳转失败', err);
-				//   }
-				// });
 			},
 			// 保持消息体可见
 			msgGo(i){

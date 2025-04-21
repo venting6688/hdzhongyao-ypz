@@ -4,40 +4,29 @@
 			<view class="personal-1">
 				<view class="title1">
 					<view class="name">
-						<text>{{footData.patientName}}</text>
-						<text>{{footData.sex}}</text>
+						<text>{{report.patientName ? report.patientName : report.name}}</text>
+						<text>{{report.sex ? report.sex : ''}}</text>
+						<text>{{report.age ? report.age : ''}}</text>
 					</view>
 				</view>
 				<view class="center">
 					<view class="no">
-						<text>文档ID：</text>
-						<text>{{report.documentID?report.documentID:''}}</text>
-					</view>
-					<view class="no">
 						<text>检查项目：</text>
-						<text>{{report.documentTitle?report.documentTitle:''}}</text>
+						<text>{{report.examType ? report.examType : (report.checkItem ? report.checkItem : '')}}</text>
 					</view>
 					<view class="no" v-if="report.department">
 						<text>申请科室：</text>
-						<text>{{report.department ? report.department : ''}}</text>
+						<text>{{report.department ? report.department : (report.inspecDeptName ? report.inspecDeptName : '')}}</text>
 					</view>
 					<view class="no two">
 						<text>检查时间：</text>
-						<text>{{report.updateDate?report.updateDate:''}} {{report.updateTime?report.updateTime:''}}</text>
-					</view>
-					<view class="no">
-						<text>报告医师：</text>
-						<text>{{report.reportDoctor?report.reportDoctor:''}}</text>
-					</view>
-					<view class="no">
-						<text>审核医师：</text>
-						<text>{{report.auditDoctor?report.auditDoctor:''}}</text>
+						<text>{{report.sendTime? report.sendTime : (report.inspecTime ? report.inspecTime : '')}}</text>
 					</view>
 				</view>
 				<view class="tips">
 					温馨提示：本报告仅供临床医师结合临床参考
 				</view>
-				<ul>
+				<ul v-if="report.checkResult">
 					<li @click="navigator(index)" v-for="(item,index) in modulesList" :key="index">
 						<template>
 							<view class="img">
@@ -84,6 +73,7 @@
 					//     name:'云胶片',
 					// },
 				],
+				siginData: {},
 			}
 		},
 		computed: {
@@ -99,10 +89,12 @@
 				}else{
 					
 				}
-				wx.reLaunch({ url: `/pages/virtualNurse/index?pattern=2&&manifestation=${this.report.manifestation}` })
+				wx.reLaunch({ url: `/pages/virtualNurse/index?pattern=2&&manifestation=${this.report.checkResult}` })
 			},
 		},
 		mounted() {
+			let data = uni.getStorageSync('loginData');
+			this.siginData = data.defaultArchives ? data.defaultArchives : {}
 		},
 		
 	}

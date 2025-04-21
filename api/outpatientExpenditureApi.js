@@ -11,6 +11,7 @@ const patient = {
 				cardNo:data.cardNo, 
 				startDate:data.startDate, 
 				endDate:data.endDate, 
+				operId: data.operId,
 			}
 		}, 2)
 		return res
@@ -50,19 +51,19 @@ const patient = {
 	      	return res
 	   },
 	   // 已缴费就诊记录
-	   async getQueryFeeRecord(data) {
-	   	const queryParams = Object.keys(data)
-	   	.map(key => `${key}=${data[key]}`)
-	   	.join('&');
-	   	const url = `queryFeeRecord?${queryParams}`;
+		async getQueryFeeRecord(data) {
+			const queryParams = Object.keys(data)
+			.map(key => `${key}=${data[key]}`)
+			.join('&');
+			const url = `queryFeeRecord?${queryParams}`;
 			const res = await cjRequest({
 				url: url,
 				method: "get",
 			}, 2)
 			return res
-	   },
+		},
 		// 已缴费就诊记录明细
-	 async queryFeeDetailRecord(data) {
+	  async queryFeeDetailRecord(data) {
 			const queryParams = Object.keys(data)
 			.map(key => `${key}=${data[key]}`)
 			.join('&');
@@ -72,7 +73,19 @@ const patient = {
 				method: "get",
 			})
 			return res
-	 },
+	  },
+	  // 未交费就诊记录明细
+	  async queryCostDetail(data) {
+			const queryParams = Object.keys(data)
+			.map(key => `${key}=${data[key]}`)
+			.join('&');
+			const url = `queryCostDetail?${queryParams}`;
+			const res = await cjRequest({
+				url: url,
+				method: "get",
+			})
+			return res
+	  },
 		 
 }
  

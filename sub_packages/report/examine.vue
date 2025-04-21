@@ -5,23 +5,13 @@
 			<view class="personal-2">
 				<view class="center">
 					<view class="word">
-						<view>
-							影像学表现:
-						</view>
-						
-						<view>
-							{{conclusion.E08.content?conclusion.E08.content:''}}
-						</view>
+						<view>影像学表现:</view>
+						<view>{{report.checkResult ? report.checkResult : ''}}</view>
 					</view>
 					<view class="word">
-						<view>
-							影像学诊断:
-						</view>
-						<view>
-							{{conclusion.E09.content?conclusion.E09.content:''}}
-						</view>
+						<view>影像学诊断:</view>
+						<view>{{report.diagnosis ? report.diagnosis : ''}}</view>
 					</view>
-					
 				</view>
 			</view>
 		</view>
@@ -30,7 +20,6 @@
 
 <script>
 	import personalInformation from './components/personalInformation.vue';
-	import elseApi from '@/api/elseApi.js'
 	import { mapState } from 'vuex'
 	export default {
 		components:{
@@ -39,7 +28,6 @@
 		data(){
 			return {
 				report:{},
-				conclusion:{},
 			}
 		},
 		computed: {
@@ -47,42 +35,7 @@
 		},
 		onLoad(e) {
 			this.report = JSON.parse(decodeURIComponent(e.report))
-			if(this.report.documentID){
-			this.documentReview(this.report)
-			}
 		},
-		methods: {
-			documentReview(item){
-				try {
-					let data = {
-						patientID: this.footData.patientUniquelyIdentifies,
-						visitNumber:this.report.visitNumber,
-						documentType:item.documentType,
-						documentID:item.documentID
-					}
-					elseApi.documentReview(data).then(res => {
-						if(res.data.code===200){
-							let result = res.data.data.body.documentSearchRp.documents.document[0].documentContentJson.clinicalDocument;
-							this.conclusion = result.structuredBody.section[1] || [];
-							let department = result.structuredBody.E0077.content;
-							
-							const { E15, E13,E08 } = this.conclusion;
-							const newData = {
-							  reportDoctor: E15?.content,
-							  auditDoctor: E13?.content,
-							  manifestation: E08?.content,
-								department,
-							  title:'检查'
-							};
-							this.report = {...this.report,...newData}
-						}
-					})
-				} catch (error) {
-					console.log(error)
-					//TODO handle the exception
-				}
-			},
-		}
 	}
 </script>
 

@@ -21,7 +21,6 @@
 	    "navigationBarTitleText": "HeHeAccompany",
 			"disableScroll": true,
 			"componentPlaceholder": {
-				"first": "view",
 				"check": "view",
 				"answer": "view",
 				"prescription": "view",

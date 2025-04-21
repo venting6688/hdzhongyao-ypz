@@ -24,6 +24,13 @@
 				<li v-for="(item,index) in billList" :key="index">
 					<view class="middle">
 						<view class="title">
+							<view class="header">
+								<view class="time">{{item.tradeTime}}</view>
+								<view class="delete" @click="particulars(item, '未交费')">
+									<text>费用明细</text>
+									<image src="../static/image/Vector@2x.png" mode=""></image>
+								</view>
+							</view>
 							<view class="clinic"><text>就诊时间：{{item.billDate}}</text></view>
 							<view class="clinic"><text>就诊科室：{{item.deptName}}</text></view>
 							<view class="clinic"><text>就诊医生：{{item.doctName}}</text></view>
@@ -52,18 +59,14 @@
 			<view class="loading" v-if="loading.loadingState">
 				<van-loading size="24px" vertical>{{loading.loadingName}}</van-loading>
 			</view>
-			
 			<zanwu v-if="headIndex===1 && !billList.length && !loading.loadingState" />
-			
 			<ul v-if="headIndex===2">
 				<template v-if="alreadyList.length">
-					<li @click="particulars(item)" v-for="(item,index) in alreadyList" :key="index">
+					<li @click="particulars(item, '已缴费')" v-for="(item,index) in alreadyList" :key="index">
 						<view class="middle">
 							<view class="title">
 								<view class="header">
-									<view class="time">
-									    {{item.tradeTime}}
-								    </view>
+									<view class="time">{{item.tradeTime}}</view>
 									<view class="delete">
 										<text>费用明细</text>
 										<image src="../static/image/Vector@2x.png" mode=""></image>
@@ -71,11 +74,11 @@
 								</view>
 							</view>
 							<!-- <view class="list">
-								<view>
+									<view>
 									<text>就诊科室：</text>
-									<text>{{item.admDept}}</text>
+									<text>{{item.itemName}}</text>
 								</view>
-								<view>
+							<view>
 									<text>就诊医生：</text>
 									<text>{{item.admDoctor}}</text>
 								</view>
@@ -107,6 +110,7 @@
 	import bus from '@/utils/bus.js'
 	import outpatientExpenditureApi from '@/api/outpatientExpenditureApi.js'
 	import registrationApi from '@/api/registrationApi.js'
+	import guideApi from '@/api/guideApi.js'
 	
 	export default {
 		mixins: [mixin],
@@ -154,8 +158,8 @@
 			closeToast(state){
 				this.toastObj.state = state
 			},
-			particulars(detail){
-				uni.navigateTo({ url: `/sub_packages/outpatientExpenditure/particulars?detail=${encodeURIComponent(JSON.stringify(detail))}`});
+			particulars(detail, type){
+				uni.navigateTo({ url: `/sub_packages/outpatientExpenditure/particulars?detail=${encodeURIComponent(JSON.stringify(detail))}&type=${type}`});
 			},
 			//时间插件
 			show(time){
@@ -174,15 +178,18 @@
 			async queryMedicalRecords() {
 				if (this.siginData.patientCard) {
 					let data = {
-					    cardNo: this.siginData.patientCard,
-					    patientId: '',
-					    startDate: this.date.startTime,
-					    endDate: this.date.endTime,
+						cardNo: this.siginData.patientCard,
+						patientId: '',
+						startDate: this.date.startTime,
+						endDate: this.date.endTime,
+						operId: 'YPZ',
 					};
 					outpatientExpenditureApi.getToBePaid(data).then(res => {
 						let result = res.data;
 						if (result.code === 200) {
 							this.billList = result.data.Response.ResultData.RecordList;
+						} else {
+							this.billList = [];
 						}
 					}).catch(err => {
 						console.log('error：', err);
@@ -195,7 +202,7 @@
 			async getPaymentRecord(){
 				try {
 					let data = {
-						cardNo:  this.siginData.patientCard,
+						cardNo: this.siginData.patientCard,
 						patientId: '',//this.siginData.patientCard,
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
@@ -223,10 +230,8 @@
 					totalAmount: String(item.billFee), 
 					merOrderId: '157Q-'+moment().format('YYYYMMDDHHmmss')+'-'+randNum
 				}
-				
 				try {
 					registrationApi.registerOrder(msg).then(result => {
-						console.log(JSON.stringify(result.data));
 						if(result.data.errCode){
 							let { merOrderId, totalAmount, miniPayRequest } = result.data;
 							uni.requestPayment({
@@ -241,38 +246,22 @@
 										loadingState:true,
 										loadingName:'正在查询支付结果',
 									}
-									this.queryPayResultForToBePaid(result.data.data)
+									this.queryPayResultForToBePaid(result.data, item.billNo)
+									this.loading = {
+										loadingState:false,
+									}
 								},
 								fail:(err)=> {
-									console.log('sksksksksks');
-									let cancelPreSettlementData = {
-										patientID:result.data.data.patientID,
-										visitNumber:item.adm,
-										orderNo:result.data.data.orderNo,
-									}
-									outpatientExpenditureApi.cancelPreSettlement(cancelPreSettlementData).then(r => {
-										if(r.data.code===200){
-											this.loading = {
-												loadingState:false,
-											}
-											this.toastObj = {
-												state:true,
-												type:'fail',
-												message:r.data.data.resultMsg,
-											}
-										}
-									})
+									this.queryMedicalRecords()
 								}
 							});
 						}else {
-							console.log('00000');
 							this.toastObj = {
 							  state: true,
 							  type:'fail',
 							  message: result.data.msg
 							};
 						}
-						
 					})
 				} catch (error) {
 					this.toastObj = {
@@ -283,43 +272,95 @@
 					//TODO handle the exception
 				}
 			},
-			queryPayResultForToBePaid(data){
-				registrationApi.queryPayResult(data).then(res => {
-					try {
-						if(res.data.code===200){
-							this.toastObj = {
-								state:true,
-								message:res.data.msg,
-							}
-							if(this.checkState){
-								this.timer = setTimeout(()=>{
-									bus.$emit('refreshGetcheckVisit')
-									clearTimeout(this.timer)
-									uni.navigateBack()
-								},4000)
-							}
-							this.queryMedicalRecords()
-						}else {
-							this.toastObj = {
-							  state: true,
-							  type:'fail',
-							  message: '缴费失败，已退款',
-							};
+			queryPayResultForToBePaid(data, billNo){
+				//支付成功
+				let msg = {
+					patientId: this.siginData.patientCard,
+					patientName: this.siginData.patientName,
+					orderSum: data.totalAmount,
+					targetOrderId: '',
+					merOrderId: data.merOrderId,
+					lockId: data.merOrderId
+				}
+				//查询支付订单
+				registrationApi.queryPayResult(msg).then(res => {
+					if(res.data.code === 200){
+						let resMsg = JSON.parse(res.data.msg);
+						//查询patientId
+						let select = {
+							cardNo: this.siginData.patientCard,
+							cardType: 1,
+							patientName: this.siginData.patientName,
 						}
-					} catch (error) {
-						this.toastObj = {
-						  state: true,
-						  type:'fail',
-						  message: error.toString(),
-						};
+						guideApi.queryPatient(select).then((r) => {
+							let result = r.data;
+							if (result.code === 200) {
+								//缴费结算
+								let patientId = result.data.Response.ResultData.RecordList[0].patientId;
+								let opPayData = {
+									cardNo: '352655255',//this.siginData.patientCard,
+									patientId: '1111',
+									billNo,
+									tradeMode: 'CCBJRZYPLUS',
+									outTradeNo: resMsg.targetOrderld,
+									transNo: resMsg.targetOrderId,
+									cash: resMsg.invoiceAmount,
+									operId: 'mobile',
+									patientName: this.siginData.patientName,
+									totalAmount: resMsg.receiptAmount,
+									allSelf: 1,
+								}
+								registrationApi.opPay(opPayData).then((r) => {
+									let uploadRes = r.data;
+									console.log(JSON.stringify(uploadRes));
+									if (uploadRes.code === 200) {
+										this.toastObj = {
+											state: true,
+											type:'fail',
+											message: '缴费成功',
+										};
+										this.queryMedicalRecords()
+									} else {
+										//退费
+										console.log(JSON.stringify(data));
+										this.reFund(data);
+									}
+								})
+							} else {
+								//退费
+								this.reFund(data);
+							}
+						})
+					}else {
+						//退费
+						this.reFund(data);
 					}
-					
 				})
 				.catch(err => {
 					console.log('errrrrr：', err);
 				})
 			},
 			
+			reFund(data) {
+				registrationApi.refund({merOrderId: data.merOrderId, refundAmount: data.totalAmount, targerOrderId: ''}).then(r => {
+					let refundRes = r.data
+					if (refundRes.code === 200) {
+						this.toastObj = {
+							state: true,
+							type:'fail',
+							message: '缴费失败，已退款',
+						};
+						this.queryMedicalRecords()
+					} else {
+						this.toastObj = {
+							state: true,
+							type:'fail',
+							message: '退费失败，请移步人工窗口处理',
+						};
+						this.queryMedicalRecords()
+					}
+				})
+			}
 		},
 		
 	}

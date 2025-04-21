@@ -7,7 +7,7 @@
 				<li v-for="(item,index) in list" :key="index">
 					<view class="title">
 						<view class="name">
-							<text>{{item.billDate ? item.billDate : ''}}</text>
+							<text>{{item.medDate}} {{item.medTime}}</text>
 						    <!-- <image src="../static/image/icon-edit.png" mode=""></image> -->
 						</view>
 						<!-- <view class="delete">
@@ -21,16 +21,16 @@
 							<text>{{siginData.patientName}}</text>
 						</view>
 						<view class="no">
-							<text>就诊科室：</text>
-							<text>{{item.deptName}}</text>
-						</view>
-						<view class="no">
 							<text>就诊医生：</text>
 							<text>{{item.doctName}}</text>
 						</view>
 						<view class="no">
-							<text>消费金额：</text>
-							<text>￥{{item.billFee / 100}}</text>
+							<text>就诊科室：</text>
+							<text>{{item.deptName}}</text>
+						</view>
+						<view class="no">
+							<text>就诊房间：</text>
+							<text>{{item.address}}</text>
 						</view>
 					</view>
 				</li>
@@ -67,14 +67,16 @@
 				try {
 					let data = {
 						cardNo: this.siginData.patientCard,
+						patientId: this.siginData.patientCard,
+						cardType: 1, 
 						patientId: '',
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
 					}
-					elseApi.queryCostSummary(data).then(res => {
-						let result = res.data;
-						if(result.code === 200){
-							this.list = result.data.Response.ResultData.RecordList;
+					elseApi.registrationRecord(data).then(res => {
+						let result = JSON.parse(res.data.msg);
+						if(result.success){
+							this.list = result.data;
 						}else {
 							this.list = []
 						}
@@ -87,7 +89,7 @@
 				const datePattern = /^\d{4}-\d{2}-\d{2}$/.test(time.startTime);
 				if(datePattern){
 					this.date = time
-					this.getVisitRecord()
+					this.getVisitRecord();
 				}
 			},
 			information(item){
@@ -96,12 +98,10 @@
 					url: `/sub_packages/record/details?item=${encodeURIComponent(JSON.stringify(data))}`
 				})
 			}
-			
 		},
 		mounted(){
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
-			this.getVisitRecord()
 		}
 	}
 </script>
@@ -123,7 +123,6 @@
 				margin: 0 auto;
 				> li {
 					width: 681.3rpx;
-					// height: 230rpx;
 					padding-bottom: 20rpx;
 					background: #ffffff;
 					border-radius: 15.27rpx;
@@ -131,14 +130,12 @@
 					&:first-child{
 						margin: 0;
 					}
-					
 					.title {
 						margin: 0 20rpx;
 						height: 70rpx;
 						display: flex;
 						justify-content: space-between;
 						align-items: center;
-						
 						image {
 							width: 12rpx;
 							height: 18rpx;
@@ -168,11 +165,11 @@
 					}
 					.center {
 						margin: 0 20rpx;
-						height: 140rpx;
 						display: flex;
 						flex-direction: column;
 						justify-content: space-between;
 						.no {
+							padding: 5rpx 0;
 							text {
 								&:nth-child(1){
 									color: #999999;

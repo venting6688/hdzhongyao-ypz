@@ -14,18 +14,18 @@
 					</li>
 				</ul>
 			</view>
-			<view class="bar" v-if="footState===2">
-				<view v-for="(item,index) in barList" @click="throttle_btns(index,item.number)" class="barList" :key="index">
-					<view  class="bar-name"  :class="{ barColor:item.number==1 }">
-						<view>
-							<text :class="{ barBackground: item.state==item.name }">{{ item.name }}</text>
-						</view>
-					</view>
-				</view>
-			</view>
 		</view>
 		<view class="scroll-Y">
-			<view class="first" style="height: 920rpx !important;">
+			<view class="first" v-if="departmentList.length">
+				<!-- <view class="bar" v-if="footState===2 && departmentList.length">
+					<view v-for="(item,index) in barList" @click="throttle_btns(index,item.number)" class="barList" :key="index">
+						<view class="bar-name" :class="{ barColor:item.number==1 }">
+							<view>
+								<text :class="{ barBackground: item.state==item.name }">{{ item.name }}</text>
+							</view>
+						</view>
+					</view>
+				</view> -->
 				<view class="center" v-if="firstContent.queueName">
 					<view class="content">
 						<view class="icon" v-if="firstContent.queueName">
@@ -55,7 +55,6 @@
 									{{firstContent.precautions}}
 								</view>
 							</li>
-							
 						</ul>
 						<view class="btn" v-if="firstContent.queueName">
 							<view>
@@ -63,7 +62,7 @@
 								<button class="cu-btn" @click="cancelRegistration(firstContent)">退号</button>
 							</view>
 						</view>
-						<view class="inquiry" v-if="firstContent.queueName">
+						<view class="inquiry" v-if="firstContent.queueName && subscribeObj.days >= 0">
 							<view>
 								<view class="inquiry-box">
 									<view class="left">
@@ -80,13 +79,13 @@
 				</view>
 				<view v-if="subscribeObj.deptName">
 					<view class="center">
-						<view class="head" v-if="subscribeObj.days != undefined && subscribeObj.days !== '0'">
+						<view class="head" v-if="subscribeObj.days != undefined">
 							<view>
 								距离您的就诊日还有 {{subscribeObj.days}} 天
 							</view>
 						</view>
-						<view class="head" v-else>
-							<view>就诊已完成，请及时查看就诊报告</view>
+						<view class="head" v-if="subscribeObj.minutes != undefined">
+							<view @click="showRecord">就诊已完成，请查看就诊报告</view>
 						</view>
 						<view class="wire-box wireState"></view>
 						<view class="content">
@@ -115,7 +114,7 @@
 									<!-- <button v-if="subscribeObj.days==='0'" class="cu-btn" @click="takeANumberPrePay(subscribeObj)">预约取号</button> -->
 								</view>
 							</view>
-							<view class="inquiry" v-if="subscribeObj.queueName">
+							<view class="inquiry" v-if="subscribeObj.queueName && subscribeObj.days >= 0">
 								<view>
 									<view class="inquiry-box">
 										<view class="left">
@@ -132,13 +131,19 @@
 					</view>
 				</view>
 			</view>
+			<!-- 暂无信息 -->
+			<view class="without" v-else>
+				<image src="@/sub_packages/static/image/no-data.png" mode="widthFix" style="width: 300rpx;"></image>
+				<text>未查询到您的挂号信息</text>
+			</view>
+		</view>
 		<foot :footState="footState"/>
-	</view>
 	</view>
 </template>
 <script>
 	import {mapState,mapMutations} from 'vuex'
 	import foot from '@/components/footer.vue'
+	import zanwu from '@/sub_packages/components/zanwu.vue'
 	import moment from 'moment'
 	import guideApi from '@/api/guideApi.js'
 	import registrationApi from '@/api/registrationApi.js'
@@ -199,6 +204,11 @@
 					state:state,
 				}
 			},
+			showRecord() {
+				uni.navigateTo({
+					url: `/sub_packages/report/index`
+				})
+			},
 			//获取挂号数据
 			getFirstVisit() {
 				let data = uni.getStorageSync('loginData');
@@ -220,10 +230,8 @@
 					if(result.success){
 						let nowDate = moment().format('YYYY-MM-DD');
 						let subscribeList = result.data.map(item => {
-							if (nowDate != item.medDate && item.medDate > nowDate) {
-								let medDate = moment(item.medDate);
-								item.days = medDate.diff(nowDate, 'days')
-							}
+							let medDate = moment(item.medDate) 
+							item.days = medDate.diff(nowDate, 'days');
 							return {
 								...item,
 								queueName:item.deptName,
@@ -231,7 +239,6 @@
 							}
 						}) || []
 						this.departmentList =[...subscribeList]
-						console.log(JSON.stringify(this.departmentList));
 						this.departmentList.sort((a, b) => {
 							let timeA = new Date(`${a.medDate} ${a.medTime}`).getTime();
 							let timeB = new Date(`${b.medDate} ${b.medTime}`).getTime();
@@ -255,9 +262,12 @@
 								this.$set(this.headerEmit,'visitNumber',this.departmentList[0].visitNumber || this.departmentList[0].orderNo)
 							}
 							this.subscribeObj = this.departmentList.find(x => x.orderNo == this.headerEmit.orderNo);
-						}else {
+						} else {
 							this.barList = []
 						}
+					} else {
+						this.subscribeObj = [];
+						this.departmentList = [];
 					}
 				}).catch(err => {
 					console.log('errrrrr：', err);
@@ -297,7 +307,7 @@
 									tradeCode: '1003',
 									extUserID: 'mobile',
 									orderNo: item.orderNo,
-									operId: 'mobile'
+									operId: 'YPZ'
 								}
 								//退号
 								guideApi.cancelAppointOrRegister(data).then((res) => {
@@ -311,7 +321,9 @@
 													icon: 'none',   
 													duration: 2000 
 												})
+												this.getFirstVisit();
 											} else {
+												this.getFirstVisit();
 												uni.showToast({
 													title: '退号成功, 退款失败，请移步人工窗口处理',
 													icon: 'none',   
@@ -349,20 +361,20 @@
 </script>
 
 <style lang="less">
-	.convenient {
-			height: 350rpx !important;
-		}
+	// .convenient {
+	// 		height: 350rpx !important;
+	// 	}
 	.head {
 		position: relative;
 		flex: 0 0 auto;
 		width: 100%;
+		height: 194rpx;
 		.text {
 			position: absolute;
 			width: 480rpx;
 			color: #ffffff;
 			font-weight: 600;
 			margin: 46rpx 0 0 32rpx;
-	
 			.title {
 				font-size: 32rpx;
 			}
@@ -376,7 +388,7 @@
 		.background {
 			display: block;
 			position: absolute;
-			height: 325rpx;
+			// height: 325rpx;
 			width: 100%;
 		}
 	
@@ -453,79 +465,7 @@
 			}
 				
 		}
-		.bar {
-			position: absolute;
-			bottom: 0;
-			width: 100%;
-			height: 72rpx;
-			background: rgba(255, 255, 255, 0.82);
-			box-shadow: 0rpx 4rpx 8rpx 0rpx rgba(31, 104, 135, 0.14);
-			// filter: blur(40rpx);
-			display: flex;
-			justify-content: space-around;
-			align-items: center;
-			color: #888888;
-	
-			.barList {
-				display: flex;
-				justify-content: center;
-				width: 100%;
-				&:nth-of-type(even){
-					max-width: 60rpx;
-					 .bar-name {
-						 >view {
-							  >text {
-								  padding: 0;
-								  padding: 0 0 0 15rpx;
-					 }
-						 }
-					 }
-					
-				}
-				.bar-name {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					text-align: center;
-					width: 70%;
-					height: 60rpx;
-					
-					>view {
-						display: flex;
-						align-items: center;
-						white-space: nowrap;
-						justify-content: center;
-						height: 52rpx;
-						font-size: 32rpx;
-						line-height: 32rpx;
-						
-						>text {
-							border-radius: 10rpx;
-							padding: 10rpx 20rpx;
-							// width: 110rpx;
-						}
-					}
-					
-					
-					.icons {
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						width: 30%;
-						background: #222;
-						font-size: 28rpx;
-						height: 60rpx;
-						letter-spacing: -10rpx;
-					
-						text {
-							display: block;
-							line-height: 28rpx;
-						}
-					}
-				}
-				
-			}
-		}
+		
 		.barColor {
 			color: #0f74c8 !important;
 		}
@@ -541,6 +481,24 @@
 		background-color: #f5f5f5;
 		display: flex;
 		flex-direction: column;
+	 
+	  .without {
+	  	font-size: 40rpx;
+	  	width: 700rpx;
+	  	padding-bottom: 35rpx;
+	  	background: #ffffff;
+	  	margin: 0 auto;
+	  	border-radius: 15.27rpx;
+	  	display: grid;
+	  	justify-content: center;
+	  	align-items: center;
+			margin-top: 50rpx;
+	  	text {
+	  		color: #797979;
+	  		font-size: 32rpx;
+	  		text-align: center;
+	  	}
+	  }
 	
 		.scroll-Y {
 			width: 750rpx;
@@ -571,6 +529,81 @@
 					text-align: center;
 					flex: auto;
 					overflow: auto;
+					margin-top: 80rpx;
+					// .bar {
+					// 	position: absolute;
+					// 	bottom: 0;
+					// 	width: 100%;
+					// 	height: 72rpx;
+					// 	background: rgba(255, 255, 255, 0.82);
+					// 	box-shadow: 0rpx 4rpx 8rpx 0rpx rgba(31, 104, 135, 0.14);
+					// 	// filter: blur(40rpx);
+					// 	display: flex;
+					// 	justify-content: space-around;
+					// 	align-items: center;
+					// 	color: #888888;
+						
+					// 	.barList {
+					// 		display: flex;
+					// 		justify-content: center;
+					// 		width: 100%;
+					// 		&:nth-of-type(even){
+					// 			max-width: 60rpx;
+					// 			 .bar-name {
+					// 				 >view {
+					// 					  >text {
+					// 						  padding: 0;
+					// 						  padding: 0 0 0 15rpx;
+					// 			 }
+					// 				 }
+					// 			 }
+								
+					// 		}
+					// 		.bar-name {
+					// 			display: flex;
+					// 			justify-content: center;
+					// 			align-items: center;
+					// 			text-align: center;
+					// 			width: 70%;
+					// 			height: 60rpx;
+								
+					// 			>view {
+					// 				display: flex;
+					// 				align-items: center;
+					// 				white-space: nowrap;
+					// 				justify-content: center;
+					// 				height: 52rpx;
+					// 				font-size: 32rpx;
+					// 				line-height: 32rpx;
+									
+					// 				>text {
+					// 					border-radius: 10rpx;
+					// 					padding: 10rpx 20rpx;
+					// 					// width: 110rpx;
+					// 				}
+					// 			}
+								
+								
+					// 			.icons {
+					// 				display: flex;
+					// 				align-items: center;
+					// 				justify-content: center;
+					// 				width: 30%;
+					// 				background: #222;
+					// 				font-size: 28rpx;
+					// 				height: 60rpx;
+					// 				letter-spacing: -10rpx;
+								
+					// 				text {
+					// 					display: block;
+					// 					line-height: 28rpx;
+					// 				}
+					// 			}
+					// 		}
+							
+					// 	}
+					// }
+					
 				.center {
 					margin:28rpx 33rpx 0 33rpx;
 					width: 684rpx;

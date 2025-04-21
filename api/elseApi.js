@@ -17,11 +17,11 @@ const patient = {
 	},
 	
 	// 就诊记录列表
-	async queryCostSummary(data) {
+	async registrationRecord(data) {
 		const queryParams = Object.keys(data)
 		.map(key => `${key}=${data[key]}`)
 		.join('&');
-		const url = `queryCostSummary?${queryParams}`;
+		const url = `registrationRecord?${queryParams}`;
 		const res = await cjRequest({
 			url: url,
 			method: "get",
@@ -39,10 +39,12 @@ const patient = {
 	},
 	// 获取就诊报告 —— 检验报告
 	async queryLisBaseInfo(data) {
+		const queryParams = Object.keys(data)
+			.map(key => `${key}=${data[key]}`)
+			.join('&');
 		const res = await cjRequest({
-			url: "queryLisBaseInfo",
-			method: "post",
-			data,
+			url: `queryLisBaseInfo?${queryParams}`,
+			method: "get",
 		}, 2)
 		return res
 	},
