@@ -1,7 +1,7 @@
 <template>
 	<view class="box">
 		<view class="head" :class="{convenient:footState===2}">
-			<image class="background" src="../../static/image/Group 1001.png" mode="widthFix"></image>
+			<image class="background" src="../../static/image/bjdy.png" mode="widthFix"></image>
 			<view class="dist">
 				<ul v-if="footState===2 && departmentList.length">
 					<li v-for="(item,index) in departmentList" :key="index">
@@ -79,7 +79,7 @@
 				</view>
 				<view v-if="subscribeObj.deptName">
 					<view class="center">
-						<view class="head" v-if="subscribeObj.days != undefined">
+						<view class="head" v-if="subscribeObj.days != undefined" style="height: 90rpx;">
 							<view>
 								距离您的就诊日还有 {{subscribeObj.days}} 天
 							</view>
@@ -368,7 +368,7 @@
 		position: relative;
 		flex: 0 0 auto;
 		width: 100%;
-		height: 194rpx;
+		height: 284rpx;
 		.text {
 			position: absolute;
 			width: 480rpx;
@@ -406,7 +406,7 @@
 			overflow: auto;
 			white-space: nowrap;
 			padding:0 30rpx 10rpx 30rpx;
-			background: linear-gradient(to right, #46DAFB, #55A0F9);
+			// background: linear-gradient(to right, #46DAFB, #55A0F9);
 			>ul {
 				display: flex;
 				align-items: center;
@@ -529,81 +529,6 @@
 					text-align: center;
 					flex: auto;
 					overflow: auto;
-					margin-top: 80rpx;
-					// .bar {
-					// 	position: absolute;
-					// 	bottom: 0;
-					// 	width: 100%;
-					// 	height: 72rpx;
-					// 	background: rgba(255, 255, 255, 0.82);
-					// 	box-shadow: 0rpx 4rpx 8rpx 0rpx rgba(31, 104, 135, 0.14);
-					// 	// filter: blur(40rpx);
-					// 	display: flex;
-					// 	justify-content: space-around;
-					// 	align-items: center;
-					// 	color: #888888;
-						
-					// 	.barList {
-					// 		display: flex;
-					// 		justify-content: center;
-					// 		width: 100%;
-					// 		&:nth-of-type(even){
-					// 			max-width: 60rpx;
-					// 			 .bar-name {
-					// 				 >view {
-					// 					  >text {
-					// 						  padding: 0;
-					// 						  padding: 0 0 0 15rpx;
-					// 			 }
-					// 				 }
-					// 			 }
-								
-					// 		}
-					// 		.bar-name {
-					// 			display: flex;
-					// 			justify-content: center;
-					// 			align-items: center;
-					// 			text-align: center;
-					// 			width: 70%;
-					// 			height: 60rpx;
-								
-					// 			>view {
-					// 				display: flex;
-					// 				align-items: center;
-					// 				white-space: nowrap;
-					// 				justify-content: center;
-					// 				height: 52rpx;
-					// 				font-size: 32rpx;
-					// 				line-height: 32rpx;
-									
-					// 				>text {
-					// 					border-radius: 10rpx;
-					// 					padding: 10rpx 20rpx;
-					// 					// width: 110rpx;
-					// 				}
-					// 			}
-								
-								
-					// 			.icons {
-					// 				display: flex;
-					// 				align-items: center;
-					// 				justify-content: center;
-					// 				width: 30%;
-					// 				background: #222;
-					// 				font-size: 28rpx;
-					// 				height: 60rpx;
-					// 				letter-spacing: -10rpx;
-								
-					// 				text {
-					// 					display: block;
-					// 					line-height: 28rpx;
-					// 				}
-					// 			}
-					// 		}
-							
-					// 	}
-					// }
-					
 				.center {
 					margin:28rpx 33rpx 0 33rpx;
 					width: 684rpx;
