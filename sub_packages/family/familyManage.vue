@@ -48,36 +48,46 @@
 		</view>
 		<view class="btn" @click="increase">
 			<image src="../static/image/icon-add.png" mode=""></image>
-			<text>添加家庭成员（剩{{5-this.patientList.length}}人）</text>
+			<text>添加就诊人（剩{{5-this.patientList.length}}人）</text>
 		</view>
+		<auth-popup 
+			ref="authPopup"
+			@success="authSuccess"
+			@fail="authFail"
+			@cancel="authCancel"
+		/>
 	</view>
+		
 </template>
 
 <script>
 	import mixin from '@/mixins/mixin.js'
 	import {mapMutations , mapState} from 'vuex'
 	import HeaderbarApi from '@/api/HeaderbarApi.js'
+	import healthCard from '@/api/healthCard.js'
+  import AuthPopup from '../components/auth-popup.vue'
+	
 	export default {
 		mixins: [mixin],
+		components: {
+			AuthPopup
+		},
 		data(){
 			return {
 				patientList:[],
+				showBtn: false,
+				healthCode: '',
+				regInfoCode: '',
+				authCode: '',
 			}
 		},
-		onShow() {
-			let loginValue = uni.getStorageSync("loginData");
-			if(loginValue){
-				let registerData = JSON.parse(loginValue)
-				this.patientList = registerData && registerData.archivesList
-				this.patientList.forEach((item, i) => {
-				    item.defaul = false;
-				    this.$set(this.patientList, i, item);
-				});
-				const temp = this.patientList[0];
-				temp.default = true;
-				this.$set(this.patientList, 0, temp);
-			}
+		onShow() { },
+		onLoad(e) {
+			this.healthCode = e.healthCode ? e.healthCode : '';
+			this.regInfoCode = e.regInfoCode ? e.regInfoCode : '';
+			this.authCode = e.authCode ? e.authCode : '';
 		},
+		
 		computed: {
 			...mapState(['footData']),
 		},
@@ -132,17 +142,79 @@
 					console.log(e);
 				}
 			},
+			
 			unfoldFun(index){
 				console.log(';;d;d;d')
 				const temp = this.patientList[index]
 				temp.unfold = !this.patientList[index].unfold
 				this.$set(this.patientList, index, temp)
 			},
+			
+			//电子健康卡
 			increase() {
-				uni.navigateTo({
-					url: `/sub_packages/family/familyInformation`
-				})
+				var plugin = requirePlugin("healthCardPlugins");
+				plugin.login((isok, res) => {
+					if (!isok && res.result.toLogin) {
+						// 用户未授权，需要用户同意授权
+						// 显示 healthCardLogin 登录组件，引导用户同意授权
+						// this.showBtn = true
+						this.$refs.authPopup.open();
+					} else {
+						// 用户在微信授权过，可直接获取登录信息，处理后续业务
+						this.todo(res);
+						console.log(res);
+					}
+				}, {
+					wechatCode: true,
+				});
 			},
+			
+			async todo(val) {
+				const { wechatCode } = val.result;
+				let loginValue = uni.getStorageSync("loginData");
+				console.log(JSON.stringify(loginValue),'======')
+				let data = {
+					weChatCode: wechatCode,
+					patientType: 0,
+					successRedirectUrl: 'mini:/sub_packages/family/familyManage?healthCode=${healthCode}',
+					failRedirectUrl: 'mini:/sub_packages/family/familyManage?regInfoCode=${regInfoCode}',
+					userFormPageUrl: 'mini:/sub_packages/family/familyManage?authCode=${authCode}',
+					faceUrl:`/sub_packages/family/facePage`,
+					verifyFailRedirectUrl:`mini:/sub_packages/family/familyManage`,
+					domainChannel: 3,
+					openId: loginValue.xcxOpenId,
+				}
+				await healthCard.cardVerification(data).then((res) => {
+					console.log(JSON.stringify(res),'=====我是建档接口1.0=========');
+				});
+				
+				
+				// wx.showModal({
+				// 	title: 'wechatCode',
+				// 	content: wechatCode,
+				// });
+				// 后续业务代码
+				// ...
+			},
+			
+			// 用户同意授权，授权成功回调
+			authSuccess(e) {
+				console.log('用户同意授权：', e);
+				const res = e.detail; 
+				// 同 plugin.login，用户同意授权，获取登录信息，处理后续业务
+				this.todo(res);
+			},
+		
+			// 用户授权失败
+			authFail(e) {
+				console.log('授权失败：', e)
+			},
+		
+			// 用户取消授权，授权失败回调
+			authCancel(e) {
+				console.log('用户取消授权：', e)
+			},
+			
 		}
 	}
 </script>

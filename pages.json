@@ -218,6 +218,15 @@
 				}
 			},
 			{
+				//人脸识别
+				"path" : "family/facePage",
+				"style" : 
+				{
+					"navigationBarTitleText": "人脸识别",
+					"disableScroll": true
+				}
+			},
+			{
 				//家庭管理-添加家庭成员
 				"path" : "family/familyInformation",
 				"style" : 
@@ -312,8 +321,11 @@
 				"van-toast": "/wxcomponents/vant/toast/index",
 				"van-rate": "/wxcomponents/vant/rate/index",
 				"van-loading": "/wxcomponents/vant/loading/index",
-				"van-progress": "/wxcomponents/vant/progress/index"
-				
+				"van-progress": "/wxcomponents/vant/progress/index",
+				"health-card-login": "plugin://healthCardPlugins/healthCardLogin",
+				"health-card-users": "plugin://healthCardPlugins/healthCardUsers",
+				"health-card-create-card": "plugin://healthCardPlugins/healthCardCreateCard",
+				"health-card-query-comp": "plugin://healthCardPlugins/healthCardQueryComp"
 		},
 		"permission":{
 			"scope.userLocation":{

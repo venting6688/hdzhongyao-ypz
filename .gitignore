@@ -1,2 +1,7 @@
 unpackage/
 node_modules/
+sub_packages/static/image/zanwu1.png
+sub_packages/filing/selectCard1.vue
+components/HeaderBar - 副本.vue
+pages/convenient/index - 副本.vue
+sub_packages/convenientModule/components/outpatient/first - 副本.vue

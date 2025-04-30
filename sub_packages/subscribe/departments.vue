@@ -7,7 +7,7 @@
 		    @change="onSearchChange"
 		/> -->
 		<van-tree-select
-			height="880rpx"
+			height="1000rpx"
 			:items="filteredItems"
 			:main-active-index.sync="mainActiveIndex"
 			:active-id.sync="activeId"

@@ -43,11 +43,23 @@
 				<view class="title">患者类型</view>
 				<input v-model="informationObj.patientType" placeholder="自费或医保" name="input" />
 			</view>
-			
 			<view class="cu-form-group" style="margin-top: 30rpx;">
 				<view class="title">手机号</view>
 				<input v-model="informationObj.phone" placeholder="请输入院内预留手机号" type="number" maxlength="11" name="input" />
 			</view>
+			
+			<view class="cu-form-group">
+				<view class="x">*</view>
+				<view class="title">验证码</view>
+				<input v-model="informationObj.verificationCode" placeholder="请输入短信验证码" name="input" />
+				<view @click="verificationCodeBtn" v-if="!verificationCodeState" class="verificationCode">
+					获取验证码
+				</view>
+				<view class="answer" v-else>
+					{{time}}
+				</view>
+			</view>
+			
 		</form>
 		<view class="tips">
 			<view class="tips-title">
@@ -166,6 +178,18 @@
 				const index = e.detail.value
 				this.selectedSex = this.sexs[index]
 				this.informationObj.sex = this.selectedSex;
+			},
+			// 获取验证码
+			verificationCodeBtn(){
+				console.log(this.informationObj)
+				this.verificationCodeState = true
+				this.count(60)
+				filingApi.sendVerificationCode(this.informationObj.phone).then(res => {
+				})
+				.catch(err => {
+					console.log('2：', err);
+				})
+				
 			},
 			Filing(){
 				if (!this.informationObj.patientName ||!this.informationObj.idNo ||!this.informationObj.phone) {

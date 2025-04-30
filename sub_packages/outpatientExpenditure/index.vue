@@ -35,15 +35,6 @@
 							<view class="clinic"><text>就诊科室：{{item.deptName}}</text></view>
 							<view class="clinic"><text>就诊医生：{{item.doctName}}</text></view>
 						</view>
-						<!-- <view class="center"  v-for="(i,x) in item.itemList.item" :key="x">
-							<view class="no">
-								<view class="name">{{i.itemName}}</view>
-								<view class="price">
-									<text>单价：{{i.billFee}}</text>
-									<text>￥{{i.billFee / 100}}</text>
-								</view>
-							</view>
-						</view> -->
 					</view>
 					<view class="totalMoney">
 						<view class="">
@@ -51,8 +42,12 @@
 							<text>￥{{item.billFee / 100}}元</text>
 						</view>
 					</view>
-					<view class="btn">
+					<view class="btn" v-if="item.AdmReasonCode == 1">
 						<view class="self-paying" @click="pay(item)">立即缴费</view>
+					</view>
+					<view class="message" v-else>
+						<uni-icons type="info" size="20" style="padding-right: 6rpx;"></uni-icons>
+						注意：请到缴费窗口进行缴费
 					</view>
 				</li>
 			</ul>
@@ -545,7 +540,9 @@
 							}
 						}
 					}
-					
+					.message {
+						padding: 25rpx;
+					}
 					
 				}
 			}

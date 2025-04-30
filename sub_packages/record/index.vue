@@ -32,6 +32,10 @@
 							<text>就诊房间：</text>
 							<text>{{item.address}}</text>
 						</view>
+						<view class="no">
+							<text>就诊状态：</text>
+							<text>{{item.statusName}}</text>
+						</view>
 					</view>
 				</li>
 			</ul>
@@ -77,6 +81,10 @@
 						let result = JSON.parse(res.data.msg);
 						if(result.success){
 							this.list = result.data;
+							this.list.map(v => {
+								v.statusName = this.showStatus(v.status);
+								return v;
+							})
 						}else {
 							this.list = []
 						}
@@ -85,6 +93,46 @@
 					console.log(error)
 				}
 			},
+			
+			showStatus(val) {
+				let text = '';
+				switch(val) {
+					case '0':
+						text = '已预约';
+						break;
+					case '1':
+						text = '已挂号';
+						break;
+					case '2':
+						text = '已取消';
+						break;
+					case '3':
+						text = '已过期';
+						break;
+					case '4':
+						text = '已停诊';
+						break;
+					case '5':
+						text = '已退号';
+						break;
+					case '7':
+						text = '就诊未完成';
+						break;
+					case '8':
+						text = '就诊完成';
+						break;
+					case '101':
+						text = '待支付';
+						break;
+					case '102':
+						text = '取消锁号';
+						break;
+					default:
+						text = '订单失效';
+				}
+				return text;
+			},
+			
 			show(time){
 				const datePattern = /^\d{4}-\d{2}-\d{2}$/.test(time.startTime);
 				if(datePattern){

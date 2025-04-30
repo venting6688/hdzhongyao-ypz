@@ -82,17 +82,17 @@
 							// {
 							// 	img:'https://aiwz.sdtyfy.com:8099/img/synthesize1.png',
 							// 	name:'家庭管理',
-							// 	num:23,
+							// 	num:6,
 							// },
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/synthesize4.png',
 								name:'在线建档',
-								num:6,
+								num:7,
 							},
 							{
 								img:'https://aiwz.sdtyfy.com:8099/img/synthesize6.png',
 								name:'我的',
-								num:7,
+								num:8,
 							},
 						]
 					},
@@ -103,8 +103,9 @@
 					'/sub_packages/record/index', //3
 					'/sub_packages/report/index', //4
 					'/sub_packages/medicine/index', //5
-					'/sub_packages/filing/information',
-					'/sub_packages/mine/index',
+					'/sub_packages/family/familyManage', //6
+					'/sub_packages/filing/information', //7
+					'/sub_packages/mine/index', //8
 				],
 			}
 		},
