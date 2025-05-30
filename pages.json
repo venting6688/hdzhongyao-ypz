@@ -14,7 +14,12 @@
 	  		"disableScroll": true
 	    }
 	},
-	
+	{
+		"path": "pages/webview/webview",
+		   "style": {
+		       "navigationBarTitleText": "加载中..."
+		   }
+	},
 	{
 	  "path": "pages/convenient/index",
 	  "style": {
@@ -136,15 +141,6 @@
 					"disableScroll": true
 				}
 			},
-			// {
-			// 	//在线建档-管理
-			// 	"path" : "filing/manage",
-			// 	"style" : 
-			// 	{
-			// 		"navigationBarTitleText": "在线建档",
-			// 		"disableScroll": true
-			// 	}
-			// },
 			{
 				//查询档案
 				"path" : "filing/selectCard",
@@ -155,20 +151,11 @@
 				}
 			},
 			{
-				//在线建档-上传身份证
-				"path" : "filing/identityCard",
-				"style" : 
-				{
-					"navigationBarTitleText": "在线建档",
-					"disableScroll": true
-				}
-			},
-			{
-				//在线建档-填写信息页面
+				//添加就诊人-填写信息页面
 				"path" : "filing/information",
 				"style" : 
 				{
-					"navigationBarTitleText": "在线建档",
+					"navigationBarTitleText": "添加就诊人",
 					"disableScroll": true
 				}
 			},
@@ -213,16 +200,7 @@
 				"path" : "family/familyManage",
 				"style" : 
 				{
-					"navigationBarTitleText": "家庭管理",
-					"disableScroll": true
-				}
-			},
-			{
-				//人脸识别
-				"path" : "family/facePage",
-				"style" : 
-				{
-					"navigationBarTitleText": "人脸识别",
+					"navigationBarTitleText": "就诊人管理",
 					"disableScroll": true
 				}
 			},
@@ -232,15 +210,6 @@
 				"style" : 
 				{
 					"navigationBarTitleText": "查询建档",
-					"disableScroll": true
-				}
-			},
-			{
-				//家庭管理-修改信息
-				"path" : "family/familyAmend",
-				"style" : 
-				{
-					"navigationBarTitleText": "家庭管理",
 					"disableScroll": true
 				}
 			},
@@ -284,6 +253,24 @@
 				"style" : 
 				{
 					"navigationBarTitleText": "预问诊",
+					"disableScroll": true
+				}
+			},
+			{
+				//添加就诊人（健康卡）
+				"path" : "family/registerHealth",
+				"style" : 
+				{
+					"navigationBarTitleText": "添加就诊人",
+					"disableScroll": true
+				}
+			},
+			{
+				//人脸识别
+				"path" : "family/faceVerify",
+				"style" : 
+				{
+					"navigationBarTitleText": "人脸识别",
 					"disableScroll": true
 				}
 			}

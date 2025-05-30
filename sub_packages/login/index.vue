@@ -22,7 +22,10 @@
 </template>
 
 <script>
+	import {mapMutations} from 'vuex'
 	import loginApi from '@/api/loginApi.js'
+	import filingApi from '@/api/filingApi.js'
+	
 	export default {
 		data (){
 			return {
@@ -30,6 +33,9 @@
 			}
 		},
 		methods: {
+			...mapMutations({
+				setFootData:'SET_FOOT_DATA',
+			}),
 			userAgreement(){
 				uni.navigateTo({
 					url:`/sub_packages/agreement/userAgreement`
@@ -57,7 +63,26 @@
 					this.getPhoneNumberFn(e.detail.code, res.code).then(data => { // 服务端获取手机号
 					let phone = data.data.phoneNum;
 						if (!data.data.patientName) {
-							uni.navigateTo({ url:"/sub_packages/family/familyInformation?phone="+phone })
+							let data = {
+								phone,
+							}
+							filingApi.archiveQuery(data).then(res => {
+								let result = res.data.data;
+								uni.setStorageSync('loginData', result);
+								if (!result.defaultArchives) {
+									// uni.navigateTo({ url:"/sub_packages/family/familyManage" })
+									uni.showModal({
+										title: "未查询到默认就诊人，请先添加或设置默认就诊人",
+										success: res => {
+											if (res.confirm) {
+												uni.navigateTo({ url:"/sub_packages/family/familyManage" })
+											} 
+										}
+									});
+								} else {
+									uni.switchTab({ url:"/pages/virtualNurse/index" })
+								}
+							});
 						} else {
 							let items = JSON.stringify(data.data)
 							uni.setStorageSync('loginData', items)

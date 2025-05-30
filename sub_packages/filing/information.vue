@@ -2,8 +2,14 @@
 	<view class="information">
 		<form>
 			<view class="cu-form-group">
+				<view class="x">*</view>
 				<view class="title">姓名</view>
 				<input v-model="informationObj.patientName" placeholder="请输入" name="input" />
+			</view>
+			<view class="cu-form-group">
+				<view class="x">*</view>
+				<view class="title">身份证号</view>
+				<input v-model="informationObj.idNo" placeholder="请输入" name="input"  @input="parseIdCard" maxlength="18" />
 			</view>
 			<view class="cu-form-group">
 				<view class="title">性别</view>
@@ -24,6 +30,12 @@
 				</picker>
 			</view>
 			<view class="cu-form-group">
+				<view class="title">家庭关系</view>
+				<picker mode="selector" :value="informationObj.relation" :range="barList" @change="onRelationChange">
+					<text class="picker birth">{{selectedRelation}}</text>
+				</picker>
+			</view>
+			<view class="cu-form-group">
 				<view class="title">省市区</view>
 				<picker mode="region" @change="chooseregion" :value="provincesAndMunicipalities">
 					<view class="picker">
@@ -36,14 +48,11 @@
 				<input v-model="address" name="input" />
 			</view>
 			<view class="cu-form-group">
-				<view class="title">身份证号</view>
-				<input v-model="informationObj.idNo" placeholder="请输入" name="input" />
-			</view>
-			<view class="cu-form-group">
 				<view class="title">患者类型</view>
 				<input v-model="informationObj.patientType" placeholder="自费或医保" name="input" />
 			</view>
 			<view class="cu-form-group" style="margin-top: 30rpx;">
+				<view class="x">*</view>
 				<view class="title">手机号</view>
 				<input v-model="informationObj.phone" placeholder="请输入院内预留手机号" type="number" maxlength="11" name="input" />
 			</view>
@@ -70,8 +79,11 @@
 				<view>★  手机号需要填写本人正在使用的手机号</view>
 			</view>
 		</view>
-		<view class="confirm" @click="Filing" :class="{unclickable:!informationObj.patientName ||!informationObj.idNo}">
-			确认建档
+		<view 
+		class="confirm" 
+		@click="Filing" 
+		:class="{unclickable:!informationObj.patientName ||!informationObj.idNo || !informationObj.phone || !informationObj.verificationCode}">
+			添加就诊人
 		</view>
 	</view>
 </template>
@@ -90,11 +102,13 @@
 					patientName:'',
 					patientType: '自费', //病人类型
 					guarderId: '', //监护人身份证id
-					sex:['男'],
-					birthday:'1995-01-01',
+					sex:'',
+					birthday:'',
 					phone:'',
 					address:'',
 					nation:['汉族'], //民族
+					verificationCode: '',
+					relation: '',
 				},
 				provincesAndMunicipalities: ['山东省','济南市','历下区'],
 				nations: [
@@ -105,35 +119,19 @@
 					'阿昌族', '普米族', '鄂温克族', '怒族', '京族', '基诺族', '德昂族', '保安族', '俄罗斯族', '裕固族',
 					'乌孜别克族', '门巴族', '鄂伦春族', '独龙族', '塔塔尔族', '赫哲族', '珞巴族'
 				],
-				selectedNation: '',
 				sexs: ['男', '女'],
-				selectedSex: '',
 				address: '',
 				occupationPickerIndex: -1,
 				patientTypePickerIndex:-1,
-				patientTypePicker: [
-					{name:'自费', type:'01'},
-					{name:'本市职工慢病', type:'02'},
-					{name:'本市居民慢病', type:'03'},
-					{name:'省内异地职工门诊', type:'04'},
-					{name:'省直', type:'05'},
-					{name:'离休',type:'06'},
-					{name:'省外异地职工慢病', type:'07'},
-					{name:'省内异地职工慢病', type:'08'},
-					{name:'省内异地居民门诊', type:'09'},
-					{name:'省内异地居民慢病', type:'10'},
-					{name:'省直门诊慢病', type:'11'},
-					{name:'本市职工普通门诊', type:'12'},
-					{name:'省外异地职工门诊', type:'13'},
-					{name:'省外异地居民慢病',type:'14'},
-					{name:'省外异地居民门诊',type:'15'},
-				],
-				barList:['本人','配偶','父母','子女','其他'],
-				countTimer:null,
-				time:60,
+				barList: ['本人','父母','子女','夫妻', '亲属', '朋友', '其他'],
+				countTimer: null,
+				time: 60,
 				verificationCodeState:false,
 				siginData: {},
-				loginPhoneNum: ''
+				loginPhoneNum: '',
+				selectedRelation: '',
+				selectedNation: '',
+				selectedSex: '',
 			}
 		},
 		computed:{
@@ -145,8 +143,9 @@
 				uni.$emit('pageNavigated');
 			})
 		},
-		onLoad(e) {
-			this.loginPhoneNum = e.phone
+		onLoad() {
+			this.loginValue = uni.getStorageSync("loginData");
+			this.loginPhoneNum = this.loginValue.phoneNum;
 		},
 		methods: {
 			...mapMutations({
@@ -179,9 +178,14 @@
 				this.selectedSex = this.sexs[index]
 				this.informationObj.sex = this.selectedSex;
 			},
+			//家庭关系
+			onRelationChange(e) {
+				const index = e.detail.value
+				this.selectedRelation = this.barList[index]
+				this.informationObj.relation = this.selectedRelation;
+			},
 			// 获取验证码
 			verificationCodeBtn(){
-				console.log(this.informationObj)
 				this.verificationCodeState = true
 				this.count(60)
 				filingApi.sendVerificationCode(this.informationObj.phone).then(res => {
@@ -189,10 +193,36 @@
 				.catch(err => {
 					console.log('2：', err);
 				})
-				
 			},
+			//通过身份证号获取出生日期+性别
+			parseIdCard() {
+				const isValid = /(^\d{15}$)|(^\d{17}[\dXx]$)/.test(this.informationObj.idNo);
+				if (!isValid) {
+					this.birthday = "";
+					this.gender = "";
+					return;
+				}
+					
+				if (this.informationObj.idNo.length === 15) {
+					const birthPart = "19" + this.informationObj.idNo.substring(6, 12);
+					this.birthday = this.formatDate(birthPart);
+				} else {
+					const birthPart = this.informationObj.idNo.substring(6, 14);
+					this.informationObj.birthday = this.formatDate(birthPart);
+				}
+					
+				const genderPos = this.informationObj.idNo.length === 15 ? 14 : 16;
+				const genderCode = parseInt(this.informationObj.idNo.charAt(genderPos));
+				this.selectedSex = genderCode % 2 === 1 ? "男" : "女";
+				this.informationObj.sex = this.selectedSex
+			},
+				
+			formatDate(dateStr) {
+				return `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`;
+			},
+			
 			Filing(){
-				if (!this.informationObj.patientName ||!this.informationObj.idNo ||!this.informationObj.phone) {
+				if (!this.informationObj.patientName ||!this.informationObj.idNo ||!this.informationObj.phone ||!this.informationObj.verificationCode) {
 					uni.showToast({
 						title: '请完善您的信息',
 						icon: 'none',   
@@ -205,6 +235,7 @@
 					this.informationObj.loginPhoneNum = this.loginPhoneNum;
 					this.informationObj.cardType = '1';
 					this.informationObj.cardNo = this.informationObj.idNo;
+					
 					filingApi.archive(this.informationObj).then(res => {
 						if(res.data.code === 200){
 							let result = res.data.data.defaultArchives;
@@ -215,9 +246,8 @@
 							if (!result.patientCard) {
 								result.patientCard = result.idNum;
 							}
-							this.setFootData(result);
-							uni.setStorageSync('loginData', res.data.data);
-							wx.reLaunch({ url: '/pages/more/index' })
+							this.refreshUserInfo();
+							wx.reLaunch({ url: '/sub_packages/family/familyManage' })
 						}else{
 							uni.showToast({
 								title: res.data.msg ? res.data.msg : '建档失败',
@@ -228,6 +258,20 @@
 					}).catch(err => {
 						console.log('2：', err);
 					})
+				}
+			},
+			// 刷新用户信息
+			async refreshUserInfo(){
+				try{
+				    const res = await filingApi.archiveQuery({phone: this.loginPhoneNum}).then(res => {
+						let result = res.data.data;
+						if(res.data.code === 200){
+							this.setFootData(result.defaultArchives);
+							uni.setStorageSync('loginData', result);
+						}
+					})
+				}catch(e){
+					console.log(e);
 				}
 			},
 			count(time) {

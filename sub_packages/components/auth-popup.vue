@@ -3,13 +3,10 @@
   <!-- 主弹窗 -->
   <uni-popup ref="popup" type="center" :mask-click="false">
     <view class="auth-popup">
-      <view class="auth-header">微信授权</view>
+      <view class="auth-header">电子健康卡</view>
       <view class="auth-content">
-        <view>需要您授权电子健康卡信息</view>
-        <!-- <view class="auth-tip">请点击下方按钮完成授权</view> -->
+        <view>即将使用电子健康卡服务，<span style="color: #1B98FF;">开启授权，就医一卡通行</span></view>
       </view>
-      
-      <!-- 这里封装了 health-card-login 组件 -->
       <health-card-login
         v-if="showAuth"
         wechatcode=true
@@ -17,11 +14,12 @@
         @authFail="onAuthFail"
         @authCancel="onAuthCancel"
       >
-        <!-- 自定义授权按钮 -->
-        <button class="auth-button" @click="handleAuthClick">确认授权</button>
+				<view class="healCard">
+					<button class="auth-button" @click="handleAuthClick">前往授权</button>
+				</view>
       </health-card-login>
       
-      <!-- <button class="cancel-button" @click="close">取消</button> -->
+      <button type="default" class="cancel-button" @click="returnHome">返回</button>
     </view>
   </uni-popup>
 </template>
@@ -34,7 +32,6 @@ export default {
     }
   },
   methods: {
-    // 打开弹窗
     open() {
       this.$refs.popup.open()
       this.showAuth = true
@@ -52,6 +49,10 @@ export default {
       // 这里会触发 health-card-login 组件自己的授权逻辑
       console.log('触发插件授权流程')
     },
+		
+		returnHome() {
+			uni.navigateTo({url: '/sub_packages/family/familyManage'});
+		},
     
     // 授权成功
     onAuthSuccess(e) {
@@ -103,16 +104,19 @@ export default {
   margin-top: 15rpx;
 }
 
+.healCard {
+	/* display: flex; */
+	justify-content: space-between;
+	align-items: center;
+}
 .auth-button {
-  background: #07C160;
   color: white;
-  margin-bottom: 20rpx;
-	width: 50%;
+  background: #1B98FF;
+	font-size: 14px;
 }
 
 .cancel-button {
-  background: #f5f5f5;
-  color: #333;
-	width: 50%;
+	font-size: 14px;
+	margin-top: 30rpx;
 }
 </style>

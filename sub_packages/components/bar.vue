@@ -10,21 +10,16 @@
 				<text>切换家庭成员</text>
 			</view>
 		</view>
-		<!-- <uni-popup class="cutPatientDialog" @maskClick="cutPatientPopupClick" :safe-area="false"  ref="cutPatientPopup" type="bottom">
-		   <popupFamily v-if="cutPatientPopupState" :personageObj="personageObj" @handle="show" />
-		</uni-popup> -->
+		
 	</view>
 </template>
 
 <script>
 	import { mapState } from 'vuex'
 	import mixin from '@/mixins/mixin.js'
-	import popupFamily from '@/components/popupFamily.vue';
 	export default {
 		mixins: [mixin],
-		components:{
-			popupFamily
-		},
+		
 		data(){
 			return {
 				registerData:{

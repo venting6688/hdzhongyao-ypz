@@ -293,8 +293,8 @@
 								//缴费结算
 								let patientId = result.data.Response.ResultData.RecordList[0].patientId;
 								let opPayData = {
-									cardNo: '352655255',//this.siginData.patientCard,
-									patientId: '1111',
+									cardNo: this.siginData.patientCard,
+									patientId,
 									billNo,
 									tradeMode: 'CCBJRZYPLUS',
 									outTradeNo: resMsg.targetOrderld,
@@ -307,7 +307,6 @@
 								}
 								registrationApi.opPay(opPayData).then((r) => {
 									let uploadRes = r.data;
-									console.log(JSON.stringify(uploadRes));
 									if (uploadRes.code === 200) {
 										this.toastObj = {
 											state: true,

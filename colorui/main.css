@@ -39,6 +39,12 @@ image {
 	border-radius: 6rpx;
 }
 
+
+@font-face {
+  font-family: 'PINGFANG MEDIUM';
+  src: url('@/static/fonts/PINGFANG MEDIUM.TTF') format('truetype');
+}
+
 /* ==================
           图片
  ==================== */

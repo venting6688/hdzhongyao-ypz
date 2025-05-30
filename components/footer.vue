@@ -37,9 +37,7 @@
 				<!-- <uv-qrcode ref="qrcode" size="500rpx" :value="qrCode"></uv-qrcode> -->
 			</view>
 		</uni-popup>
-		<!-- <uni-popup class="cutPatientDialog" @maskClick="cutPatientPopupClick" :safe-area="false"  ref="cutPatientPopup" type="bottom">
-		   <popupFamily v-if="cutPatientPopupState" :personageObj="personageObj" @handle="show" />
-		</uni-popup> -->
+		
 		
 	</view>
 </template>
@@ -48,15 +46,12 @@
 	import {mapState,mapActions} from 'vuex'
 	import mixin from '../mixins/mixin'
 	import HeaderbarApi from '@/api/HeaderbarApi.js'
-	// import popupFamily from './popupFamily.vue';
 	export default {
 		mixins: [mixin],
 		props: {
 		  footState: Number,
 		},
-		// components:{
-		// 	popupFamily
-		// },
+		
 		data() {
 			return {
 				footList: [
