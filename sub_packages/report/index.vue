@@ -68,6 +68,12 @@
 			</ul>
 			<zanwu v-else />
 		</view>
+		<auth-popup
+			ref="authPopup"
+			@success="authSuccess"
+			@fail="authFail"
+			@cancel="authCancel"
+		/>
 	</view>
 </template>
 
@@ -75,28 +81,42 @@
 	import bar from '../components/bar.vue'
 	import date from '../components/date.vue'
 	import elseApi from '@/api/elseApi.js'
+	import healthCard from '@/api/healthCard.js'
 	import zanwu from '../components/zanwu.vue'
+  import AuthPopup from '../components/auth-popup.vue'
 	import { mapState } from 'vuex'
 	export default {
 		components:{
 			bar,
 			date,
-			zanwu
+			zanwu,
+			AuthPopup,
 		},
 		data(){
 			return {
 				headIndex:1,
 				date:{},
 				List:[],
-				siginData: {}
+				siginData: {},
+				loginData: {},
+				registerOrderId: '',
+				verifyOrderId: '',
 			}
 		},
 		computed: {
 			...mapState(['footData']),
 		},
-		mounted() {
-			let data = uni.getStorageSync('loginData');
-			this.siginData = data.defaultArchives ? data.defaultArchives : {}
+		onLoad(e) {
+			this.loginData = uni.getStorageSync('loginData');
+			this.siginData = this.loginData.defaultArchives ? this.loginData.defaultArchives : {};
+
+			this.registerOrderId = e.registerOrderId ? e.registerOrderId : '';
+			if (this.registerOrderId == '' && this.siginData.linkHealthCard) {
+				this.healthcardVerify();
+			}
+			if (this.registerOrderId != '') {
+				this.checkUniformVerifyResult();
+			}
 		},
 		methods: {
 			show(time){
@@ -112,12 +132,83 @@
 				let type = num === 1 ? 'jiancha' : 'jianyan';
 				this.getVisitRecord(type)
 			},
+			
+			//实人验证
+			healthcardVerify() {
+				var plugin = requirePlugin("healthCardPlugins");
+				plugin.login((isok, res) => {
+					if (!isok && res.result.toLogin) {
+						this.$refs.authPopup.open();
+					} else {
+						this.verifyOrder(res);
+					}
+				}, {
+					wechatCode: true,
+				});
+			},
+			
+			//实人验证生成orderid
+			verifyOrder(val) {
+				const { wechatCode } = val.result;
+				
+				let data = {
+					cardType: '01',
+					idCard: this.siginData.patientCard,
+					name: this.siginData.patientName,
+					wechatCode,
+					ecardNo: '',
+					scene: '0101081',
+					department: '',
+					useCardType: '01',
+					cardCostTypes: '',
+					verifySuccessRedirectUrl: 'mini:/sub_packages/report/index?registerOrderId=${registerOrderId}',
+					verifyFailRedirectUrl: 'mini:/sub_packages/report/index?registerOrderId=${registerOrderId}',
+					faceUrl:`/sub_packages/family/faceVerify`,
+					domainChannel: 3,
+					openId: this.loginData.xcxOpenId,
+				}
+				
+				healthCard.registerUniformVerifyOrder(data).then((res) => {
+					if (res.data.code == 200) {
+						let url = res.data.data.rsp.verifyUrl;
+						uni.setStorageSync('verifyOrderId', res.data.data.rsp.verifyOrderId)
+						uni.redirectTo({ url: '/pages/webview/webview?url=' + encodeURIComponent(url) });
+					}
+				});
+			},
+			
+			//实人验证结果查询
+			checkUniformVerifyResult() {
+				let verifyOrderId = uni.getStorageSync('verifyOrderId');
+				let data = {
+					verifyOrderId,
+					verifyResult: this.registerOrderId,
+					openId: this.loginData.xcxOpenId,
+				}
+				
+				healthCard.checkUniformVerifyResult(data).then((res) => {
+					if (res.data.code != 200) {
+						
+					}
+				});
+			},
+			
+			authSuccess(e) {
+				const res = e.detail; 
+				this.verifyOrder(res);
+			},
+			authFail(e) {
+				console.log('授权失败：', e)
+			},
+			authCancel(e) {
+				console.log('用户取消授权：', e)
+			},
 			//检查报告
 			getVisitRecord(type) {
 				try {
 					let data = {
-						cardNo: this.siginData.patientCard, //370911199507194418 370223195107021525
-						patientId: '', //this.siginData.patientCard,
+						cardNo: this.siginData.patientCard, 
+						patientId: this.footData.hisPatientId,
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
 						patientName: this.siginData.patientName,

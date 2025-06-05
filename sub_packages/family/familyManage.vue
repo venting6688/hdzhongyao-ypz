@@ -148,12 +148,16 @@
 		},
 		onLoad(e) {
 			this.loginValue = uni.getStorageSync("loginData");
-			this.healthCode = e.healthCode ? e.healthCode : '';
-			this.regInfoCode = e.regInfoCode ? e.regInfoCode : '';
-			this.authCode = e.authCode ? e.authCode : '';
-			this.getHealthCardList();
-			if (this.healthCode != '') {
-				this.getHealthCard();
+			if (!this.loginValue) {
+				uni.navigateTo({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
+			} else {
+				this.healthCode = e.healthCode ? e.healthCode : '';
+				this.regInfoCode = e.regInfoCode ? e.regInfoCode : '';
+				this.authCode = e.authCode ? e.authCode : '';
+				this.getHealthCardList();
+				if (this.healthCode != '') {
+					this.getHealthCard();
+				}
 			}
 		},
 		
@@ -428,26 +432,16 @@
 					});
 				}
 			},
-			onFinish(e) {
-				console.log('🐞 onFinish', e);
-			},
-			// 用户同意授权，授权成功回调
 			authSuccess(e) {
 				const res = e.detail; 
-				// 同 plugin.login，用户同意授权，获取登录信息，处理后续业务
 				this.todo(res);
 			},
-		
-			// 用户授权失败
 			authFail(e) {
 				console.log('授权失败：', e)
 			},
-		
-			// 用户取消授权，授权失败回调
 			authCancel(e) {
 				console.log('用户取消授权：', e)
 			},
-			
 		}
 	}
 </script>

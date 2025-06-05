@@ -89,6 +89,26 @@ const healthCard = {
 			data
 		})
 		return res
+	},
+	
+	//获取实人验证生成orderId
+	async registerUniformVerifyOrder (data) {
+		const res = await cjRequest({
+			url: "registerUniformVerifyOrder",
+			method: "post",
+			data
+		})
+		return res
+	},
+	
+	//实人验证结果查询
+	async checkUniformVerifyResult (data) {
+		const res = await cjRequest({
+			url: "checkUniformVerifyResult",
+			method: "post",
+			data
+		})
+		return res
 	}
 	
 }

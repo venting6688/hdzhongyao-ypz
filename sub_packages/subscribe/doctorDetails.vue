@@ -238,6 +238,7 @@
 												tradeTime: resMsg.responseTimestamp,
 												outTradeNo: resMsg.targetOrderld,
 												transNo: resMsg.targetOrderId,
+												merOrderId,
 											}
 											//上传支付订单信息
 											registrationApi.registrationSettlement(uploadOrder).then(uploadRes => {

@@ -65,7 +65,6 @@
 				}
 				
 				healthCardApi.registerRealPersonAuthOrder(faceData).then(res => {
-					console.log(JSON.stringify(res.data),'====人脸识别验证结果------');
 					let redirectUrl = decodeURIComponent(this.redirectUrl);
 					let url = '';
 					if (res.data.code == 200 && res.data.data.rsp.verifyOrderId != '') {

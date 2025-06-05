@@ -16,7 +16,7 @@
 			  </van-grid-item>
 			</van-grid>
 		</view>
-		<foot :footState="footState" />
+		<foot :footState="footState"/>
 		</view>
 </template>
 <script>
@@ -103,7 +103,7 @@
 					'/sub_packages/record/index', //3
 					'/sub_packages/report/index', //4
 					'/sub_packages/medicine/index', //5
-				  !uni.getStorageSync("loginData") ? '/sub_packages/login/index?title=青岛西海岸新区第二中医医院' : '/sub_packages/family/familyManage', //6
+				  '/sub_packages/family/familyManage', //6
 					// '/sub_packages/filing/information', //7
 					'/sub_packages/mine/index', //8
 				],
@@ -189,7 +189,6 @@
 		onShow() {
 			let data = uni.getStorageSync('loginData');
 			data = data.defaultArchives ? data.defaultArchives : {};
-			
 		}
 	}
 </script>

@@ -32,13 +32,11 @@
 			</view>
 		</view>	
 		<uni-popup class="qrcode" safe-area  ref="uvQrcode">
-		    <view class="box" v-if="qrcodeState">
+			<view class="box" v-if="qrcodeState">
 				<image class="img" :src="`data:image/png;base64,${qrCode}`" mode=""></image>
 				<!-- <uv-qrcode ref="qrcode" size="500rpx" :value="qrCode"></uv-qrcode> -->
 			</view>
 		</uni-popup>
-		
-		
 	</view>
 </template>
 

@@ -70,21 +70,15 @@
 								let result = res.data.data;
 								uni.setStorageSync('loginData', result);
 								if (!result.defaultArchives) {
-									// uni.navigateTo({ url:"/sub_packages/family/familyManage" })
-									uni.showModal({
-										title: "未查询到默认就诊人，请先添加或设置默认就诊人",
-										success: res => {
-											if (res.confirm) {
-												uni.navigateTo({ url:"/sub_packages/family/familyManage" })
-											} 
-										}
-									});
+									uni.navigateTo({ url:"/sub_packages/family/familyManage" })
 								} else {
+									this.setFootData(result.defaultArchives);
 									uni.switchTab({ url:"/pages/virtualNurse/index" })
 								}
 							});
 						} else {
 							let items = JSON.stringify(data.data)
+							this.setFootData(items.defaultArchives);
 							uni.setStorageSync('loginData', items)
 							uni.showToast({ title: '登录成功' })
 							wx.reLaunch({
