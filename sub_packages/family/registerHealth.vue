@@ -25,6 +25,7 @@
 				</picker>
 			</view>
 			<view class="cu-form-group">
+				<view class="x">*</view>
 				<view class="title">民族</view>
 				<picker mode="selector" :value="informationObj.nation" :range="nations" @change="onNationChange">
 					<text class="picker birth">{{selectedNation}}</text>
@@ -37,6 +38,7 @@
 				</picker>
 			</view>
 			<view class="cu-form-group">
+				<view class="x">*</view>
 				<view class="title">家庭关系</view>
 				<picker mode="selector" :value="informationObj.relation" :range="relation" @change="onRelationChange">
 					<text class="picker birth">{{selectedRelation}}</text>
@@ -59,7 +61,7 @@
 				<view class="title">手机号</view>
 				<input v-model="informationObj.phone1" placeholder="请输入院内预留手机号" type="number" maxlength="11" name="input" />
 			</view>
-			<view class="cu-form-group">
+			<!-- <view class="cu-form-group">
 				<view class="x">*</view>
 				<view class="title">验证码</view>
 				<input v-model="informationObj.verificationCode" placeholder="请输入短信验证码" name="input" />
@@ -69,7 +71,7 @@
 				<view class="answer" v-else>
 					{{time}}
 				</view>
-			</view>
+			</view> -->
 		</form>
 		<view class="tips">
 			<view class="tips-title">
@@ -83,7 +85,7 @@
 		<view 
 			class="confirm" 
 			@click="saveInfo" 
-			:class="{unclickable:!informationObj.name || !informationObj.idNumber || !informationObj.phone1 || !informationObj.verificationCode}"
+			:class="{unclickable:!informationObj.name || !informationObj.idNumber || !informationObj.phone1 }"
 		>
 			提交绑卡信息
 		</view>
@@ -145,10 +147,10 @@
 				sexs: ['男', '女'],
 				relation:['本人','父母','子女','夫妻', '亲属', '朋友', '其他'],
 				siginData: {},
-				selectedSex: ['男'],
+				selectedSex: '',
 				selectedIdType: '',
-				selectedNation: ['汉族'],
-				selectedRelation: ['本人'],
+				selectedNation: '',
+				selectedRelation: '',
 				verificationCodeState:false,
 				time:60,
 			}
@@ -201,8 +203,7 @@
 				this.verificationCodeState = true
 				this.count(60)
 				filingApi.sendVerificationCode(this.informationObj.phone).then(res => {
-				})
-				.catch(err => {
+				}).catch(err => {
 					console.log('2：', err);
 				})
 			},
@@ -252,7 +253,7 @@
 			},
 			
 			async saveInfo() {
-				if (!this.informationObj.name ||!this.informationObj.idNumber ||!this.informationObj.phone1) {
+				if (!this.informationObj.name ||!this.informationObj.idNumber ||!this.informationObj.phone1 ||!this.informationObj.relation) {
 					uni.showToast({
 						title: '请完善您的信息',
 						icon: 'none',   

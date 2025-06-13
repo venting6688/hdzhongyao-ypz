@@ -38,11 +38,17 @@
 				secondDepartment:[],     //二级科室
 				clickDepartment:[],
 				activeId: null,
-				mainActiveIndex: 0
+				mainActiveIndex: 0,
+				departmentName: '内科'
 			};
 		},
-		onShow() {
-			this.getServiceGroup()
+		onLoad() {
+			this.loginValue = uni.getStorageSync("loginData");
+			if (!this.loginValue) {
+				uni.navigateTo({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
+			} else {
+				this.getServiceGroup()
+			}
 		},
 		methods: {
 			onSearchChange(value) {
@@ -85,7 +91,6 @@
 								v.children = this.secondDepartment
 							})
 							this.filteredItems = this.stairDepartment;
-							// this.filteredItems.push(this.stairDepartment[0]);
 						}
 					}
 				}).catch(err => {
@@ -102,7 +107,7 @@
 					// this.mainActiveIndex = index
 					return {
 							...category,
-					};	
+					};
 					}
 					return null;
 					}).filter(category => category !== null);
@@ -116,6 +121,8 @@
 			onNavClick(index) {
 				this.mainActiveIndex = index.target.index;
 				this.clickDepartment = this.filteredItems[this.mainActiveIndex];
+				this.departmentName = this.clickDepartment.text;
+				
 				this.filteredItems.forEach((i,x)=> {
 					if(x === this.mainActiveIndex){
 						i.children = this.clickDepartment['children'];
@@ -129,7 +136,7 @@
 				this.items = []
 					// 处理点击事件
 					uni.navigateTo({
-						url: `/sub_packages/subscribe/doctors?title=${item.target.text}&deptCode=${item.target.deptCode}`
+						url: `/sub_packages/subscribe/doctors?title=${item.target.text}&deptCode=${item.target.deptCode}&parentDeptName=${this.departmentName}&detail=${item.target.text}`
 					})
 			}
 	},

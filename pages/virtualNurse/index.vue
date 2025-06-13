@@ -254,29 +254,28 @@
 			const options = this.$mp.query;
 			if (options && options.patient) {
 				this.patient = JSON.parse(decodeURIComponent(options.patient))
-			    console.log(this.patient);
 			}
 		},
 		onLoad(options) {
 			if (Object.keys(options).length > 0) {
-			    this.pattern = Number(options.pattern)
-			    let manifestation = options.manifestation
-			    if(this.pattern===1){
-					uni.showToast({
-					    title: '已为您切换到智能导诊',
-					    icon: 'none',   
-					    duration: 2000 
-					}) 
-					this.msgList = [
-						{
-						    my:false,
-							type:1,
-							msg:'您可以详细描述症状，我将为您优先推荐科室去挂号：',
-							questionList:['感冒','恶心','上吐下泻'],
-						}
-					]
-			    	
-			    }else{
+				this.pattern = Number(options.pattern)
+				let manifestation = options.manifestation
+				if(this.pattern===1){
+				uni.showToast({
+						title: '已为您切换到智能导诊',
+						icon: 'none',   
+						duration: 2000 
+				}) 
+				this.msgList = [
+					{
+							my:false,
+						type:1,
+						msg:'您可以详细描述症状，我将为您优先推荐科室去挂号：',
+						questionList:['感冒','恶心','上吐下泻'],
+					}
+				]
+					
+				}else{
 					if(options.shouldUpdate){
 						this.updateData()
 					}
@@ -284,21 +283,20 @@
 						this.answer(manifestation)
 					}else{
 						uni.showToast({
-						    title: '已为您切换到智能问答',
-						    icon: 'none',   
-						    duration: 2000 
+								title: '已为您切换到智能问答',
+								icon: 'none',   
+								duration: 2000 
 						}) 
 						this.msgList = [
 							{
-							    my:false,
+									my:false,
 								type:1,
 								msg:'您可以向我询问以下问题：',
 								questionList:['感冒吃什么药','头孢的作用是什么'],
 							}
 						]
 					}
-					
-			    }
+				}
 			} 
 		},
 		computed: {

@@ -1,9 +1,5 @@
 <template>
 	<view class="manage">
-		<view class="headTitle" @click="linkHealthCard">
-			<uni-icons type="personadd" color="#1B98FF" size="22"></uni-icons> 
-			已有健康卡，关联健康卡
-		</view>
 		<view class="information">
 			<ul v-if="healthCardList.length">
 				<li v-for="(item,index) in healthCardList" :key="item.archiveId">
@@ -12,7 +8,6 @@
 							<text class="big">{{item.archives.patientName ? pixelate(item.archives.patientName) : ''}}</text>
 							<text class="small">{{item.archives.sex != null ? item.archives.sex : ''}}</text>
 							<text class="relation">{{item.relation != null ? item.relation : '其他'}}</text>
-							<!-- <image src="../static/image/icon-edit.png" mode=""></image> -->
 						</view>
 						<view class="ok" @click="defaultPatients(item)">
 							<image v-if="item.defaultType" src="../static/image/icon-ok.png" mode=""></image>
@@ -72,7 +67,7 @@
 			</ul>
 		</view>
 		
-		<view class="btn" @click="increase" v-if="5-healthCardList.length > 0">
+		<view class="btn" @click="linkHealthCard" v-if="5-healthCardList.length > 0">
 			<image src="../static/image/icon-add.png" mode="" />
 			<text>添加就诊人（剩{{5-healthCardList.length}}人）</text>
 		</view>
@@ -138,6 +133,7 @@
 					{index: '28', value: '外国人永久居留身份证'},
 					{index: '25', value: '港澳居住证'},
 				],
+				relation:['本人','父母','子女','夫妻', '亲属', '朋友', '其他'],
 				isSave: false,
 				toastObj:{
 					state:false,
@@ -217,6 +213,7 @@
 					}
 				});
 			},
+			
 			//获取健康卡信息
 			async getHealthCard() {
 				let str = {
@@ -245,6 +242,9 @@
 					let healthVal = filterHealthCard.length ? filterHealthCard[0].value : '';
 					let filterHisCard = this.hisCardType.filter(x => x.value == healthVal);
 					let hisCardType = healthVal == '居民户口簿' ? 1 : (filterHisCard.length > 0 ? filterHisCard[0].index : 98);
+					let ext = JSON.parse(data.ext);
+					let relation = this.relation[ext.relationship];
+					
 					let archiveStr = {
 						idNo: data.idNumber,
 						idType: hisCardType,
@@ -256,58 +256,19 @@
 						phone: data.phone1,
 						address: data.address,
 						nation: data.nation,
-						cardType: '24',
+						cardType: '1',
 						isDefault: false,
 						cardNo: idCard,
 						loginPhoneNum: this.loginValue.phoneNum,
+						healthCardId: data.healthCardId,
+						qrCodeText: data.qrCodeText,
+						relation, 
 					}
 					
 					filingApi.archive(archiveStr).then(result => {
 						if(result.data.code === 200){
-							//查询是否存在同一个healthcard的信息
-							healthCard.queueFilingInfo({phone: this.loginValue.phoneNum}).then(cardRes => {
-								if(cardRes.data.code === 200) {
-									cardRes.data.data.map(v => {
-										if (v.healthCardId == null || v.healthCardId != data.healthCardId) {
-											let localData = {
-												patientIdCard: this.loginValue.phoneNum == data.phone1 ? data.idCard : '',
-												name,
-												idCard,
-												healthCardId: data.healthCardId,
-												loginUserPhoneNum: this.loginValue.phoneNum,
-												phone: data.phone1,
-												data,
-											}
-											healthCard.addHealthCard(localData).then(saveRes => {
-												if (saveRes.data.code === 200) {
-													console.log('保存成功.');
-												}
-												this.getHealthCardList();
-												this.refreshUserInfo({phone: this.loginValue.phoneNum});
-											});
-										}
-									})
-								} else {
-									let localData = {
-										patientIdCard: this.loginValue.phoneNum == data.phone1 ? data.idCard : '',
-										name,
-										idCard,
-										healthCardId: data.healthCardId,
-										loginUserPhoneNum: this.loginValue.phoneNum,
-										phone: data.phone1,
-										data,
-									}
-									
-									healthCard.addHealthCard(localData).then(saveRes => {
-										if (saveRes.data.code === 200) {
-											console.log('保存成功.');
-										}
-										this.getHealthCardList();
-										this.refreshUserInfo({phone: this.loginValue.phoneNum});
-									});
-								}
-								
-							})
+							this.getHealthCardList();
+							this.refreshUserInfo({phone: this.loginValue.phoneNum});
 						}
 					})
 				}
@@ -326,22 +287,27 @@
 						
 						if (v != null) {
 							let idCard = v.idCard;
-							let healthCardData = JSON.parse(v.data);
+							let firstFour = idCard.slice(0, 4);
+							let lastFour = idCard.slice(-4);
+							let cardNum = `${idCard.slice(0, 4)}${'*'.repeat(idCard.length - 10)}${idCard.slice(-2)}`;
 							
+							// let healthCardData = JSON.parse(v.data);
 							item.healthCard = {
 								name: v.name,
-								idCard,
+								idCard: cardNum,
 								idNo: idCard,
 								healthCardId: v.healthCardId,
-								phone: healthCardData.phone1,
-								relation: healthCardData.nation,
+								phone: item.archives.phoneNum,
+								relation: item.archives.relation,
 							}
 						}
 						this.healthCardList.push(item);
+						
 					})
 					
 				}
 			},
+			
 			//展码
 			showQRCode(healthCardId) {
 				let hospitalId = '40088';

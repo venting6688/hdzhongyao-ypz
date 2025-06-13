@@ -11,7 +11,7 @@
 				} else {
 					setTimeout(() => {
 						uni.navigateTo({
-							url:"/sub_packages/family/familyInformation"
+							url:"/sub_packages/family/familyManage"
 						})
 					}, 100);
 				}

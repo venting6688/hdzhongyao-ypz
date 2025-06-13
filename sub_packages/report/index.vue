@@ -1,7 +1,7 @@
 <template>
 	<view class="box">
 		<bar />
-		<date @handle="show" />
+		<date @handle="show()" />
 		<view class="head">
 			<view>
 				<view class="name" @click="headBtn(1)">
@@ -101,6 +101,7 @@
 				loginData: {},
 				registerOrderId: '',
 				verifyOrderId: '',
+				isVerify: false,
 			}
 		},
 		computed: {
@@ -109,9 +110,8 @@
 		onLoad(e) {
 			this.loginData = uni.getStorageSync('loginData');
 			this.siginData = this.loginData.defaultArchives ? this.loginData.defaultArchives : {};
-
 			this.registerOrderId = e.registerOrderId ? e.registerOrderId : '';
-			if (this.registerOrderId == '' && this.siginData.linkHealthCard) {
+			if (this.registerOrderId == '') {
 				this.healthcardVerify();
 			}
 			if (this.registerOrderId != '') {
@@ -123,8 +123,10 @@
 				const datePattern = /^\d{4}-\d{2}-\d{2}$/.test(time.startTime);
 				if(datePattern){
 					this.date = time
-					let type = this.headIndex === 1 ? 'jiancha' : 'jianyan';
-					this.getVisitRecord(type)
+					if (this.isVerify) {
+						let type = this.headIndex === 1 ? 'jiancha' : 'jianyan';
+						this.getVisitRecord(type)
+					}
 				}
 			},
 			headBtn(num){
@@ -176,7 +178,6 @@
 					}
 				});
 			},
-			
 			//实人验证结果查询
 			checkUniformVerifyResult() {
 				let verifyOrderId = uni.getStorageSync('verifyOrderId');
@@ -187,8 +188,9 @@
 				}
 				
 				healthCard.checkUniformVerifyResult(data).then((res) => {
-					if (res.data.code != 200) {
-						
+					if (res.data.code == 200) {
+						this.headBtn(1);
+						this.isVerify = true;
 					}
 				});
 			},
@@ -214,6 +216,7 @@
 						patientName: this.siginData.patientName,
 						verslon: 1,
 					}
+					console.log(JSON.stringify(data),'s=s==s=s=s=s=s');
 					if (type == 'jiancha') {
 						elseApi.queryPacsInfo(data).then(res => {
 							let result = res.data;

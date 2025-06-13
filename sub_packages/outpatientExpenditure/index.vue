@@ -106,6 +106,7 @@
 	import outpatientExpenditureApi from '@/api/outpatientExpenditureApi.js'
 	import registrationApi from '@/api/registrationApi.js'
 	import guideApi from '@/api/guideApi.js'
+	import healthCard from '@/api/healthCard.js'
 	
 	export default {
 		mixins: [mixin],
@@ -133,22 +134,27 @@
 				},
 				checkState:false,
 				date: {},
-				siginData: {}
+				siginData: {},
+				loginValue: {},
 			}
 		},
 		computed: {
 			...mapState(['footData','showState']),
 		},
-		mounted(){
-			let data = uni.getStorageSync('loginData');
-			this.siginData = data.defaultArchives ? data.defaultArchives : {}
-		},
 		onLoad(option) {
-			this.loading.loadingState = false
-			if(option.checkState){
-				this.checkState = option.checkState
+			this.loginValue = uni.getStorageSync("loginData");
+			if (!this.loginValue) {
+				uni.navigateTo({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
+			} else {
+				this.siginData = this.loginValue.defaultArchives ? this.loginValue.defaultArchives : {}
+				this.loading.loadingState = false
+				if(option.checkState){
+					this.checkState = option.checkState
+				}
+				this.reportHISData();
 			}
 		},
+		
 		methods: {
 			closeToast(state){
 				this.toastObj.state = state
@@ -168,6 +174,21 @@
 				this.loading.loadingState = false
 				this.headIndex = num
 				num === 1 ? this.queryMedicalRecords() : this.getPaymentRecord();
+			},
+			//检测用卡数据
+			async reportHISData() {
+				let data = {
+					qrCodeText: this.siginData.qrCodeText,
+					time: moment().format('YYYY-MM-DD HH:mm:ss'),
+					hospitalCode: '40088',
+					scene: '0101051',
+					department: '',
+					cardType: '11',
+					cardChannel: '0402',
+					cardCostTypes: '0100',
+					openId: this.loginValue.xcxOpenId,
+				}
+				let res = await healthCard.reportHISData(data);
 			},
 			//未交费
 			async queryMedicalRecords() {
@@ -287,6 +308,7 @@
 							cardType: 1,
 							patientName: this.siginData.patientName,
 						}
+						
 						guideApi.queryPatient(select).then((r) => {
 							let result = r.data;
 							if (result.code === 200) {

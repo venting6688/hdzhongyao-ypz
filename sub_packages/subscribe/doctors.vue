@@ -111,6 +111,8 @@ import registrationApi from '@/api/registrationApi.js'
 				CLGRPRowId:'',
 				timeList:[],
 				title:'',
+				parentDeptName: '',
+				detailName: '',
 				timeObj:{
 					week:'',
 					date:'',
@@ -126,6 +128,7 @@ import registrationApi from '@/api/registrationApi.js'
 				doctorInfo: {},
 				medAmPm: '',
 				restNum: '',
+				departmentName: '',
 			}
 		},
 		computed: {
@@ -295,7 +298,7 @@ import registrationApi from '@/api/registrationApi.js'
 						appoNo: reserveItem.appoNo !== undefined ? reserveItem.appoNo : '',
 					}
 					uni.navigateTo({
-						url: `/sub_packages/subscribe/doctorDetails?title=${this.title}&doctor=${encodeURIComponent(JSON.stringify(this.doctor))}&detail=${encodeURIComponent(JSON.stringify(item))}&regMode=${this.regMode}`
+						url: `/sub_packages/subscribe/doctorDetails?title=${this.title}&doctor=${encodeURIComponent(JSON.stringify(this.doctor))}&detail=${encodeURIComponent(JSON.stringify(item))}&regMode=${this.regMode}&parentDeptName=${this.parentDeptName}&detailDept=${this.detailName}`
 					})
 				}
 			},
@@ -306,11 +309,13 @@ import registrationApi from '@/api/registrationApi.js'
 			
 		},
 		onLoad(e) {
-			this.title = e.title
+			this.title = e.title;
+			this.parentDeptName = e.parentDeptName;
+			this.detailName = e.detail;
+			this.deptCode = e.deptCode ? e.deptCode : e.CLGRPRowId
 			wx.setNavigationBarTitle({
 				title: e.title
 			})
-			this.deptCode = e.deptCode ? e.deptCode : e.CLGRPRowId
 		},
 		mounted() {
 			this.getScheduleDates()

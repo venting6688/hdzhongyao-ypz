@@ -94,6 +94,7 @@
 	import Toast from '../components/toast.vue'
 	import registrationApi from '@/api/registrationApi.js'
 	import guideApi from '@/api/guideApi.js'
+	import healthCard from '@/api/healthCard.js'
 	
 	export default {
 		components:{
@@ -121,13 +122,27 @@
 					'请按照候诊时间提示到医院等待就诊，请勿迟到根据国家医保政策规定，医保患者住院期间一律不得使用医保账户支付门诊费用，否则将影响住院费用的医保报销结算。',
 					'同一身份证号码，30天内总计爽约5次，进入黑名单14天，14天内不能预约就诊，可以现场挂号，14天后黑名单自动解除。黑名单触发三次以上拉黑90天。'
 				],
+				parentName: [
+					{name: '内科', index: '0300'},
+					{name: '外科部', index: '0400'},
+					{name: '妇产科门诊', index: '0500'},
+					{name: '儿科门诊', index: '0700'},
+					{name: '眼科门诊', index: '1000'},
+					{name: '视光门诊', index: '1000'},
+					{name: '耳鼻喉科门诊', index: '1100'},
+					{name: '口腔治疗门诊', index: '1200'},
+					{name: '口腔修复门诊', index: '1200'},
+				],
 				QRCodePopup: null,
 				isShowPay: false,
 				payUrl: '',
 				siginData: {},
+				loginValue: {},
 				doctorInfo: {},
 				lockId: '',
-				regMode: ''
+				regMode: '',
+				parentDeptName: '',
+				detailName: '',
 			}
 		},
 		computed: { 
@@ -157,7 +172,7 @@
 				if (loginValue) {
 					this.today(loginValue)
 				} else {
-					uni.navigateTo({ url:"/sub_packages/family/familyInformation" })
+					uni.navigateTo({ url:"/sub_packages/family/familyManage" })
 				}
 			},
 			today(data){
@@ -186,6 +201,35 @@
 							duration: 2000 
 						})
 					} else {
+						//用卡检测数据接口（电子健康卡）
+						let parentDeptName = ['外科部', '内科'];
+						let department = '';
+						if (parentDeptName.includes(this.parentDeptName)) {
+							let filter = this.parentName.filter(x => x.name == this.parentDeptName);
+							department = filter[0].index;
+						} else {
+							let filterRes = this.parentName.filter(x => x.name == this.detailName);
+							if (filterRes.length > 0) {
+								department = filterRes[0].index;
+							} else {
+								department = '1800'
+							}
+						}
+						
+						let healthCardData = {
+							qrCodeText: this.siginData.qrCodeText,
+							time: moment().format('YYYY-MM-DD HH:mm:ss'),
+							hospitalCode: '40088',
+							scene: '0101011',
+							department,
+							cardType: '11',
+							cardChannel: '0402',
+							cardCostTypes: '0100',
+							openId: this.loginValue.xcxOpenId,
+						}
+						healthCard.reportHISData(healthCardData).then(healthRes => {
+						});
+						
 						let lockId = res.data.lockId;
 						let randNum = Math.floor(1000000 + Math.random() * 9000000);
 						let datas = { 
@@ -313,10 +357,12 @@
 			wx.setNavigationBarTitle({title: e.title})
 			this.doctor = JSON.parse(decodeURIComponent(e.doctor));
 			let data = uni.getStorageSync('loginData');
-			console.log(JSON.stringify(data));
+		  this.loginValue = data;
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 			this.doctorInfo = JSON.parse(decodeURIComponent(e.detail));
 			this.regMode = e.regMode;
+			this.parentDeptName = e.parentDeptName;
+			this.detailName = e.detailDept;
 		},
 	}
 </script>

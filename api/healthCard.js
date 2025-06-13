@@ -109,7 +109,17 @@ const healthCard = {
 			data
 		})
 		return res
-	}
+	},
+	
+	//检测用卡数据
+	async reportHISData (data) {
+		const res = await cjRequest({
+			url: "reportHISData",
+			method: "post",
+			data
+		})
+		return res
+	},
 	
 }
 

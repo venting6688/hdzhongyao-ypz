@@ -19,7 +19,13 @@
 				</view>
 				<view class="wire"  v-if="footData.patientName || siginData.patientName"></view>
 				<view class="foot-bar" :class="{'bar-w':!footData.patientName || !siginData.patientName}">
-					<view class="piece" :style="{ width: footData.patientName || !siginData.patientName ? '33.333%' : '50%' }" v-for="item in footList" :key="item.name" @click="footBtn(item)">
+					<view class="piece" 
+					:style="{ width: loginStatus == 'login' ? '33.333%' : '100%' }" 
+					v-for="item in footList" 
+					:key="item.name" 
+					v-if="loginStatus == 'login' ? loginMenu.includes(item.name) : notLoginMenu.includes(item.name)"
+					@click="footBtn(item)"
+					>
 						<view class="title">
 							<image v-if="item.type==footState" :src="item.selectedIconPath" mode="widthFix"></image>
 							<image v-else :src="item.iconPath" mode="widthFix"></image>
@@ -75,6 +81,8 @@
             type: 3,
           }
         ],
+			  loginMenu: ['护士导诊', '便捷导引', '更多服务'],
+			  notLoginMenu: ['更多服务'],
 				registerData:{
 					archivesList:[]
 				},
@@ -91,7 +99,7 @@
 			}
 		},
 		computed: { 
-			...mapState(['footData']),
+			...mapState(['footData', 'loginStatus']),
 		},
 	  async created() {
 			uni.hideTabBar()

@@ -17,13 +17,13 @@
 			</van-grid>
 		</view>
 		<foot :footState="footState"/>
-		</view>
+	</view>
 </template>
 <script>
-	import foot from '@/components/footer.vue'
 	import bus from "@/utils/bus";
 	import HeaderBar from '@/components/HeaderBar.vue';
-	import {mapState} from 'vuex'
+	import {mapState,mapMutations} from 'vuex'
+	import foot from '@/components/footer.vue'
 	export default {
 		components:{
 			foot,
@@ -62,10 +62,10 @@
 							},
 						],
 					},
-					{
-						title: '住院服务',
-						list: []
-					},
+					// {
+					// 	title: '住院服务',
+					// 	list: []
+					// },
 					{
 						title: '智慧取药',
 						list: [
@@ -89,11 +89,11 @@
 							// 	name:'在线建档',
 							// 	num:7,
 							// },
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/synthesize6.png',
-								name:'我的',
-								num:8,
-							},
+							// {
+							// 	img:'https://aiwz.sdtyfy.com:8099/img/synthesize6.png',
+							// 	name:'我的',
+							// 	num:8,
+							// },
 						]
 					},
 				],
@@ -105,12 +105,15 @@
 					'/sub_packages/medicine/index', //5
 				  '/sub_packages/family/familyManage', //6
 					// '/sub_packages/filing/information', //7
-					'/sub_packages/mine/index', //8
+					// '/sub_packages/mine/index', //8
 				],
 			}
 		},
 		
 		methods: {
+			...mapMutations({
+				setFootData:'SET_FOOT_DATA',
+			}),
 			skip(num){
 				let appId
 				let targetUrl
@@ -155,22 +158,6 @@
 				    })  
 				}	
 			},
-			toggle() {
-			      const animation = uni.createAnimation({
-			        duration: 0,
-			        timingFunction: 'ease'
-			      });
-				  animation.opacity(0).step();
-			      this.animationData = animation.export();
-				  setTimeout(()=>{
-				  	const animation = uni.createAnimation({
-				    duration: 500,
-				    timingFunction: 'linear'
-				  });
-				  animation.opacity(1).step();
-				  this.animationData = animation.export();			  
-				  },0)
-			    },
 			async show(str){
 				this.headerEmit = {
 					state:'',
@@ -188,7 +175,11 @@
 		},
 		onShow() {
 			let data = uni.getStorageSync('loginData');
-			data = data.defaultArchives ? data.defaultArchives : {};
+			let defaultData = data.defaultArchives ? data.defaultArchives : {};
+			if (data) {
+				uni.setStorageSync('loginData', data);
+				this.setFootData(defaultData);
+			}
 		}
 	}
 </script>

@@ -17,15 +17,6 @@
 		</view>
 		<view class="scroll-Y">
 			<view class="first" v-if="departmentList.length">
-				<!-- <view class="bar" v-if="footState===2 && departmentList.length">
-					<view v-for="(item,index) in barList" @click="throttle_btns(index,item.number)" class="barList" :key="index">
-						<view class="bar-name" :class="{ barColor:item.number==1 }">
-							<view>
-								<text :class="{ barBackground: item.state==item.name }">{{ item.name }}</text>
-							</view>
-						</view>
-					</view>
-				</view> -->
 				<view class="center" v-if="firstContent.queueName">
 					<view class="content">
 						<view class="icon" v-if="firstContent.queueName">
@@ -218,7 +209,7 @@
 					endDate: moment().add(7, 'days').format('YYYY-MM-DD')
 				};
 				const msg = {
-				  cardNo: siginData.patientCard,
+				  cardNo: siginData ? siginData.patientCard : '',
 					cardType: 1,
 				  startDate: time.startDate,
 				  endDate: time.endDate,

@@ -25,16 +25,19 @@
 	import {mapMutations} from 'vuex'
 	import loginApi from '@/api/loginApi.js'
 	import filingApi from '@/api/filingApi.js'
+	import guideApi from '@/api/guideApi.js'
 	
 	export default {
 		data (){
 			return {
 				agreementState:false,
+				patientId: '',
 			}
 		},
 		methods: {
 			...mapMutations({
-				setFootData:'SET_FOOT_DATA',
+				setFootData: 'SET_FOOT_DATA',
+				setLoginStatus: 'SET_LOGINSTATUS',
 			}),
 			userAgreement(){
 				uni.navigateTo({
@@ -47,7 +50,7 @@
 				})
 			},
 			back(){
-				uni.navigateBack();
+				wx.reLaunch({url:`/pages/more/index`})
 			},
 			btn(){
 				if(!this.agreementState){
@@ -61,30 +64,32 @@
 			onGetPhoneNumber(e){ 
 			    this.loginFn().then(res => {  // 微信登录&服务端获取openid
 					this.getPhoneNumberFn(e.detail.code, res.code).then(data => { // 服务端获取手机号
-					let phone = data.data.phoneNum;
+						let phone = data.data.phoneNum;
 						if (!data.data.patientName) {
-							let data = {
-								phone,
-							}
+							let data = { phone }
 							filingApi.archiveQuery(data).then(res => {
 								let result = res.data.data;
-								uni.setStorageSync('loginData', result);
 								if (!result.defaultArchives) {
 									uni.navigateTo({ url:"/sub_packages/family/familyManage" })
 								} else {
+									uni.setStorageSync('loginData', result);
 									this.setFootData(result.defaultArchives);
+									this.setLoginStatus('login');
 									uni.switchTab({ url:"/pages/virtualNurse/index" })
 								}
 							});
-						} else {
-							let items = JSON.stringify(data.data)
-							this.setFootData(items.defaultArchives);
-							uni.setStorageSync('loginData', items)
-							uni.showToast({ title: '登录成功' })
-							wx.reLaunch({
-								url: `/pages/virtualNurse/index?pattern=2&shouldUpdate=true`,
-							})
 						}
+						// else {
+						// 	let items = JSON.stringify(data.data)
+						// 	console.log(items,'=====');
+						// 	this.setFootData(items.defaultArchives);
+						// 	uni.setStorageSync('loginData', items);
+						// 	uni.setStorageSync('isLoginStatus', 'login');
+						// 	uni.showToast({ title: '登录成功' })
+						// 	wx.reLaunch({
+						// 		url: `/pages/virtualNurse/index?pattern=2&shouldUpdate=true`,
+						// 	})
+						// }
 					})
 				})
 			},

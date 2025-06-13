@@ -87,7 +87,6 @@ export default {
 		...mapState(['footData','department']),
 	},
 	async created() {
-			console.log('666')
 		let loginData = uni.getStorageSync("loginData");
 		loginData = loginData.defaultArchives ? loginData.defaultArchives : '';
 		if(this.footState===2 && loginData != ''){
@@ -95,29 +94,16 @@ export default {
 				if(data.callingInterface){
 					// 取消挂号或取消预约后马上调用接口更新数据
 					this.getFirstVisit()
-					console.log('777')
 				}else{
 					this.refreshData(data)
-					console.log('刷刷刷刷11111')
 				}
 			})
-			
 			await this.getFirstVisit()
-			console.log('9999')
-			
-			// this.getTreatmentStageNew(3)
-			
 			this.timer = setInterval(()=>{
-				console.log('aaaaa')
 				this.getFirstVisit()
-				// this.getTreatmentStageNew(3)
 			},20000)
-			
 			this.animateText()
 		}
-		
-		// await this.getSuggest()
-		
 	},
 	beforeDestroy() {
 		if(this.footState){
@@ -126,7 +112,6 @@ export default {
 			clearInterval(this.timer)
 			this.timer = null
 		}
-		
 	},
 	mounted() {
 		this.throttle_btns = this.throttle(this.btns, 1200)
@@ -136,8 +121,6 @@ export default {
 			setDepartment:'SET_DEPARTMENT',
 		}),
 		refreshData(data){
-			console.log('4444')
-			console.log(JSON.stringify(data),'departmentListdepartmentList');
 			let msg = {
 				data:this.departmentList,
 				effectState:data.effectState,
@@ -147,7 +130,6 @@ export default {
 		},
 		//获取挂号数据
 		async getFirstVisit() {
-			console.log('3333')
 			let data = uni.getStorageSync('loginData');
 			let siginData = data.defaultArchives;
 			const time = {
@@ -174,8 +156,6 @@ export default {
 					}) || []
 					this.departmentList =[...subscribeList]
 					
-					console.log(JSON.stringify(this.departmentList),'-----')
-					
 					if(this.departmentList.length){
 						console.log(this.departmentList[0].visitNumber,'vvvvv');
 						let found = false
@@ -197,15 +177,12 @@ export default {
 					}else {
 						this.barList = []
 					}
-					
-					// if(data && data.firstState){
-						// 当初诊卡片创建后传值
-						let msg = {
-							data:this.departmentList,
-							effectState:data.effectState,
-						}
-						bus.$emit('complex-data-passed',msg)
-					// }
+					// 当初诊卡片创建后传值
+					let msg = {
+						data:this.departmentList,
+						effectState:data.effectState,
+					}
+					bus.$emit('complex-data-passed',msg)
 				}
 				
 			}).catch(err => {
@@ -233,11 +210,6 @@ export default {
 		},
 		//切换科室
 		departmentBtn(item,index){
-			// this.loading = true
-			// uni.showLoading({
-			// 	title: '加载中...',
-			// 	mask: true
-			// })
 			if(item.visitNumber){
 				if(this.headerEmit.visitNumber !== item.visitNumber){
 					this.barListData=null
@@ -252,15 +224,10 @@ export default {
 					this.headerEmit.orderNo = item.orderNo
 					this.index = index
 				}
-				// setTimeout(()=> {
-				// 	this.loading = false
-				// 	uni.hideLoading()
-				// },15000)
 			}
 			
 		},
 		animateText() {
-			console.log('1111')
 			if (this.interval) {
 				clearInterval(this.interval)
 			}
