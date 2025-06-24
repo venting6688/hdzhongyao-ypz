@@ -79,17 +79,6 @@
 								}
 							});
 						}
-						// else {
-						// 	let items = JSON.stringify(data.data)
-						// 	console.log(items,'=====');
-						// 	this.setFootData(items.defaultArchives);
-						// 	uni.setStorageSync('loginData', items);
-						// 	uni.setStorageSync('isLoginStatus', 'login');
-						// 	uni.showToast({ title: '登录成功' })
-						// 	wx.reLaunch({
-						// 		url: `/pages/virtualNurse/index?pattern=2&shouldUpdate=true`,
-						// 	})
-						// }
 					})
 				})
 			},

@@ -27,7 +27,7 @@
 </template>
 
 <script>
-	import moment from 'moment';
+	import dayjs from 'dayjs';
 	
 	export default {
 		
@@ -36,7 +36,7 @@
 				date:{},
 				index:0,
 				dateState:0,
-				selectDate: moment().format('YYYY-MM'),
+				selectDate: dayjs().format('YYYY-MM'),
 			}
 		},
 		computed:{
@@ -52,8 +52,8 @@
 				this.dateState = num
 				let monthNum = this.dateState === 1 ? 6 : 3;
 				this.date = {
-					startTime: moment().subtract(monthNum, 'months').format('YYYY-MM-DD'),
-					endTime: moment().format('YYYY-MM-DD'),
+					startTime: dayjs().subtract(monthNum, 'months').format('YYYY-MM-DD'),
+					endTime: dayjs().format('YYYY-MM-DD'),
 				}
 				this.$emit('handle',this.date)
 			},
@@ -62,11 +62,11 @@
 				this.selectDate = e.detail.value;
 				let year = this.selectDate.split('-')[0];
 				let month = this.selectDate.split('-')[1];
-				let startDate = moment({year: year, month: month - 1, day: 1}).startOf('month');
-				let endDate = moment(startDate).endOf('month');
+				let startDate = dayjs({year: year, month: month - 1, day: 1}).startOf('month');
+				let endDate = dayjs(startDate).endOf('month');
 				this.date = {
-					startTime: moment(startDate).format('YYYY-MM-DD'),
-					endTime: moment(endDate).format('YYYY-MM-DD'),
+					startTime: dayjs(startDate).format('YYYY-MM-DD'),
+					endTime: dayjs(endDate).format('YYYY-MM-DD'),
 				}
 				this.$emit('handle',this.date)
 			},

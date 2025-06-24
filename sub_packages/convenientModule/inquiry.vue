@@ -1,9 +1,10 @@
 <template>
 	<view class="inquiry">
+		
 		<view class="" :animation="anData"  style="height:0rpx;"></view>
-		<image class="background" src="../../static/image/virtualBg.png"></image>
+		<image class="background" src="https://aiwz.sdtyfy.com:8099/img/virtualBg.png" ></image>	
 		<view class="head">
-			您好！“海豚禾禾”为您服务  
+			您好！“安好”  为您服务  
 		</view>
 		<view class="center">
 			<scroll-view scroll-y="true" :scroll-top="scrollTop" class="scroll-Y" scroll-with-animation>
@@ -21,9 +22,6 @@
 					<!-- AI消息 -->
 					<view class="robot" v-else>
 						<view class="robot-box"  v-if="x.type!==2">
-							<view class="tubiao">
-								<image src="../../static/image/Group 998.png" mode="widthFix"></image>
-							</view>
 							<view class="triangle"></view>
 							<view class="center">
 								<view v-if="x.msgLoad" class="cuIcon-loading turn-load" style="font-size: 50rpx;color: #60B6FE;"></view>
@@ -320,6 +318,7 @@
 				department:{},
 				requestTask:null,
 				scene:false,     //判断是否是从外部小程序跳转
+				visitNumber: '',
 			}
 		},
 		computed: {
@@ -329,11 +328,10 @@
 			
 		},
 		onShow() {
-		    const options = this.$mp.query;
+			const options = this.$mp.query;
 			if (options && options.patient) {
 				this.scene = true
 				this.patient = JSON.parse(decodeURIComponent(options.patient))
-			    console.log(this.patient);
 			}else if(options && options.params){
 				this.scene = false
 				let content = JSON.parse(options.params)
@@ -344,6 +342,7 @@
 					deptName:content.queueName,
 					doctorName:content.doctorName,
 				}
+				this.visitNumber = content.visitNumber
 			}
 		},
 		beforeDestroy() {
@@ -425,8 +424,8 @@
 				  data: {
 				    query: m,
 				    inputs: {
-				      sex: this.patient.sex?this.patient.sex:'男',
-				      age: this.patient.age?this.patient.age:30,
+				      sex: this.patient.sex ? this.patient.sex : '男',
+				      age: this.patient.age ? this.patient.age : 30,
 				    },
 				    response_mode: "streaming",
 				    conversation_id: this.conversation_id,
@@ -536,6 +535,7 @@
 			async complete(index){
 				if(index==1) {
 					try{
+						this.summary.visitNumber = this.visitNumber;
 						const res= await guideApi.PreConsultation({
 							data:this.summary,
 					    }).then((res) => {
@@ -776,13 +776,13 @@
 							align-items: center;
 							width: 460rpx;
 							margin: 20rpx 25rpx 20rpx 0;
+							
 							.triangle {
-								width: 0;
+							    width: 0;
 							 	height: 0;
 							 	border-style: solid;
 							 	border-width: 15rpx 0 15rpx 18rpx;
 							 	border-color: transparent transparent transparent #076aff;
-								// background: url("../../static/image/Group 998.png") center/cover;
 							}
 							
 							.center {
@@ -808,23 +808,18 @@
 						
 						
 						.robot-box {
-							display: flex;
-							justify-content: flex-start;
-							align-items: center;
-							width: 574rpx;
-							margin: 20rpx 0 20rpx 25rpx;
-						 .tubiao {
-							 image {
-								 width: 84rpx;
-							 }
-						 }
+						display: flex;
+						justify-content: flex-start;
+						align-items: center;
+						width: 490rpx;
+						margin: 20rpx 0 20rpx 25rpx;
+						
 						.triangle {
-							width: 0;
+						    width: 0;
 						 	height: 0;
 						 	border-style: solid;
 						 	border-width: 15rpx 18rpx 15rpx 0;
 						 	border-color: transparent rgba(255,255,255,0.80) transparent transparent;
-							// background: url("../../static/image/Group 998.png") center/cover;
 						}
 							
 							.center{

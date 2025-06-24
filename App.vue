@@ -2,22 +2,15 @@
 	export default {
 		onLaunch: function() {
 			let loginData = uni.getStorageSync("loginData");
-			loginData = loginData.defaultArchives ? loginData.defaultArchives : false;
-			if (loginData) {
-				if (loginData.patientName) { 
-					setTimeout(() => {
-						uni.reLaunch({ url: '/pages/virtualNurse/index' });
-					}, 100);
-				} else {
-					setTimeout(() => {
-						uni.navigateTo({
-							url:"/sub_packages/family/familyManage"
-						})
-					}, 100);
-				}
-			} else {
+			
+			if (JSON.stringify(loginData) != '{}' && loginData.defaultArchives) {
 				setTimeout(() => {
 					uni.reLaunch({ url: '/pages/more/index' });
+				}, 100);
+			} 
+			if (loginData.phoneNum != undefined && !loginData.defaultArchives) {
+				setTimeout(() => {
+					uni.reLaunch({ url: '/sub_packages/family/familyManage' });
 				}, 100);
 			}
 		},

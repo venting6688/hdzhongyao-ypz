@@ -132,10 +132,10 @@
 	</view>
 </template>
 <script>
+	import dayjs from 'dayjs'
 	import {mapState,mapMutations} from 'vuex'
 	import foot from '@/components/footer.vue'
 	import zanwu from '@/sub_packages/components/zanwu.vue'
-	import moment from 'moment'
 	import guideApi from '@/api/guideApi.js'
 	import registrationApi from '@/api/registrationApi.js'
 	import mixin from '@/mixins/mixin'
@@ -184,7 +184,12 @@
 		mounted() {
 			let data = uni.getStorageSync('loginData');
 			this.signData = data.defaultArchives ? data.defaultArchives : {};
-			this.getFirstVisit();
+			if (JSON.stringify(this.signData) == "{}") {
+				console.log('22020200202');
+				uni.reLaunch({ url: '/pages/more/index' });
+			} else {
+				this.getFirstVisit();
+			}
 		},
 		methods: {
 			...mapMutations({
@@ -205,8 +210,8 @@
 				let data = uni.getStorageSync('loginData');
 				let siginData = data.defaultArchives;
 				const time = {
-					startDate: moment().format('YYYY-MM-DD'),
-					endDate: moment().add(7, 'days').format('YYYY-MM-DD')
+					startDate: dayjs().format('YYYY-MM-DD'),
+					endDate: dayjs().add(7, 'days').format('YYYY-MM-DD')
 				};
 				const msg = {
 				  cardNo: siginData ? siginData.patientCard : '',
@@ -219,9 +224,9 @@
 				guideApi.registrationRecord(msg).then(res => {
 					let result = JSON.parse(res.data.msg);
 					if(result.success){
-						let nowDate = moment().format('YYYY-MM-DD');
+						let nowDate = dayjs().format('YYYY-MM-DD');
 						let subscribeList = result.data.map(item => {
-							let medDate = moment(item.medDate) 
+							let medDate = dayjs(item.medDate) 
 							item.days = medDate.diff(nowDate, 'days');
 							return {
 								...item,

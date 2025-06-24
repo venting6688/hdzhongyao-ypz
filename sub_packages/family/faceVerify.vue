@@ -43,7 +43,7 @@
 								});
 							}),
 							fail: (err => {
-								uni.showToast({ title: '验证失败，请重试', icon: 'none' });
+								uni.redirectTo({ url: '/sub_packages/family/familyManage' });
 							})
 						});
 					}

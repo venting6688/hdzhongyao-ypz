@@ -321,6 +321,9 @@ import registrationApi from '@/api/registrationApi.js'
 			this.getScheduleDates()
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
+			if (!this.siginData) {
+				uni.reLaunch({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
+			}
 		},
 		
 	}

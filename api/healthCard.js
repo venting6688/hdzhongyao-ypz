@@ -47,7 +47,7 @@ const healthCard = {
 		const res = await cjRequest({
 			url: `queueFilingInfo?${queryParams}`,
 			method: "get",
-		})
+		},2)
 		return res
 	},
 	
@@ -57,7 +57,7 @@ const healthCard = {
 		const res = await cjRequest({
 			url: `deleteArchiveById?${queryParams}`,
 			method: "delete",
-		})
+		},2)
 		return res
 	},
 	
@@ -67,7 +67,7 @@ const healthCard = {
 			url: "updateDefaultArchives",
 			method: "post",
 			data
-		})
+		},2)
 		return res
 	},
 	
@@ -77,7 +77,7 @@ const healthCard = {
 		const res = await cjRequest({
 			url: `getOrderInfoByOrderId?${queryParams}`,
 			method: "get",
-		})
+		},2)
 		return res
 	},
 	
@@ -87,7 +87,7 @@ const healthCard = {
 			url: "registerRealPersonAuthOrder",
 			method: "post",
 			data
-		})
+		},2)
 		return res
 	},
 	

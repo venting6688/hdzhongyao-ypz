@@ -2,33 +2,19 @@
 	<view class="check">
 		<view class="center" v-for="(item,index) in checkContentList" :key="index">
 			<view class="title" v-if="item.callObj.execDept">
-				<view class="clinic">
-					{{item.callObj.execDept ?item.callObj.execDept :''}}
-				</view>
+				<view class="clinic">{{item.callObj.execDept ?item.callObj.execDept :''}}</view>
 				<view class=" title-calling">
 					<view class="left">
-					    <view class="no">
-						    {{item.callObj.selfNum?item.callObj.selfNum+'号':''}}
-					    </view>
-					    <view class="text">
-						    就诊序号
-					    </view>
+					    <view class="no">{{item.callObj.selfNum?item.callObj.selfNum+'号':''}}</view>
+					    <view class="text">就诊序号</view>
 				    </view>
 					<view class="middle">
-					    <view class="call">
-							{{item.callObj.currentNum?item.callObj.currentNum+'号':''}}
-					    </view>
-					    <view class="text">
-						    正在呼叫
-					    </view>
+					    <view class="call">{{item.callObj.currentNum?item.callObj.currentNum+'号':''}}</view>
+					    <view class="text">正在呼叫</view>
 					</view>
 				    <view class="right">
-					    <view class="time">
-				    		{{item.callObj.waitNum?item.callObj.waitNum:''}}
-					    </view>
-					    <view class="text">
-						    等候人数
-					    </view>
+					    <view class="time">{{item.callObj.waitNum?item.callObj.waitNum:''}}</view>
+					    <view class="text">等候人数</view>
 				    </view>
 				</view>
 			</view>
@@ -46,20 +32,12 @@
 				</view>
 				<ul>
 					<li v-if="item.OEORIEnterDeptDesc">
-						<view class="attribute">
-							查验科室:
-						</view>
-						<view class="name">
-							{{item.OEORIEnterDeptDesc}}
-						</view>
+						<view class="attribute">查验科室:</view>
+						<view class="name">{{item.OEORIEnterDeptDesc}}</view>
 					</li>
 					<li v-if="item.OEORIARCItmMastDesc">
-						<view class="attribute">
-							查验项目:
-						</view>
-						<view class="name">
-							{{item.OEORIARCItmMastDesc}}
-						</view>
+						<view class="attribute">查验项目:</view>
+						<view class="name">{{item.OEORIARCItmMastDesc}}</view>
 					</li>
 					<!-- <li v-if="item.signInStatus=='已签到' && item.callObj.medicalTreatmentNumber">
 						<view class="attribute">
@@ -70,46 +48,27 @@
 						</view>
 					</li> -->
 					<li v-else-if="item.sign">
-						<view class="attribute">
-							预计等待:
-						</view>
-						<view class="name">
-							{{item.time}}
-						</view>
+						<view class="attribute">预计等待:</view>
+						<view class="name">{{item.time}}</view>
 					</li>
-					<li  v-if="item.OEORIPrice * item.OEORIOrderQty">
-						<view class="attribute">
-							查验费用:
-						</view>
-						<view class="name">
-							{{item.OEORIPrice * item.OEORIOrderQty}}元
-						</view>
+					<li v-if="item.OEORIPrice * item.OEORIOrderQty">
+						<view class="attribute">查验费用:</view>
+						<view class="name">￥{{item.OEORIPrice * item.OEORIOrderQty}}元</view>
 					</li>
 					<li  v-if="item.acceptDeptLocation">
-						<view class="attribute">
-							科室位置:
-						</view>
-						<view class="name department" @click="navigation">
-							{{item.acceptDeptLocation}}
-						</view>
-						<view class="img">
-							<image src="@/static/image/location.png" mode=""></image>
-						</view>
+						<view class="attribute">科室位置:</view>
+						<view class="name department" @click="navigation">{{item.acceptDeptLocation}}</view>
+						<view class="img"><image src="@/static/image/location.png" mode=""></image></view>
 					</li>
 					<li  v-if="item.notice">
-						<view class="attribute">
-							注意事项:
-						</view>
-						<view class="name">
-							{{item.notice}}
-						</view>
+						<view class="attribute">注意事项:</view>
+						<view class="name">{{item.notice}}</view>
 					</li>
 				</ul>
 				<view class="btn" v-if="shouldShowItem(item)">
 					<view>
 						<button class="cu-btn" @click="confirm(btnText(item),item,index)" :disabled="item.SigninStatus === '不能线上签到'" :class="{gray:item.SigninStatus === '不能线上签到'}">{{btnText(item)}}</button>
 					</view>
-					
 				</view>
 				<!-- <view class="footer" v-else>
 					<view>
@@ -132,7 +91,7 @@
 	import bus from '@/utils/bus.js'
 	export default {
 		props: {
-		    headerEmit: Object,
+		  headerEmit: Object,
 		},
 		components:{
 			Toast,
@@ -171,16 +130,16 @@
 				this.toastObj.state = state
 			},
 			shouldShowItem(item) {
-			    return (item.SigninStatus==='-99'&& item.OEORIBillStatusCode!=='P') || item.SigninStatus!=='-99';
+			  return (item.SigninStatus==='-99'&& item.OEORIBillStatusCode!=='P') || item.SigninStatus!=='-99';
 			},
 			statusText(item) {
-			    if (item.OEORIBillStatusCode!=='P') {
-			        return '未缴费';
-			    } else if (item.SigninStatus === '已签到') {
-			        return '已签到';
-			    } else {
-			        return '未签到';
-			    }
+				if (item.OEORIBillStatusCode!=='P') {
+						return '未缴费';
+				} else if (item.SigninStatus === '已签到') {
+						return '已签到';
+				} else {
+						return '未签到';
+				}
 			},
 			btnText(item) {
 				if (item.OEORIBillStatusCode!=='P') {
@@ -199,10 +158,10 @@
 				// wx.openLocation({
 				//           latitude: latitude,//目的地的纬度
 				//           longitude: longitude,//目的地的经度
-				//           name: '青岛西海岸新区第二中医医院', 
+				//           name: '山东第一医科大学第二附属医院', 
 				//})
 			},
-			async confirm(name,item,index){
+			async confirm(name,item,index) {
 				console.log('item',item)
 				if(name==='立即缴费'){
 					uni.navigateTo({

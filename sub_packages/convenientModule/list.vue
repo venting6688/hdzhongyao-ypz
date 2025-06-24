@@ -1,12 +1,16 @@
 <template>
 	<view class="inventory">
+		<bar />
+		<view class="date">
+			<uni-datetime-picker v-model="range" type="daterange" />
+		</view>
 		<view class="center">
 			<view class="top" @click="showDetail(item.value)" v-for="(item, index) in dayList" :key="index">
 				<view class="title">
 					<view class="left">{{item.date}}</view>
 					<view class="right">
 						<text>查看详情</text>
-						<image src="../../../static/image/Vector@2x.png" mode=""></image>
+						<image src="../static/image/Vector@2x.png" mode=""></image>
 					</view>
 				</view>
 				<view class="content">本日消费金额：￥{{item.totalAmount}}元</view>
@@ -22,45 +26,52 @@
 	import dayjs from 'dayjs';
 	import { mapState } from 'vuex';
 	import bus from "@/utils/bus.js";
+	import bar from '../components/bar.vue'
 	import hospitalizationApi from '@/api/hospitalizationApi.js';
 	export default {
-		props: { headerEmit: Object, },
+		components:{
+			bar,
+		},
 		data() {
 			return {
 				dayList: [],
+				date:{},
+				admID: '',
+				range: [],
+				startDate: '',
+				endDate: dayjs().format('YYYY-MM-DD'),
 			}
 		},
 		computed: {
 			...mapState(['footData','department']),
 		},
-		mounted() {
-			this.getHospitalizationDaysList()
+		watch: {
+			range(newval) {
+				this.startDate = this.range.length ? this.range[0] : this.startDate
+				this.endDate =  this.range.length ? this.range[1] : this.endDate
+				this.getHospitalizationDaysList();
+			},
+		},
+		onLoad(e) {
+			this.admID = e.id;
+			this.startDate = e.date;
+			this.getHospitalizationDaysList();
 		},
 		
 		methods: {
 			async getHospitalizationDaysList () {
-				let data = {
-					patientID: this.footData.patientUniquelyIdentifies,
-					AimFlag: 'Dep'
+				let str = {
+					startDate: this.startDate,
+					endDate: this.endDate,
+					admID: this.admID,
 				}
-				let res = await hospitalizationApi.getHospitalRecord(data);
-				if (res.data.code === 200 && res.data.data.admInfoList != undefined) {
-					let admID = res.data.data.admInfoList.admInfo[0].admID;
-					let startDate =res.data.data.admInfoList.admInfo[0].admDate;
-					let endDate = dayjs().format('YYYY-MM-DD');
-					let str = {
-						startDate,
-						endDate,
-						admID
-					}
-					let data = await hospitalizationApi.getHospitalizationDaysList(str);
-					if (data.data.code === 200) {
-						this.dayList = data.data.data;
-						this.dayList.sort((a, b) => new Date(b.date) - new Date(a.date))
-					}
-				}
+				let data = await hospitalizationApi.getHospitalizationDaysList(str);
+				this.dayList = [];
+				if (data.data.code === 200) {
+					this.dayList = data.data.data;
+					this.dayList.sort((a, b) => new Date(b.date) - new Date(a.date))
+				} 
 			},
-			
 			showDetail(data) {
 				uni.navigateTo({
 					url: `/sub_packages/convenientModule/detail?data=${encodeURIComponent(JSON.stringify(data))}`
@@ -82,8 +93,11 @@
 	     transform: translateX(100%);
 	   }
 	.inventory{
-		// background: fuchsia;
-		
+		.date {
+			margin: 15rpx auto;
+			width: 92%;
+			border: 3rpx solid #4286ff
+		}
 		.center {
 			margin:28rpx 33rpx 0 33rpx;
 			width: 684rpx;
@@ -105,6 +119,7 @@
 					image {
 						width: 12rpx;
 						height: 16rpx;
+						margin-left: 10rpx
 					}
 					text {
 						color: #4286FF;

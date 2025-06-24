@@ -1,6 +1,6 @@
 <template>
 	<view class="box">
-		<bar />
+		<bar v-if="siginData.patientName" />
 		<date @handle="show" />
 		<view class="information">
 			<ul v-if="list.length">

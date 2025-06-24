@@ -89,7 +89,7 @@
 </template>
 
 <script>
-	import moment from 'moment';
+	import dayjs from 'dayjs';
 	import { mapState } from 'vuex'
 	import Toast from '../components/toast.vue'
 	import registrationApi from '@/api/registrationApi.js'
@@ -218,7 +218,7 @@
 						
 						let healthCardData = {
 							qrCodeText: this.siginData.qrCodeText,
-							time: moment().format('YYYY-MM-DD HH:mm:ss'),
+							time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
 							hospitalCode: '40088',
 							scene: '0101011',
 							department,
@@ -237,7 +237,7 @@
 							patientName: this.siginData.patientName,
 							subOpenId: data.xcxOpenId,
 							totalAmount: String(this.doctor.Fee * 100), 
-							merOrderId: '157Q-'+moment().format('YYYYMMDDHHmmss')+'-'+randNum
+							merOrderId: '157Q-'+dayjs().format('YYYYMMDDHHmmss')+'-'+randNum
 						}
 						
 						registrationApi.registerOrder(datas).then(res => {

@@ -2,24 +2,28 @@
 	<view class="box">
 		<view class="bar">
 			<view class="name">
-				{{siginData.patientName ? pixelate(siginData.patientName):''}}
-				<!-- <text>{{siginData.relation ? siginData.relation:''}}</text> -->
+				{{footData.patientName?pixelate(footData.patientName):''}}<text>{{footData.relation?footData.relation:''}}</text>
 			</view>
-			<!-- <view class="cut"  @click="cutPatient">
+			<view class="cut"  @click="cutPatient">
 				<image src="@/static/image/cut.png" mode=""></image>
 				<text>切换家庭成员</text>
-			</view> -->
+			</view>
 		</view>
-		
+		<uni-popup class="cutPatientDialog" @maskClick="cutPatientPopupClick" :safe-area="false"  ref="cutPatientPopup" type="bottom">
+		   <popupFamily v-if="cutPatientPopupState" :personageObj="personageObj" @handle="show" />
+		</uni-popup>
 	</view>
 </template>
 
 <script>
 	import { mapState } from 'vuex'
 	import mixin from '@/mixins/mixin.js'
+	import popupFamily from '@/components/popupFamily.vue';
 	export default {
 		mixins: [mixin],
-		
+		components:{
+			popupFamily
+		},
 		data(){
 			return {
 				registerData:{
@@ -31,12 +35,11 @@
 				},
 				timer:null,
 				cutPatientPopupState:true,
-				siginData: {}
 			}
 		},
 		computed: { 
 			...mapState(['footData']),
-		},
+				},
 		methods: {
 			cutPatientPopupClick(){
 				this.timer = setTimeout(()=>{
@@ -49,30 +52,28 @@
 				this.$refs.cutPatientPopup.close()
 			},
 			cutPatient(){
-				// if(this.timer){
-				// 	clearTimeout(this.timer)
-				// 	this.timer = null
-				// 	this.cutPatientPopupState = false
-				// }
-				// this.$nextTick(() => {
-				// 	this.loginData()
-				// 	this.cutPatientPopupState = true
-				// 	this.$refs.cutPatientPopup.open('bottom')   //弹框
-				// });
+				if(this.timer){
+					clearTimeout(this.timer)
+					this.timer = null
+					this.cutPatientPopupState = false
+				}
+				this.$nextTick(() => {
+					this.loginData()
+					this.cutPatientPopupState = true
+					this.$refs.cutPatientPopup.open('bottom')   //弹框
+				});
 			},
 			loginData(){
 				let loginValue = uni.getStorageSync("loginData");
-				loginValue = data.defaultArchives ? data.defaultArchives : '';
-				if(loginValue != ''){
-					this.registerData = loginValue
+				if(loginValue){
+					this.registerData = JSON.parse(loginValue)
 					this.personageObj.list = this.registerData && this.registerData.archivesList
 					this.personageObj.sole = this.footData
 				}
 			},
 		},
 		mounted(){
-			let data = uni.getStorageSync('loginData');
-			this.siginData = data.defaultArchives ? data.defaultArchives : {}
+			
 		}
 	}
 </script>

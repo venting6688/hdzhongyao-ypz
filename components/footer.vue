@@ -20,10 +20,9 @@
 				<view class="wire"  v-if="footData.patientName || siginData.patientName"></view>
 				<view class="foot-bar" :class="{'bar-w':!footData.patientName || !siginData.patientName}">
 					<view class="piece" 
-					:style="{ width: loginStatus == 'login' ? '33.333%' : '100%' }" 
+					:style="{ width:'33.333%'}" 
 					v-for="item in footList" 
 					:key="item.name" 
-					v-if="loginStatus == 'login' ? loginMenu.includes(item.name) : notLoginMenu.includes(item.name)"
 					@click="footBtn(item)"
 					>
 						<view class="title">

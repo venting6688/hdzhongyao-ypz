@@ -6,7 +6,14 @@
 				<view class="title">
 					{{i.title}}
 				</view>
-			  <van-grid-item use-slot @click="toast(item.num,urlList[item.num-1])" link-type="navigateTo" :url="urlList[item.num-1]" v-for="(item,index) in i.list" :key="index">
+			  <van-grid-item 
+				use-slot @click="toast(item.num,urlList[item.num-1])" 
+				link-type="navigateTo" 
+				:url="urlList[item.num-1]" 
+				v-for="(item,index) in i.list" 
+				:key="index" 
+				v-if="item.active"
+				>
 			    <view class="img" >
 			    	<image :src="item.img" mode=""></image>
 			    </view>
@@ -30,73 +37,80 @@
 			HeaderBar,
 		},
 		computed: {
-			...mapState(['footData']),
+			...mapState(['footData', 'loginStatus']),
+			
+			moduleList() {
+				return [
+					{
+						title: '门诊服务',
+						list: [
+							{
+								img: 'https://aiwz.sdtyfy.com:8099/img/outpatient1.png',
+								active: true,
+								name: '预约挂号',
+								num: 1,
+							},
+							{
+								img: 'https://aiwz.sdtyfy.com:8099/img/outpatient3.png',
+								active: this.loginStatus === 'login',
+								name: '门诊缴费',
+								num: 2,
+							},
+							{
+								img: 'https://aiwz.sdtyfy.com:8099/img/outpatient7.png',
+								active: true,
+								name: '就诊记录',
+								num: 3,
+							},
+							{
+								img: 'https://aiwz.sdtyfy.com:8099/img/outpatient4.png',
+								active: this.loginStatus === 'login',
+								name: '门诊报告',
+								num: 4,
+							},
+						],
+					},
+					{
+						title: '智慧取药',
+						list: [
+							{
+								img: '../../static/image/quyaofy.png',
+								active: true,
+								name: '智慧取药',
+								num: 5,
+							},
+						],
+					},
+					{
+						title: '便民服务',
+						list: [
+							{
+								img: 'https://aiwz.sdtyfy.com:8099/img/synthesize1.png',
+								active: true,
+								name: '就诊人管理',
+								num: 6,
+							},
+							{
+								img:'https://aiwz.sdtyfy.com:8099/img/hospitalized5.png',
+								active: this.loginStatus === 'login',
+								name:'住院费用',
+								num:7,
+							},
+							{
+								img:'https://aiwz.sdtyfy.com:8099/img/hospitalized7.png',
+								active: this.loginStatus === 'login',
+								name:'住院预交金',
+								num:8,
+							},
+						],
+					},
+				];
+			}
 		},
 		data() {
 			return {
 				animationData: {},
 				footState:3,
-				moduleList:[
-					{
-						title:'门诊服务',
-						list: [
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/outpatient1.png',
-								name:'预约挂号',
-								num:1, //2,
-							},
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/outpatient3.png',
-								name:'门诊缴费',
-								num:2, //3,
-							},
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/outpatient7.png',
-								name:'就诊记录',
-								num:3, //5,
-							},
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/outpatient4.png',
-								name:'门诊报告',
-								num:4, //6,
-							},
-						],
-					},
-					// {
-					// 	title: '住院服务',
-					// 	list: []
-					// },
-					{
-						title: '智慧取药',
-						list: [
-							{
-								img:'../../static/image/quyaofy.png',
-								name:'智慧取药',
-								num:5,
-							},
-						]
-					},
-					{
-						title:'便民服务',
-						list:[
-							{
-								img:'https://aiwz.sdtyfy.com:8099/img/synthesize1.png',
-								name:'就诊人管理',
-								num:6,
-							},
-							// {
-							// 	img:'https://aiwz.sdtyfy.com:8099/img/synthesize4.png',
-							// 	name:'在线建档',
-							// 	num:7,
-							// },
-							// {
-							// 	img:'https://aiwz.sdtyfy.com:8099/img/synthesize6.png',
-							// 	name:'我的',
-							// 	num:8,
-							// },
-						]
-					},
-				],
 				urlList:[
 					'/sub_packages/subscribe/departments', //1
 					'/sub_packages/outpatientExpenditure/index', //2
@@ -104,8 +118,8 @@
 					'/sub_packages/report/index', //4
 					'/sub_packages/medicine/index', //5
 				  '/sub_packages/family/familyManage', //6
-					// '/sub_packages/filing/information', //7
-					// '/sub_packages/mine/index', //8
+					'/sub_packages/convenientModule/index', //7
+					'/sub_packages/deposit/index', //8
 				],
 			}
 		},

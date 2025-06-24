@@ -44,11 +44,7 @@
 		},
 		onLoad() {
 			this.loginValue = uni.getStorageSync("loginData");
-			if (!this.loginValue) {
-				uni.navigateTo({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
-			} else {
-				this.getServiceGroup()
-			}
+			this.getServiceGroup()
 		},
 		methods: {
 			onSearchChange(value) {

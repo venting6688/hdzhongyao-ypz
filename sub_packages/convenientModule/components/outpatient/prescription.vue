@@ -39,13 +39,6 @@
 				    <image src="@/static/image/Group 679.png" mode=""></image>
 				</view>
 			</view>
-			<!-- <view class="head">
-				<view class="left">
-				</view>
-				<view class="right">
-					{{item.type?item.type:''}}
-				</view>
-			</view> -->
 			<view class="content">
 				<view class="icon">
 					<text>{{item.payStatus=='未收费'?item.payStatus:item.signInStatus}}</text>
@@ -61,14 +54,6 @@
 							{{item.OEORIExecDeptDesc}}
 						</view>
 					</li>
-					<!-- <li v-if="item.callObj.medicalTreatmentNumber">
-						<view class="attribute">
-							排队序号:
-						</view>
-						<view class="name">
-							{{item.callObj.medicalTreatmentNumber}}号
-						</view>
-					</li> -->
 					<li  v-if="item.OEORIOrderQty">
 						<view class="attribute">
 							药品数量:
@@ -101,24 +86,15 @@
 							{{item.queueNotice}}
 						</view>
 					</li>
-					
 				</ul>
 				<view class="btn" v-if="item.queueName ||item.doctorName">
-					<!-- <navigator class="navigator"  url="../../pages/payAFee" hover-class="navigator-hover">
-					{{btn(item.payStatus)}}
-					</navigator> -->
 					<view v-if="item.payStatus!=='已收费'">
 						<button class="cu-btn" @click="leftBtn(index)">{{btn(item.payStatus)}}</button>
-					    <!-- <button class="cu-btn">暂未开放</button> -->
 					</view>
 					<view v-else>
 						<button class="cu-btn" @click="leftBtn(index)">{{btn(item.signInStatus)}}</button>
-						<!-- <button class="cu-btn">暂未开放</button> -->
 					</view>
-					
 				</view>
-				
-						
 			</view>
 		</view>
 		</view>

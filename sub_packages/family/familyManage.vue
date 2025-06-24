@@ -144,16 +144,12 @@
 		},
 		onLoad(e) {
 			this.loginValue = uni.getStorageSync("loginData");
-			if (!this.loginValue) {
-				uni.navigateTo({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
-			} else {
-				this.healthCode = e.healthCode ? e.healthCode : '';
-				this.regInfoCode = e.regInfoCode ? e.regInfoCode : '';
-				this.authCode = e.authCode ? e.authCode : '';
-				this.getHealthCardList();
-				if (this.healthCode != '') {
-					this.getHealthCard();
-				}
+			this.healthCode = e.healthCode ? e.healthCode : '';
+			this.regInfoCode = e.regInfoCode ? e.regInfoCode : '';
+			this.authCode = e.authCode ? e.authCode : '';
+			this.getHealthCardList();
+			if (this.healthCode != '') {
+				this.getHealthCard();
 			}
 		},
 		
@@ -179,18 +175,22 @@
 			},
 			//电子健康卡
 			linkHealthCard() {
-				var plugin = requirePlugin("healthCardPlugins");
-				plugin.login((isok, res) => {
-					if (!isok && res.result.toLogin) {
-						// 用户未授权，需要用户同意授权
-						this.$refs.authPopup.open();
-					} else {
-						// 用户在微信授权过，可直接获取登录信息，处理后续业务
-						this.todo(res);
-					}
-				}, {
-					wechatCode: true,
-				});
+				if (!this.loginValue) {
+					uni.navigateTo({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
+				} else {
+					var plugin = requirePlugin("healthCardPlugins");
+					plugin.login((isok, res) => {
+						if (!isok && res.result.toLogin) {
+							// 用户未授权，需要用户同意授权
+							this.$refs.authPopup.open();
+						} else {
+							// 用户在微信授权过，可直接获取登录信息，处理后续业务
+							this.todo(res);
+						}
+					}, {
+						wechatCode: true,
+					});
+				}
 			},
 			
 			async todo(val) {

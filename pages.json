@@ -273,6 +273,51 @@
 					"navigationBarTitleText": "人脸识别",
 					"disableScroll": true
 				}
+			},
+			
+			{
+				//住院记录
+				"path" : "convenientModule/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "住院记录"
+					// "disableScroll": true
+				}
+			},
+			{
+				//住院清单
+				"path" : "convenientModule/list",
+				"style" : 
+				{
+					"navigationBarTitleText": "住院清单"
+				}
+			},
+			{
+				//住院清单详情
+				"path" : "convenientModule/detail",
+				"style" : 
+				{
+					"navigationBarTitleText": "清单明细",
+					"disableScroll": true
+				}
+			},
+			{
+				//住院充值
+				"path" : "deposit/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "住院预交金",
+					"disableScroll": true
+				}
+			},
+			{
+				//住院充值记录
+				"path" : "deposit/topUpRecord",
+				"style" : 
+				{
+					"navigationBarTitleText": "充值记录",
+					"disableScroll": true
+				}
 			}
 		]
   }],

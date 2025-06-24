@@ -8,10 +8,10 @@
 		</view>
 		<view class="center">
 			<scroll-view scroll-y="true" :scroll-top="scrollTop" class="scroll-Y" scroll-with-animation>
-				<view  id="okk" style="padding-bottom: 100rpx;">
+				<view id="okk" style="padding-bottom: 100rpx;">
 					<view class="msgList" v-for="(x,i) in msgList" :key="i" :class="{ 'padd': i === msgList.length - 1 }">
 					<!-- 用户消息 -->
-				    <view class="my"  v-if="x.my">
+				    <view class="my" v-if="x.my">
 						<view class="my-box">
 							<view class="center">
 								<text class="msg">{{x.msg}}</text>
@@ -80,7 +80,7 @@
 							</view>
 						</view>
 					</view>
-			       </view>
+					</view>
 				</view>
 		    </scroll-view>
 			<!-- 选择症状、疾病 弹窗 -->
@@ -212,18 +212,18 @@
 				mode:'',
 				msgList:[
 					{
-					    my:false,
+						my:false,
 						type:1,
 						msg:'您可以向我询问以下问题：',
 						questionList:['感冒吃什么药','头孢的作用是什么'],
 					}
 				],      //消息集合
 				DataList:{},    //底部弹窗
-				footBar:[
+				footBar: [
 					{
-					name:'智能导诊',
-					state:1,
-				    },
+						name:'智能导诊',
+						state:1,
+					},
 					{
 					name:'智能问答',
 					state:2,
@@ -268,7 +268,7 @@
 				}) 
 				this.msgList = [
 					{
-							my:false,
+						my:false,
 						type:1,
 						msg:'您可以详细描述症状，我将为您优先推荐科室去挂号：',
 						questionList:['感冒','恶心','上吐下泻'],
@@ -315,19 +315,6 @@
 				uni.navigateTo({
 					url: `/sub_packages/subscribe/departments`
 				})
-				// 跳转到山一大二附院小程序挂号科室页面
-				// const appId = 'wx6334d37b051ec074';
-				// const targetUrl = `pages/outpatient-department/main?hosld=2`;
-				// wx.navigateToMiniProgram({
-				//   appId: appId,
-				//   path: targetUrl,
-				//   envVersion: 'release',
-				//   success: function(res) {
-				//   },
-				//   fail: function(err) {
-				//     console.log('跳转失败', err);
-				//   }
-				// });
 			},
 			footBarBtn(item){
 				if(!this.inputState){
@@ -345,7 +332,7 @@
 					this.conversation_id = ''
 					this.msgList = [
 						{
-						    my:false,
+						  my:false,
 							type:1,
 							msg:'您可以详细描述症状，我将为您优先推荐科室去挂号：',
 							questionList:['感冒','恶心','上吐下泻'],
@@ -396,9 +383,9 @@
 					   // 如果超过scorll高度就滚动scorll
 					   if(data.height-wh>-240){
 					   		this.go=data.height-wh+300  
-					   						this.$nextTick(function() {
-					   							this.scrollTop = this.go
-					   						});
+								this.$nextTick(function() {
+									this.scrollTop = this.go
+								});
 					   }
 					   // this.msg = 'wh:+'wh+'data.height:'+data.height+'wh'+wh
 					   // 保证键盘第一次拉起时消息体能保持可见
@@ -419,30 +406,17 @@
 			},
 			msgMove(x,t){
 				var animation = uni.createAnimation({
-				        duration: t,
-				          timingFunction: 'ease',
-				      })
-				      this.animation = animation
-				      animation.height(x).step()
-				      this.anData = animation.export()
+					duration: t,
+						timingFunction: 'ease',
+				})
+				this.animation = animation
+				animation.height(x).step()
+				this.anData = animation.export()
 			},
 			// 回答问题
 			answer(msg){
-				let loginValue = uni.getStorageSync("loginData");
-				if(loginValue){
-					// let data = JSON.parse(loginValue)
-					if(loginValue){
-						this.msg = msg
-						this.sendMsg()
-					}else {
-						login.loginData().catch((error) => {});
-					}
-					
-				}else {
-					login.loginData().catch((error) => {
-					});
-				}
-				
+				this.msg = msg
+				this.sendMsg()
 			},
 			sendMsg(){
 				// 消息为空不做任何操作
@@ -684,11 +658,11 @@
 			  },
 		},
 	  mounted() {
-			 let loginData = uni.getStorageSync("loginData");
-			 loginData = loginData.defaultArchives ? loginData.defaultArchives : false;
-			 if (!loginData) {
-				 uni.reLaunch({ url: '/pages/more/index' });
-			 } else  {
+			 // let loginData = uni.getStorageSync("loginData");
+			 // loginData = loginData.defaultArchives ? loginData.defaultArchives : false;
+			 // if (!loginData) {
+				//  uni.reLaunch({ url: '/pages/more/index' });
+			 // } else  {
 				 // 监听键盘拉起
 				 // 因为无法控制键盘拉起的速度,所以这里尽量以慢速处理
 				 uni.onKeyboardHeightChange(res => {
@@ -720,7 +694,7 @@
 				 this.setManagerLisener()
 				 this.msgGo()
 				 // this.$refs.agePopup.open('bottom')  
-			 }
+			 
 		},
 	}
 </script>

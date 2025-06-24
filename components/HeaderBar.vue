@@ -26,7 +26,7 @@
 </template>
 
 <script>
-	import moment from 'moment';
+	import dayjs from 'dayjs';
 	import HeaderbarApi from '@/api/HeaderbarApi.js'
 	import guideApi from '@/api/guideApi.js'
 	import mixin from '@/mixins/mixin'
@@ -133,8 +133,8 @@ export default {
 			let data = uni.getStorageSync('loginData');
 			let siginData = data.defaultArchives;
 			const time = {
-				startDate: moment().format('YYYY-MM-DD'),
-				endDate: moment().add(7, 'days').format('YYYY-MM-DD')
+				startDate: dayjs().format('YYYY-MM-DD'),
+				endDate: dayjs().add(7, 'days').format('YYYY-MM-DD')
 			};
 			const msg = {
 			  cardNo: siginData.patientCard,

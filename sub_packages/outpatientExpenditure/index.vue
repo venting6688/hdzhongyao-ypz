@@ -95,7 +95,7 @@
 </template>
 
 <script>
-	import moment from 'moment';
+	import dayjs from 'dayjs';
 	import mixin from '@/mixins/mixin'
 	import bar from '../components/bar.vue'
 	import date from '../components/date.vue'
@@ -144,7 +144,7 @@
 		onLoad(option) {
 			this.loginValue = uni.getStorageSync("loginData");
 			if (!this.loginValue) {
-				uni.navigateTo({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
+				uni.reLaunch({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
 			} else {
 				this.siginData = this.loginValue.defaultArchives ? this.loginValue.defaultArchives : {}
 				this.loading.loadingState = false
@@ -179,7 +179,7 @@
 			async reportHISData() {
 				let data = {
 					qrCodeText: this.siginData.qrCodeText,
-					time: moment().format('YYYY-MM-DD HH:mm:ss'),
+					time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
 					hospitalCode: '40088',
 					scene: '0101051',
 					department: '',
@@ -244,7 +244,7 @@
 					patientName: this.siginData.patientName,
 					subOpenId: loginValue.xcxOpenId,
 					totalAmount: String(item.billFee), 
-					merOrderId: '157Q-'+moment().format('YYYYMMDDHHmmss')+'-'+randNum
+					merOrderId: '157Q-jf'+dayjs().format('YYYYMMDDHHmmss')+'-'+randNum
 				}
 				try {
 					registrationApi.registerOrder(msg).then(result => {

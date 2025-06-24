@@ -2,22 +2,18 @@
 	<view class="first">
 		<view class="center" v-if="firstContent.queueName">
 			<view class="title" v-if="callObj.deptName">
-				<view class="clinic">
-					{{callObj.deptName ?callObj.deptName :''}}
-				</view>
+				<view class="clinic">{{firstContent.room ? firstContent.room : ''}}</view>
 				<view class=" title-calling">
 					<view class="left">
-					   <view class="no">
-						    {{callObj.waitCallNo?callObj.waitCallNo+'号':''}}
-					    </view>
+					   <view class="no">{{callObj.waitCallNo ? callObj.waitCallNo+'号' : ''}}</view>
 					    <view class="text">就诊序号</view>
 				    </view>
 					<view class="middle">
-						<view class="call">{{callObj.callNo?callObj.callNo+'号':''}}</view>
-						<view class="text">正在呼叫</view>
+					    <view class="call">{{callObj.callNo ? callObj.callNo+'号' : '暂无'}}</view>
+					    <view class="text">正在呼叫</view>
 					</view>
 				    <view class="right">
-					    <view class="time">{{callObj.queueWaitNum?callObj.queueWaitNum:''}}</view>
+					    <view class="time">{{callObj.queueWaitNum ? callObj.queueWaitNum : '0'}}</view>
 					    <view class="text">等候人数</view>
 				    </view>
 				</view>
@@ -30,57 +26,41 @@
 			</view>
 			<view class="content">
 				<view class="icon" v-if="firstContent.queueName">
-					<text>已预约</text>
+					<text>已签到</text>
 					<image src="@/static/image/Union2.png" mode="widthFix"></image>
 				</view>
 				<ul>
-					<li v-if="firstContent.deptName">
+					<li v-if="firstContent.queueName">
 						<view class="attribute">挂号科室:</view>
-						<view class="name">{{firstContent.deptName}}</view>
+						<view class="name">{{firstContent.queueName}}</view>
 					</li>
-					<li v-if="firstContent.doctName">
+					<li v-if="firstContent.admitAddress">
+						<view class="attribute">科室房间:</view>
+						<view class="name">{{firstContent.admitAddress}}</view>
+					</li>
+					<li v-if="firstContent.doctorName">
 						<view class="attribute">挂号医生:</view>
-						<view class="name">{{firstContent.doctName}}</view>
+						<view class="name">{{firstContent.doctorName}}</view>
 					</li>
-					<!-- <li v-if="firstContent.callState=='已签到' && callObj.medicalTreatmentNumber">
-						<view class="attribute">
-							就诊序号:
-						</view>
-						<view class="name">
-							{{callObj.medicalTreatmentNumber}}号
-						</view>
-					</li> -->
-					<li v-if="firstContent.medDate">
+					<li v-if="firstContent.appointmentTime">
 						<view class="attribute">预约时间:</view>
-						<view class="name">{{firstContent.medDate}} {{firstContent.medTime}}</view>
+						<view class="name">{{firstContent.appointmentTime}}</view>
 					</li>
-					<li v-if="firstContent.address">
+					<li v-if="firstContent.queueLocation">
 						<view class="attribute">科室位置:</view>
-						<view class="name">{{firstContent.address}}</view>
+						<view class="name">{{firstContent.queueLocation}}</view>
 					</li>
 					<li v-if="firstContent.precautions">
 						<view class="attribute">注意事项:</view>
-						<view class="name">
-							{{firstContent.precautions}}
-						</view>
+						<view class="name">{{firstContent.precautions}}</view>
 					</li>
-					
 				</ul>
 				<view class="btn" v-if="firstContent.queueName">
 					<view>
-						<!-- <button class="cu-btn" @click="getQueueingMessage">刷新信息</button> -->
-						<button class="cu-btn" @click="cancelRegistration(firstContent)">退号</button>
-					    <!-- <button class="cu-btn" >更改预约</button>
-					    <button class="cu-btn" >预约车位</button>
-					    <button class="cu-btn" @click="navigation">导航到院</button> -->
+						<button class="cu-btn" @click="getQueueingMessage">刷新信息</button>
+						<button class="cu-btn" @click="cancelRegistration">退号</button>
 					</view>
 				</view>
-				
-				<!-- <view class="footer" v-else>
-					<view>
-						<text>初诊已经结束，请您移步至检查检验科室继续就诊</text>
-					</view>
-				</view> -->
 				<view class="inquiry" v-if="firstContent.queueName">
 					<view>
 						<view class="inquiry-box">
@@ -88,20 +68,16 @@
 								<image src="../../../static/image/inquiry.png" mode=""></image>
 								<text>智能问诊</text>
 							</view>
-							<view class="inquiryBtn" @click="navigateToPage">
-								去填写
-							</view>
+							<view class="inquiryBtn" @click="navigateToPage">去填写</view>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-		<view v-if="subscribeObj.deptName">
+		<view v-if="subscribeObj.department">
 			<view class="center">
-				<view class="head" v-if="subscribeObj.days || subscribeObj.days !== '0'">
-					<view class="">
-						距离您的就诊日还有 {{subscribeObj.days}} 天
-					</view>
+				<view class="head" v-if="subscribeObj.days && subscribeObj.days!=='0'">
+					<view class="">距离您的就诊日还有 {{subscribeObj.days}} 天</view>
 				</view>
 				<view class="wire-box wireState"></view>
 				<view class="content">
@@ -111,36 +87,33 @@
 						<image v-if="subscribeObj.days && subscribeObj.days!=='0'" src="@/static/image/Union2.png" mode="widthFix"></image>
 					</view>
 					<ul>
-						<li v-if="subscribeObj.deptName">
+						<li v-if="subscribeObj.department">
 							<view class="attribute">挂号科室:</view>
-							<view class="name">{{subscribeObj.deptName}}</view>
+							<view class="name">{{subscribeObj.department}}</view>
 						</li>
-						<li v-if="subscribeObj.doctName">
+						<li v-if="subscribeObj.doctor">
 							<view class="attribute">挂号医生:</view>
-							<view class="name">{{subscribeObj.doctName}}</view>
+							<view class="name">{{subscribeObj.doctor}}</view>
 						</li>
-						<li v-if="subscribeObj.medDate">
+						<li v-if="subscribeObj.admitDate">
 							<view class="attribute">预约时间:</view>
-							<view class="name">{{subscribeObj.medDate}} {{subscribeObj.medTime}}</view>
+							<view class="name">{{subscribeObj.admitDate}}</view>
 						</li>
 					</ul>
 					<view class="btn">
 						<view>
-							<button  v-if="subscribeObj.days>='0'" class="cu-btn" @click="cancelRegistration(subscribeObj)">退号</button>
-							<!-- <button v-if="subscribeObj.days==='0'" class="cu-btn" @click="takeANumberPrePay(subscribeObj)">预约取号</button> -->
+							<button  v-if="subscribeObj.days>='0'" class="cu-btn" @click="cancelAppointmentRegister(subscribeObj.orderCode)">取消预约</button>
+							<button v-if="subscribeObj.days==='0'" class="cu-btn" @click="takeANumberPrePay(subscribeObj)">预约取号</button>
 						</view>
 					</view>
-					
 				</view>
 			</view>
 		</view>
-		
 		<Toast v-if="toastObj.state" @back="closeToast" :type="toastObj.type" :message="toastObj.message"/>
 	</view>
 </template>
 
 <script>
-	import moment from 'moment';
 	import guideApi from '@/api/guideApi.js'
 	import mixin from '@/mixins/mixin'
 	import bus from '@/utils/bus.js'
@@ -174,22 +147,16 @@
 		},
 		created() {
 			bus.$on('complex-data-passed',(data)=>{
-				console.log(JSON.stringify(data.data),'datadatadatadata')
 				if(data.data.length){
-					let nowDate = moment().format('YYYY-MM-DD');
 					data.data.forEach(e => {
-						if (nowDate != e.medDate && e.medDate > nowDate) {
-							let medDate = moment(e.medDate);
-							e.days = medDate.diff(nowDate, 'days')
-						}
-						if(e.visitNumber === this.department.visitNumber){
+						if(e.visitNumber===this.department.visitNumber){
 							this.firstContent = e
-							console.log(JSON.stringify(this.firstContent),'》》》》》');
+							this.getQueueingMessage()
 						}else if(e.orderCode === this.department.visitNumber){
-							this.subscribeObj = e;
-							console.log(JSON.stringify(this.subscribeObj),'《《《《《《《《《《');
+							this.subscribeObj = e
 						}
 					})
+					// console.log(JSON.stringify(this.firstContent),'change......');
 				}else{
 					this.firstContent = {}
 					this.subscribeObj = {}
@@ -201,48 +168,18 @@
 					this.$emit('handle')
 				}
 			})
+			
 		},
 		mounted() {
-			console.log('eeeee')
 			// 只有初次创建需要渐入效果  effectState为true
 			bus.$emit('refreshGetFirstVisit',{firstState:true,effectState:true})
 			if(this.timer3){
-			console.log('ffff')
 				clearInterval(this.timer3)
 				this.timer3 = null
 			}
 			this.timer3 = setInterval(()=>{
-			console.log('hhhhh')
 				bus.$emit('refreshGetFirstVisit',{firstState:true,effectState:false})
 			},20000)
-			
-			// bus.$on('complex-data-passed',(data)=>{
-			// 	console.log(JSON.stringify(data.data),'++++++++--------');
-			// 	if(data.data.length){
-			// 		let nowDate = moment().format('YYYY-MM-DD');
-			// 		data.data.forEach(e => {
-			// 			if (nowDate != e.medDate && e.medDate > nowDate) {
-			// 				let medDate = moment(e.medDate);
-			// 				e.days = medDate.diff(nowDate, 'days')
-			// 			}
-			// 			if(e.visitNumber === this.department.visitNumber){
-			// 				this.firstContent = e
-			// 			}else if(e.orderCode === this.department.visitNumber){
-			// 				this.subscribeObj = e;
-			// 				console.log(JSON.stringify(this.subscribeObj));
-			// 			}
-			// 		})
-			// 	}else{
-			// 		this.firstContent = {}
-			// 		this.subscribeObj = {}
-			// 		this.$set(this.headerEmiter,'state','')
-			// 		this.$emit('handle',this.headerEmiter)
-			// 	}
-			// 	// 回传的effectState  渐入效果渲染
-			// 	if(data.effectState){
-			// 		this.$emit('handle')
-			// 	}
-			// })
 			
 		},
 		beforeDestroy(){
@@ -267,7 +204,7 @@
 				wx.openLocation({
 					latitude: latitude,//目的地的纬度
 					longitude: longitude,//目的地的经度
-					name: '青岛西海岸新区第二中医院', 
+					name: '山东第一医科大学第二附属医院', 
 				})
 			},
 			navigateToPage() {
@@ -276,22 +213,106 @@
 					url: '/sub_packages/convenientModule/inquiry?params='+data
 				});
 			},
+			
 			// 退号
-			async cancelRegistration(item) {
+			async cancelRegistration() {
 				try{
-					let data = {
-						cardNo: siginData.patientCard,
-						cardType: 1,
-						regMode: 2,
-						appoNo: item.appoNo,
-						version: 1,
-						lockld: item.lockId,
-					}
 					const res= await guideApi.cancelRegistration(this.firstContent.visitNumber).then((res) => {
+						if(res.data.code === 200){ 
+							if (res.data.data && res.data.data.cancelRegistrationResponse.returnFee !== '0') {
+								res.data.data.patientID = this.footData.patientUniquelyIdentifies;
+								res.data.data.cardNo = this.footData.patientCard;
+								res.data.data.cardType = this.footData.cardTypeCode;
+								
+								this.callApiWithRetry(res.data.data).then((r) => {
+									this.toastObj = {
+										state:true,
+										message:'退号成功',
+									}
+									
+									this.timer2 = setTimeout(()=>{
+										let msg = {
+											callingInterface:true,   //调用接口
+											firstState:true,     //初诊组件
+											effectState:false,   //动态效果
+										}
+										bus.$emit('refreshGetFirstVisit',msg)
+										clearTimeout(this.timer2)
+									},4000)
+								});
+								
+							} else {
+								this.toastObj = {
+									state:true,
+									message:'退号成功',
+								}
+								
+								this.timer2 = setTimeout(()=>{
+									let msg = {
+										callingInterface:true,   //调用接口
+										firstState:true,     //初诊组件
+										effectState:false,   //动态效果
+									}
+									bus.$emit('refreshGetFirstVisit',msg)
+									clearTimeout(this.timer2)
+									
+								},4000)
+							}
+							
+						}else {
+							this.toastObj = {
+								state:true,
+								type:'fail',
+								message:res.data.msg,
+							}
+						}
+				  })
+				}catch(e){
+					this.toastObj = {
+						state:true,
+						type:'fail',
+						message:e.toString(),
+					}
+				}
+			},
+			
+			//退号查询
+			async callApiWithRetry(data, maxRetry = 5) {
+			  let retryCount = 0;
+			  
+			  while (retryCount < maxRetry) {
+			    try {
+			      const res = await guideApi.queryRefundResult(data);
+			      if (res.data.code !== 999) {
+			        return res.data;
+			      }
+			      // 如果是999状态码，增加重试计数
+			      retryCount++;
+			      // 等待1秒后继续下一次循环
+			      await new Promise(resolve => setTimeout(resolve, 1000));
+			    } catch (e) {
+			      this.toastObj = {
+			        state: true,
+			        type: 'fail',
+			        message: e.toString(),
+			      };
+			      // 异常直接抛出
+			      throw e;
+			    }
+			  }
+			  
+			  // 达到最大重试次数仍返回999
+			  throw new Error('达到最大重试次数');
+			},
+			
+			// 取消预约
+			async cancelAppointmentRegister(orderCode) {
+				try{
+					const res= await guideApi.cancelAppointmentRegister(orderCode).then((res) => {
 						if(res.data.code===200){ 
 							this.toastObj = {
 								state:true,
-								message:'退号成功',
+								message:'取消预约成功',
 							}
 							this.timer2 = setTimeout(()=>{
 								let msg = {
@@ -301,7 +322,6 @@
 								}
 								bus.$emit('refreshGetFirstVisit',msg)
 								clearTimeout(this.timer2)
-								
 							},4000)
 						}else {
 							this.toastObj = {
@@ -311,7 +331,7 @@
 							}
 						}
 						
-				            })
+					})
 				}catch(e){
 					this.toastObj = {
 						state:true,
@@ -360,7 +380,7 @@
 							}
 						}
 						
-				            })
+				  })
 				}catch(e){
 					this.toastObj = {
 						state:true,
@@ -394,7 +414,7 @@
 							}
 						}
 						
-				            })
+					})
 				}catch(e){
 					this.toastObj = {
 						state:true,
@@ -404,31 +424,33 @@
 				}
 			},
 			// 刷新信息
-			// async getQueueingMessage() {
-			// 	try{
-			// 		let data = {
-			// 			patientID:this.footData.patientUniquelyIdentifies,
-			// 			DepartmentCode:this.firstContent.queueId,
-			//         }
-			// 		const res= await guideApi.getQueueingMessage(data).then((res) => {
-			// 			if(res.data.code===200){
-			// 				this.callObj = res.data.data.queLists.queList[0] || {}
-			// 			}else{
-			// 				// this.toastObj = {
-			// 				// 	state:true,
-			// 				// 	type:'fail',
-			// 				// 	message:res.data.msg,
-			// 				// }
-			// 			}
-			//                 })
-			// 	}catch(e){
-			// 		this.toastObj = {
-			// 			state:true,
-			// 			type:'fail',
-			// 			message:e,
-			// 		}
-			// 	}
-			// },
+			async getQueueingMessage() {
+				uni.showLoading({
+					title: '加载中...',
+					mask: true // 防止触摸穿透
+				});
+				try{
+					let data = {
+						patientID:this.footData.patientUniquelyIdentifies,
+						DepartmentCode:this.firstContent.queueId,
+					}
+					
+					const res= await guideApi.getQueueingMessage(data).then((res) => {
+						uni.hideLoading();
+						if(res.data.code===200){
+							this.callObj = res.data.data.queLists.queList[0] || {}
+						} else {
+							this.callObj = {}
+						}
+					})
+				}catch(e){
+					this.toastObj = {
+						state:true,
+						type:'fail',
+						message:e,
+					}
+				}
+			},
 			
 		},
 		
@@ -577,13 +599,15 @@
 						z-index: 1;
 						color: #ffffff;
 						font-size: 25rpx;
-						margin-left: 17rpx;
+						
 					}
 					image {
 						position: absolute;
 						top: -10rpx;
 						width: 110rpx;
 						height: 52rpx;
+						
+						
 					}
 				}
 				
