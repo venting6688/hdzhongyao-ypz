@@ -1,0 +1,382 @@
+{
+  "pages": [
+	{
+		"path": "pages/virtualNurse/index",
+		"style": {
+			"navigationBarTitleText": "HeHeAccompany",
+			"disableScroll": true
+		}
+	},
+	{
+	    "path": "pages/more/index",
+	    "style": {
+	  	"navigationBarTitleText": "更多服务",
+	  		"disableScroll": true
+	    }
+	},
+	{
+		"path": "pages/webview/webview",
+		   "style": {
+		       "navigationBarTitleText": "加载中..."
+		   }
+	},
+	{
+	  "path": "pages/convenient/index",
+	  "style": {
+	    "navigationBarTitleText": "HeHeAccompany",
+			"disableScroll": true,
+			"componentPlaceholder": {
+				"check": "view",
+				"answer": "view",
+				"prescription": "view",
+				"report": "view",
+				"prepare": "view",
+				"doing": "view",
+				"inventory": "view",
+				"zanwu": "view"
+			}
+	  }
+	}
+  ],
+  "subPackages": [{
+  	"root": "sub_packages",
+  	"pages": [
+			{
+				//门诊缴费-主页
+				"path" : "outpatientExpenditure/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "门诊缴费",
+					"disableScroll": true
+				}
+			},
+			{
+				//门诊缴费-费用明细
+				"path" : "outpatientExpenditure/particulars",
+				"style" : 
+				{
+					"navigationBarTitleText": "费用明细",
+					"disableScroll": true
+				}
+			},
+			{
+				//门诊报告-列表
+				"path" : "report/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "门诊报告",
+					"disableScroll": true
+				}
+			},
+			{
+				//门诊报告-详情
+				"path" : "report/examine",
+				"style" : 
+				{
+					"navigationBarTitleText": "门诊报告",
+					"disableScroll": true
+				}
+			},
+			{
+				//门诊报告-详情
+				"path" : "report/checkout",
+				"style" : 
+				{
+					"navigationBarTitleText": "门诊报告",
+					"disableScroll": true
+				}
+			},
+			{
+				//就诊记录-列表
+				"path" : "record/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "就诊记录",
+					"disableScroll": true
+				}
+			},
+			{
+				//就诊记录-详情
+				"path" : "record/details",
+				"style" : 
+				{
+					"navigationBarTitleText": "就诊记录",
+					"disableScroll": true
+				}
+			},
+			{
+				//我的
+				"path" : "mine/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "我的",
+					"disableScroll": true
+				}
+			},
+			{
+				// 预约挂号-科室
+				"path" : "subscribe/departments",
+				"style" : 
+				{
+					// "navigationStyle": "custom",
+				"navigationBarTitleText": "预约挂号",
+					"disableScroll": true
+				}
+			},
+			{
+				//预约挂号-医生
+				"path" : "subscribe/doctors",
+				"style" : 
+				{
+				"navigationBarTitleText": "预约挂号",
+					"disableScroll": true
+				}
+			},
+			{
+				//预约挂号-医生详情
+				"path" : "subscribe/doctorDetails",
+				"style" : 
+				{
+				"navigationBarTitleText": "预约挂号",
+					"disableScroll": true
+				}
+			},
+			{
+				//查询档案
+				"path" : "filing/selectCard",
+				"style" : 
+				{
+					"navigationBarTitleText": "查询档案",
+					"disableScroll": true
+				}
+			},
+			{
+				//添加就诊人-填写信息页面
+				"path" : "filing/information",
+				"style" : 
+				{
+					"navigationBarTitleText": "添加就诊人",
+					"disableScroll": true
+				}
+			},
+			{
+				//更多处方
+				"path" : "prescription/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "更多处方",
+					"disableScroll": true
+				}
+			},
+			{
+				//地址簿
+				"path" : "addressBook/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "地址簿",
+					"disableScroll": true
+				}
+			},
+			{
+				//添加地址
+				"path" : "logistics/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "地址管理",
+					"disableScroll": true
+				}
+			},
+			{
+				//取药服务
+				"path" : "medicine/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "取药服务",
+					"disableScroll": true
+				}
+			},
+			{
+				//家庭管理
+				"path" : "family/familyManage",
+				"style" : 
+				{
+					"navigationBarTitleText": "就诊人管理",
+					"disableScroll": true
+				}
+			},
+			{
+				//家庭管理-添加家庭成员
+				"path" : "family/familyInformation",
+				"style" : 
+				{
+					"navigationBarTitleText": "查询建档",
+					"disableScroll": true
+				}
+			},
+			{
+				"path": "login/index",
+				"style": {
+					"navigationBarTitleText": "登录",
+				"disableScroll": true
+				}
+			},
+			{
+				//隐私政策
+				"path" : "agreement/privacyPolicy",
+				"style" : 
+				{
+					"navigationBarTitleText": "隐私政策",
+					"disableScroll": true
+				}
+			},
+			{
+				//用户协议
+				"path" : "agreement/userAgreement",
+				"style" : 
+				{
+					"navigationBarTitleText": "用户协议",
+					"disableScroll": true
+				}
+			},
+			{
+				//预约须知
+				"path" : "agreement/appointment",
+				"style" : 
+				{
+					"navigationBarTitleText": "预约须知",
+					"disableScroll": true
+				}
+			},
+			{
+				//预问诊
+				"path" : "convenientModule/inquiry",
+				"style" : 
+				{
+					"navigationBarTitleText": "预问诊",
+					"disableScroll": true
+				}
+			},
+			{
+				//添加就诊人（健康卡）
+				"path" : "family/registerHealth",
+				"style" : 
+				{
+					"navigationBarTitleText": "添加就诊人",
+					"disableScroll": true
+				}
+			},
+			{
+				//人脸识别
+				"path" : "family/faceVerify",
+				"style" : 
+				{
+					"navigationBarTitleText": "人脸识别",
+					"disableScroll": true
+				}
+			},
+			
+			{
+				//住院记录
+				"path" : "convenientModule/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "住院记录"
+					// "disableScroll": true
+				}
+			},
+			{
+				//住院清单
+				"path" : "convenientModule/list",
+				"style" : 
+				{
+					"navigationBarTitleText": "住院清单"
+				}
+			},
+			{
+				//住院清单详情
+				"path" : "convenientModule/detail",
+				"style" : 
+				{
+					"navigationBarTitleText": "清单明细",
+					"disableScroll": true
+				}
+			},
+			{
+				//住院充值
+				"path" : "deposit/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "住院预交金",
+					"disableScroll": true
+				}
+			},
+			{
+				//住院充值记录
+				"path" : "deposit/topUpRecord",
+				"style" : 
+				{
+					"navigationBarTitleText": "充值记录",
+					"disableScroll": true
+				}
+			}
+		]
+  }],
+  "tabBar": {
+  		"color": "#7A7E83",
+  		"selectedColor": "#086d5b",
+  		"backgroundColor": "#ffffff",
+  		"list": [
+  			{
+  				"pagePath": "pages/virtualNurse/index"
+  			},
+  			{
+  				"pagePath": "pages/convenient/index"
+  			},
+  			{
+  				"pagePath": "pages/more/index"
+  			}
+  		]
+  		
+  	},
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#F8F8F8",
+		"usingComponents": {
+				"van-tree-select": "/wxcomponents/vant/tree-select/index",
+				"van-search": "/wxcomponents/vant/search/index",
+				"van-notice-bar": "/wxcomponents/vant/notice-bar/index",
+				"van-switch": "/wxcomponents/vant/switch/index",
+				"van-grid": "/wxcomponents/vant/grid/index",
+				"van-grid-item": "/wxcomponents/vant/grid-item/index",
+				"van-toast": "/wxcomponents/vant/toast/index",
+				"van-rate": "/wxcomponents/vant/rate/index",
+				"van-loading": "/wxcomponents/vant/loading/index",
+				"van-progress": "/wxcomponents/vant/progress/index",
+				"health-card-login": "plugin://healthCardPlugins/healthCardLogin",
+				"health-card-users": "plugin://healthCardPlugins/healthCardUsers",
+				"health-card-create-card": "plugin://healthCardPlugins/healthCardCreateCard",
+				"health-card-query-comp": "plugin://healthCardPlugins/healthCardQueryComp"
+		},
+		"permission":{
+			"scope.userLocation":{
+				"desc":"获得用户当前位置"
+			},
+			"scope.userFuzzyLocation":{
+				"desc":"获得用户当前位置"
+			}
+		}
+  },
+  "uniIdRouter": {},
+	"condition" : { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [
+			{
+				"name": "", //模式名称
+				"path": "", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			}
+		]
+	}
+}
