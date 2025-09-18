@@ -44,6 +44,8 @@
 		},
 		onLoad() {
 			this.loginValue = uni.getStorageSync("loginData");
+		},
+		onShow() {
 			this.getServiceGroup()
 		},
 		methods: {

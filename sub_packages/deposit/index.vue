@@ -18,11 +18,11 @@
 				</view>
 				<view>
 					<text>总费用:</text>
-					<text>￥{{parseFloat(information.cost).toFixed(2)}}元</text>
+					<text>￥{{parseFloat(information.cost/100).toFixed(2)}}元</text>
 				</view>
 				<view>
 					<text>账户余额:</text>
-					<text>￥{{parseFloat(information.accBalance).toFixed(2)}}元</text>
+					<text>￥{{parseFloat(information.accBalance/100).toFixed(2)}}元</text>
 				</view>
 			</view>
 		</view>

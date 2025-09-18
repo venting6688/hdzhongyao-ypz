@@ -231,15 +231,30 @@
 						});
 						
 						let lockId = res.data.lockId;
+						
 						let randNum = Math.floor(1000000 + Math.random() * 9000000);
 						let datas = { 
+							lockId,
 							patientId: this.siginData.patientCard,
 							patientName: this.siginData.patientName,
 							subOpenId: data.xcxOpenId,
 							totalAmount: String(this.doctor.Fee * 100), 
-							merOrderId: '157Q-'+dayjs().format('YYYYMMDDHHmmss')+'-'+randNum
+							merOrderId: '157Q-'+dayjs().format('YYYYMMDDHHmmss')+'-'+randNum,
+							uploadData: {
+								lockId,
+								accountNo: '',
+								cardNo: this.siginData.patientCard,
+								deptCode: this.doctor.deptCode,
+								doctCode: this.doctor.doctCode,
+								extend: this.doctorInfo.extend,
+								idNo: this.siginData.patientCard,
+								medAmPm: this.doctor.medAmPm,
+								medDate: this.doctorInfo.medDate,
+								patientId: this.siginData.patientUniquelyIdentifies,
+								patientName: this.siginData.patientName,
+								scheduleId: this.doctor.scheduleId,
+							}
 						}
-						
 						registrationApi.registerOrder(datas).then(res => {
 							let { merOrderId, totalAmount } = res.data;
 							uni.requestPayment({

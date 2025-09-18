@@ -17,9 +17,9 @@
 					</view>
 					<view class="content">科室：{{item.deptName}}</view>
 					<view class="content">项目：{{item.itemName}}</view>
-					<view class="content">单价：￥{{item.itemPrice}}元</view>
+					<view class="content">单价：￥{{parseFloat(item.itemPrice/100).toFixed(2)}}元</view>
 					<view class="content">规格：{{item.itemQty}} {{item.itemUnits}}</view>
-					<view class="content">费用：￥{{item.cost}}元</view>
+					<view class="content">费用：￥{{parseFloat(item.cost/100).toFixed(2)}}元</view>
 				</view>
 				
 				<!-- 加载状态提示 -->
@@ -84,7 +84,7 @@
 			getHospitalizationRecord() {
 				let data = {
 					operId: 'YPZ',
-					cardNo: this.defaultValue.patientCard, //'370223196007020466',
+					cardNo: this.defaultValue.patientCard, 
 					cardType:'',
 					patientId: ''
 				}
