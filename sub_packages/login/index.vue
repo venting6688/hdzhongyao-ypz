@@ -38,6 +38,7 @@
 			...mapMutations({
 				setFootData: 'SET_FOOT_DATA',
 				setLoginStatus: 'SET_LOGINSTATUS',
+				setLoginToken: 'SET_LOGINTOKEN',
 			}),
 			userAgreement(){
 				uni.navigateTo({
@@ -65,14 +66,18 @@
 			    this.loginFn().then(res => {  // 微信登录&服务端获取openid
 					this.getPhoneNumberFn(e.detail.code, res.code).then(data => { // 服务端获取手机号
 						let phone = data.data.phoneNum;
+						
+						uni.setStorageSync('loginToken', data.data.token)
+						this.setLoginToken(data.data.token);
+						
 						if (!data.data.patientName) {
 							let data = { phone }
 							filingApi.archiveQuery(data).then(res => {
 								let result = res.data.data;
+								uni.setStorageSync('loginData', result);
 								if (!result.defaultArchives) {
 									uni.navigateTo({ url:"/sub_packages/family/familyManage" })
 								} else {
-									uni.setStorageSync('loginData', result);
 									this.setFootData(result.defaultArchives);
 									this.setLoginStatus('login');
 									uni.switchTab({ url:"/pages/virtualNurse/index" })
