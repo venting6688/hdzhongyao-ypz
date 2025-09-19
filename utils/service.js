@@ -36,31 +36,46 @@ export const cjRequest =  (parmas, state) => {
 		return request(parmas,state)
 	}
 }
+
+const baseUrl = "https://api.2zhongyi.cn/prod-api/mobile2/"
+
 function request(parmas,state){
+	let header = { "Authorization": store.state.loginToken };
+	
 	return new Promise((resolve, reject) => {
-		const baseUrl = "https://api.2zhongyi.cn/prod-api/mobile2/"
 		if(!state){
 			requestCount++;
 			uni.showLoading({
 				title:'加载中'
 			})
 		}
-		wx.request({
-			...parmas,
+		uni.request({
 			url: baseUrl + parmas.url,
-			success: (result) => {
-			if(!state){
-				requestCount--;
-				if(!requestCount){
-					uni.hideLoading()
+			method: parmas.method,
+			header,
+			data: parmas.data,
+			success: res => {
+				if(!state){
+					requestCount--;
+					if(!requestCount){
+						uni.hideLoading()
+					}
 				}
+				if (res.data.code === 401) {
+				  uni.showModal({
+						title: '登录过期',
+						content: '请重新授权手机号登录',
+						showCancel: false,
+						success: () => {
+							uni.navigateTo({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" });
+						}
+					});
+				}
+				resolve(res)
+			},
+			fail: err => {
+				reject(err)
 			}
-				resolve(result)
-			},
-			fail: (err) => {
-					reject(err)
-			},
-		}); 
+		});
 	})
 }
- 
