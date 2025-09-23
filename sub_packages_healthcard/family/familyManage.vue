@@ -74,12 +74,24 @@
 		<view class="btn" @click="returnIndex" style="background-color: #EAAA52;">
 			<text>返回</text>
 		</view>
-		<auth-popup 
-			ref="authPopup"
-			@success="authSuccess"
-			@fail="authFail"
-			@cancel="authCancel"
-		/>
+		<!-- 插件授权 -->
+		<uni-popup ref="popup" type="center">
+			<view class="auth-popup" v-if="showAuth">
+				<view class="auth-header">电子健康卡</view>
+				<view class="auth-content">
+					<view>即将使用电子健康卡服务，<span style="color: #1B98FF;">开启授权，就医一卡通行</span></view>
+				</view>
+				<health-card-login
+					:wechatcode="true"
+					@authFail="authFail"
+					@authSuccess="authSuccess"
+					@authCancel="authCancel"
+				>
+					<view class="auth-button">前往授权</view>
+				</health-card-login>
+				<button type="default" class="cancel-button" @click="returnHome">取消授权</button>
+			</view>
+		</uni-popup>
 		<Toast v-if="toastObj.state" @back="closeToast" :type="toastObj.type" :url="toastObj.url" :tips="toastObj.tips" :message="toastObj.message" />
 	</view>
 		
@@ -91,16 +103,17 @@
 	import Toast from '../components/toast.vue'
 	import filingApi from '@/api/filingApi.js'
 	import healthCard from '@/api/healthCard.js'
-  import AuthPopup from '../components/auth-popup.vue'
+  // import AuthPopup from '../components/auth-popup.vue'
 	
 	export default {
 		mixins: [mixin],
 		components: {
-			AuthPopup,
+			// AuthPopup,
 			Toast
 		},
 		data(){
 			return {
+				showAuth: false,
 				patientList:[],
 				showBtn: false,
 				healthCode: '',
@@ -181,8 +194,8 @@
 					var plugin = requirePlugin("healthCardPlugins");
 					plugin.login((isok, res) => {
 						if (!isok && res.result.toLogin) {
-							// 用户未授权，需要用户同意授权
-							this.$refs.authPopup.open();
+							this.showAuth = true;
+							this.$refs.popup.open();
 						} else {
 							// 用户在微信授权过，可直接获取登录信息，处理后续业务
 							this.todo(res);
@@ -198,11 +211,11 @@
 				let data = {
 					weChatCode: wechatCode,
 					patientType: 0,
-					successRedirectUrl: 'mini:/sub_packages/family/familyManage?healthCode=${healthCode}', //授权成功获取就诊人列表
-					failRedirectUrl: 'mini:/sub_packages/family/familyManage?regInfoCode=${regInfoCode}',
-					userFormPageUrl: 'mini:/sub_packages/family/registerHealth?authCode=${authCode}', //添加就诊人
-					faceUrl:`/sub_packages/family/faceVerify`,
-					verifyFailRedirectUrl:`mini:/sub_packages/family/familyManage`,
+					successRedirectUrl: 'mini:/sub_packages_healthcard/family/familyManage?healthCode=${healthCode}', //授权成功获取就诊人列表
+					failRedirectUrl: 'mini:/sub_packages_healthcard/family/familyManage?regInfoCode=${regInfoCode}',
+					userFormPageUrl: 'mini:/sub_packages_healthcard/family/registerHealth?authCode=${authCode}', //添加就诊人
+					faceUrl:`/sub_packages_healthcard/family/faceVerify`,
+					verifyFailRedirectUrl:`mini:/sub_packages_healthcard/family/familyManage`,
 					domainChannel: 3,
 					openId: this.loginValue.xcxOpenId,
 				}
@@ -705,5 +718,52 @@
 				line-height: 30.53rpx;
 			}
 		}
+		
+		.auth-popup {
+		  width: 80vw;
+		  background: #fff;
+		  border-radius: 16rpx;
+		  padding: 30rpx;
+		  box-sizing: border-box;
+		}
+		
+		.auth-header {
+		  font-size: 36rpx;
+		  font-weight: bold;
+		  text-align: center;
+		  margin-bottom: 30rpx;
+		}
+		
+		.auth-content {
+		  margin-bottom: 40rpx;
+		  text-align: center;
+		  font-size: 30rpx;
+		  color: #666;
+		}
+		
+		.auth-tip {
+		  font-size: 26rpx;
+		  color: #999;
+		  margin-top: 15rpx;
+		}
+		
+		.healCard {
+			justify-content: space-between;
+			align-items: center;
+		}
+		.auth-button {
+		  color: white;
+		  background: #1B98FF;
+			font-size: 14px;
+			padding: 20rpx;
+			border-radius: 10rpx;
+			text-align: center;
+		}
+		
+		.cancel-button {
+			font-size: 14px;
+			margin-top: 30rpx;
+		}
+		
 	}
 </style>

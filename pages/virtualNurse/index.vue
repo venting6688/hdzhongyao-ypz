@@ -1,8 +1,13 @@
 <template>
 	<view class="virtual">
+		<!-- <aiNotice
+		ref="notice" 
+		:tipMsg="tipMsg" 
+		@confirmed="handleConfirm" 
+		/> -->
+		
 		<view class=""   :animation="anData"  style="height:0rpx;"></view>
 		<image class="background" src="../../static/image/virtualBg.png"></image>
-		<!-- <image class="background" src="https://aiwz.sdtyfy.com:8099/img/virtualBg.png" ></image>	 -->
 		<view class="head">
 			您好！“海豚禾禾”为您服务 
 		</view>
@@ -17,6 +22,9 @@
 								<text class="msg">{{x.msg}}</text>
 							</view>
 							<view class="triangle"></view>
+							<view class="tubiao">
+								<image src="../../static/image/ai-user.png" mode="widthFix"></image>
+							</view>
 						</view>
 				    </view>
 					<!-- AI消息 -->
@@ -130,7 +138,6 @@
 					</view>
 				</view>
 		    </view>
-			<foot v-if="showComponent" :footState="footState" />
 		</view>
 		<!--------------------- 语音  ------------------- -->
 		<view class="flex-column-center" style="position: fixed;bottom: 0px;" >
@@ -183,15 +190,16 @@
 	// 顶部空盒子的高度
 	var mgUpHeight
 	
+	import {mapActions} from 'vuex'
 	import MarkdownIt from 'markdown-it';
-	import foot from '@/components/footer.vue'
 	import bus from "@/utils/bus";
 	import login from '@/utils/login.js'
 	import { parse } from 'best-effort-json-parser'
-	import {mapActions} from 'vuex'
+	import aiNotice from '@/components/aiNotice.vue'
+	
 	export default {
 	components:{
-		foot,
+		aiNotice
 	},
 		data() {
 			return {
@@ -255,6 +263,13 @@
 			if (options && options.patient) {
 				this.patient = JSON.parse(decodeURIComponent(options.patient))
 			}
+		},
+		onReady() {
+		  this.$nextTick(() => {
+		    if (this.$refs.notice && this.$refs.notice.open) {
+		      this.$refs.notice.open();
+		    }
+		  });
 		},
 		onLoad(options) {
 			if (Object.keys(options).length > 0) {
@@ -461,6 +476,7 @@
 						this.test1 = ''
 						if(!this.test2.is_complete){
 							this.mode = this.test2.mode
+							console.log(JSON.stringify(this.test2),'=s=s=s=s=s=s=s');
 							if(this.test2.option.length){
 								this.DataList.main = this.test2.option.map(item=> {
 								    return {value:item}
@@ -707,21 +723,28 @@
 		display: flex;
 		flex-direction: column;  
 		
+		.tubiao {
+			margin: 0 10rpx;
+		  image {
+			 width: 84rpx;
+		  }
+		}
+		
 		.background {
 			position: absolute;
-            width: 100%;
-			height: 89%;
+			width: 100%;
+			height: 100%;
 		}
 		
 		.head{
 			position: absolute;
-			top: 20rpx;
+			top: 115rpx;
 			left: 32rpx;
 			height: 50rpx;
 			font-size: 36rpx;
 			font-weight: 600;
 			text-align: LEFT;
-			color: #ffffff;
+			color: #87653A;
 		}
 		
 		.center{
@@ -731,34 +754,24 @@
 			flex-direction: column;  
 			.scroll-Y {
 				margin-top: 86rpx;
-			    width: 750rpx;
-		        flex: auto;
-			    overflow: auto;
-				
+				width: 750rpx;
+				flex: auto;
+				overflow: auto;
 				.padd{
-					
 					padding-bottom: 180rpx !important;
 				}
 				.msgList {
 					font-size: 37rpx;
 					color: #000;
-					// display: flex;
-					// justify-content: flex-start;
-					
 					&:nth-of-type(1){
 						padding-top: 140rpx;
 						padding-bottom: 0 !important;
 					}
-					
-					
 					.my {
 						width: 100%;
 						display: flex;
 						justify-content: flex-end;
 						align-items: flex-start;
-						
-						
-						
 						.my-box {
 							display: flex;
 							justify-content: flex-end;
@@ -767,18 +780,18 @@
 							margin: 20rpx 25rpx 20rpx 0;
 							
 							.triangle {
-							    width: 0;
+								width: 0;
 							 	height: 0;
 							 	border-style: solid;
 							 	border-width: 15rpx 0 15rpx 18rpx;
-							 	border-color: transparent transparent transparent rgba(7,106,255,0.80);
+							 	border-color: transparent transparent transparent #9A7546;
 							}
 							
 							.center {
-								background: rgba(7,106,255,0.80);
-							    padding: 20rpx 24rpx;
-							    border-radius: 12rpx;
-							    color: #ffffff;
+								background: #9A7546;
+								padding: 20rpx 24rpx;
+								border-radius: 12rpx;
+								color: #ffffff;
 								.msg {
 									text-align: left;
 									line-height: 37rpx;
@@ -800,14 +813,10 @@
 							justify-content: flex-start;
 							align-items: center;
 							width: 680rpx;
-							margin: 20rpx 0 20rpx 25rpx;
-						.tubiao {
-						  image {
-							 width: 84rpx;
-						  }
-						}
+							margin: 20rpx 0 20rpx 0;
+						
 						.triangle {
-						    width: 0;
+							width: 0;
 						 	height: 0;
 						 	border-style: solid;
 						 	border-width: 15rpx 18rpx 15rpx 0;
@@ -815,11 +824,11 @@
 						}
 							
 							.center{
-								color: #000000;
+									color: #02134E;
 							    padding:20rpx 24rpx;
 							    background: rgba(255,255,255,0.80);
 							    border-radius: 12rpx;
-								font-size: 34rpx;
+									font-size: 34rpx;
 								
 								.msg {
 									text-align: left;
@@ -828,14 +837,14 @@
 								.top1 {
 									margin-top: 10rpx;
 									text-align: left;
-									color: #1A66C2;
+									color: #87653A;
 									display: flex;
 									flex-wrap: wrap;
 									
 									view {
 										margin: 20rpx 14rpx 0 14rpx;
 										text{
-											border-bottom: 2rpx solid #1A66C2;
+											border-bottom: 2rpx solid #87653A;
 										}
 									}
 								}
@@ -942,13 +951,13 @@
 								}
 								.more {
 									// width: 100%;
-									color: #1A66C2;
+									color: #87653A;
 									margin: 0 20rpx;
 									display: flex;
 									align-items: center;
 									justify-content: space-between;
 									>text {
-										border-bottom: 2rpx solid #1A66C2;
+										border-bottom: 2rpx solid #87653A;
 									}
 									>image {
 										width: 45rpx;
@@ -1076,7 +1085,7 @@
 					
 					.blue {
 						color: #ffffff;
-						background: #0066ff;
+						background: #9A7546;
 					}
 				}
 				

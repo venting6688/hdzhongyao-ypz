@@ -72,11 +72,7 @@
             "WechatSI" : {
 							"version" : "0.3.6",
 							"provider" : "wx069ba97219f66d99"
-            },
-						"healthCardPlugins": {
-							"version": "3.54.1",
-							"provider": "wxee969de81bba9a45" 
-						}
+            }
         },
         "secureNetwork" : {
             "enable" : true

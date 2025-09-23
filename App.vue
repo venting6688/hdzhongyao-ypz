@@ -7,20 +7,20 @@
 				setTimeout(() => {
 					uni.reLaunch({ url: '/pages/more/index' });
 				}, 100);
-			} 
+			}
 			if (loginData.phoneNum != undefined && !loginData.defaultArchives) {
 				setTimeout(() => {
-					uni.reLaunch({ url: '/sub_packages/family/familyManage' });
+					uni.reLaunch({ url: '/sub_packages_healthcard/family/familyManage' });
 				}, 100);
 			}
 		},
-		onShow: function() {
-			console.log('App Show')
-			  wx.hideTabBar();
-		},
-		onHide: function() {
-			console.log('App Hide')
-		}
+		// onShow: function() {
+		// 	console.log('App Show')
+		// 	  wx.hideTabBar();
+		// },
+		// onHide: function() {
+		// 	console.log('App Hide')
+		// }
 	}
 </script>
 
@@ -30,7 +30,9 @@
 	@import "@/colorui/animation.css";
 	@import "@/colorui/icon.css";
 	@import "@/static/css/index-app.css";
+	@import "@/colorui/common-style.scss";
 	page{ height: 100%}
+	
 </style>
 
 

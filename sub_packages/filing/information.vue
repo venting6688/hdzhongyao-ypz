@@ -247,7 +247,7 @@
 								result.patientCard = result.idNum;
 							}
 							this.refreshUserInfo();
-							wx.reLaunch({ url: '/sub_packages/family/familyManage' })
+							wx.reLaunch({ url: '/sub_packages_healthcard/family/familyManage' })
 						}else{
 							uni.showToast({
 								title: res.data.msg ? res.data.msg : '建档失败',

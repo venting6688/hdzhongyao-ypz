@@ -1,0 +1,95 @@
+view, swiper, swiper-item {
+	box-sizing: border-box; //一种布局属性设置，用于定义元素的宽高计算方式
+}
+.pageBg {
+  position: relative;
+  background-color: #F5F5F5; // 背景兜底
+  padding: 0 20rpx;
+  box-sizing: border-box;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+	min-height: 100vh;
+	padding-bottom: 15rpx;
+}
+
+/* 使用伪元素制造固定高度的渐变背景 */
+.pageBg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  // background: linear-gradient(135deg, #F3EFEC 0%, #C9BA9F 100%);
+	background: linear-gradient(304deg, #c9ba9f 0%, #f3efec 88%);
+  border-bottom-left-radius: 8% 10%;
+  border-bottom-right-radius: 8% 10%;
+  z-index: 0;
+}
+
+.homePageBg::before {
+  height: 530rpx; // 首页专属高度
+}
+
+.otherPageBg::before {
+  height: 300rpx; // 其他页面专属高度
+}
+
+.loadingLayout {
+	padding: 30rpx 0;
+}
+
+.goBack {
+	position: fixed;
+	z-index: 999;
+	top: 0;
+	left: 30rpx;
+	margin-left: 0;
+	width: 30px;
+	height: 30px;
+	border: 1rpx solid rgba(255, 255, 255, 0.3);
+	border-radius: 35px;
+	background: rgba(66, 134, 255);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(10rpx);
+}
+
+.without {
+	font-size: 40rpx;
+	width: 681.3rpx;
+	height: 500rpx;
+	background: #ffffff;
+	margin: 0 auto;
+	border-radius: 15.27rpx;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+
+.safe-area-inset-bottom {
+	height: env(safe-area-inset-bottom)
+}
+
+.btnStyle {
+	color: #fff;
+	background: #C9BA9F;
+	border-radius: 35rpx;
+	line-height: 76rpx;
+	min-height: 76rpx;
+	font-size: 32rpx;
+	text-align: center;
+}
+
+.bigBtn {
+	width: 80%;
+}
+
+.smallBtn {
+	width: 45%;
+}
+
+

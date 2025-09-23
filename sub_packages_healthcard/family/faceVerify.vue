@@ -43,7 +43,7 @@
 								});
 							}),
 							fail: (err => {
-								uni.redirectTo({ url: '/sub_packages/family/familyManage' });
+								uni.redirectTo({ url: '/sub_packages_healthcard/family/familyManage' });
 							})
 						});
 					}

@@ -165,7 +165,7 @@
 					cardCostTypes: '',
 					verifySuccessRedirectUrl: 'mini:/sub_packages/report/index?registerOrderId=${registerOrderId}',
 					verifyFailRedirectUrl: 'mini:/sub_packages/report/index?registerOrderId=${registerOrderId}',
-					faceUrl:`/sub_packages/family/faceVerify`,
+					faceUrl:`/sub_packages_healthcard/family/faceVerify`,
 					domainChannel: 3,
 					openId: this.loginData.xcxOpenId,
 				}

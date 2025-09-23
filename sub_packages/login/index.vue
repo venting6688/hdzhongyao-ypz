@@ -76,7 +76,7 @@
 								let result = res.data.data;
 								uni.setStorageSync('loginData', result);
 								if (!result.defaultArchives) {
-									uni.navigateTo({ url:"/sub_packages/family/familyManage" })
+									uni.navigateTo({ url:"/sub_packages_healthcard/family/familyManage" })
 								} else {
 									this.setFootData(result.defaultArchives);
 									this.setLoginStatus('login');

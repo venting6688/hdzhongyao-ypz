@@ -128,22 +128,17 @@
 				<text>未查询到您的挂号信息</text>
 			</view>
 		</view>
-		<foot :footState="footState"/>
 	</view>
 </template>
 <script>
 	import dayjs from 'dayjs'
 	import {mapState,mapMutations} from 'vuex'
-	import foot from '@/components/footer.vue'
 	import zanwu from '@/sub_packages/components/zanwu.vue'
 	import guideApi from '@/api/guideApi.js'
 	import registrationApi from '@/api/registrationApi.js'
 	import mixin from '@/mixins/mixin'
 	import bus from '@/utils/bus.js'
 	export default {
-		components:{
-			foot,
-		},
 		data() {
 			return {
 				animationData: {},
@@ -185,8 +180,7 @@
 			let data = uni.getStorageSync('loginData');
 			this.signData = data.defaultArchives ? data.defaultArchives : {};
 			if (JSON.stringify(this.signData) == "{}") {
-				console.log('22020200202');
-				uni.reLaunch({ url: '/pages/more/index' });
+				uni.reLaunch({ url: '/pages/user/index' });
 			} else {
 				this.getFirstVisit();
 			}

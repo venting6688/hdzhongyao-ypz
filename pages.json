@@ -1,18 +1,28 @@
 {
   "pages": [
 	{
+			"path": "pages/home/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "首页",
+				"disableScroll": true
+			}
+	},
+	{
 		"path": "pages/virtualNurse/index",
 		"style": {
-			"navigationBarTitleText": "HeHeAccompany",
+			"navigationStyle": "custom",
+			"navigationBarTitleText": "智能导诊",
 			"disableScroll": true
 		}
 	},
 	{
-	    "path": "pages/more/index",
-	    "style": {
-	  	"navigationBarTitleText": "更多服务",
-	  		"disableScroll": true
-	    }
+		"path": "pages/user/index",
+		"style": {
+			"navigationStyle": "custom",
+			"navigationBarTitleText": "我的",
+			"disableScroll": true
+		}
 	},
 	{
 		"path": "pages/webview/webview",
@@ -39,6 +49,49 @@
 	}
   ],
   "subPackages": [{
+      "root": "sub_packages_healthcard",
+			"plugins": {
+				"healthCardPlugins": {
+					"version": "3.55.0",
+					"provider": "wxee969de81bba9a45"
+				}
+			},
+      "pages": [
+				{
+					//家庭管理
+					"path" : "family/familyManage",
+					"style" : 
+					{
+						"navigationBarTitleText": "就诊人管理",
+						"disableScroll": true,
+						"usingComponents": {
+						  "health-card-login": "plugin://healthCardPlugins/healthCardLogin"
+						}
+					}
+				},
+        {
+          "path": "family/registerHealth",
+          "style": {
+            "navigationBarTitleText": "添加就诊人",
+            "disableScroll": true,
+            "usingComponents": {
+              "health-card-login": "plugin://healthCardPlugins/healthCardLogin"
+            }
+          }
+        },
+        {
+          "path": "family/faceVerify",
+          "style": {
+            "navigationBarTitleText": "人脸识别",
+            "disableScroll": true,
+            "usingComponents": {
+              "health-card-login": "plugin://healthCardPlugins/healthCardLogin"
+            }
+          }
+        }
+      ]
+    },
+		{
   	"root": "sub_packages",
   	"pages": [
 			{
@@ -196,24 +249,6 @@
 				}
 			},
 			{
-				//家庭管理
-				"path" : "family/familyManage",
-				"style" : 
-				{
-					"navigationBarTitleText": "就诊人管理",
-					"disableScroll": true
-				}
-			},
-			{
-				//家庭管理-添加家庭成员
-				"path" : "family/familyInformation",
-				"style" : 
-				{
-					"navigationBarTitleText": "查询建档",
-					"disableScroll": true
-				}
-			},
-			{
 				"path": "login/index",
 				"style": {
 					"navigationBarTitleText": "登录",
@@ -257,25 +292,6 @@
 				}
 			},
 			{
-				//添加就诊人（健康卡）
-				"path" : "family/registerHealth",
-				"style" : 
-				{
-					"navigationBarTitleText": "添加就诊人",
-					"disableScroll": true
-				}
-			},
-			{
-				//人脸识别
-				"path" : "family/faceVerify",
-				"style" : 
-				{
-					"navigationBarTitleText": "人脸识别",
-					"disableScroll": true
-				}
-			},
-			
-			{
 				//住院记录
 				"path" : "convenientModule/index",
 				"style" : 
@@ -318,26 +334,64 @@
 					"navigationBarTitleText": "充值记录",
 					"disableScroll": true
 				}
+			},
+			{
+				"path" : "olderVersion/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path" : "questionnaire/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path" : "complaint/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
 			}
 		]
   }],
   "tabBar": {
-  		"color": "#7A7E83",
-  		"selectedColor": "#086d5b",
-  		"backgroundColor": "#ffffff",
-  		"list": [
-  			{
-  				"pagePath": "pages/virtualNurse/index"
-  			},
-  			{
-  				"pagePath": "pages/convenient/index"
-  			},
-  			{
-  				"pagePath": "pages/more/index"
-  			}
-  		]
-  		
-  	},
+  	"color": "#637088",
+  	"selectedColor": "#87653A",
+  	"fontSize": "36rpx",
+  	"list": [
+  		{ 
+  			"text": "首页", 
+  			"pagePath": "pages/home/index",
+  			"iconPath": "static/img/tabBar/home.png",
+  			"selectedIconPath": "static/img/tabBar/home-h.png"
+  		},
+  		{ 
+  			"text": "虚拟护士", 
+  			"pagePath": "pages/virtualNurse/index",
+  			"iconPath": "static/img/tabBar/nurs.png",
+  			"selectedIconPath": "static/img/tabBar/nurs-h.png"
+  		},
+  		{ 
+  			"text": "便捷导引", 
+  			"pagePath": "pages/convenient/index",
+  			"iconPath": "static/img/tabBar/daoyin.png",
+  			"selectedIconPath": "static/img/tabBar/daoyin-h.png"
+  		},
+  		{ 
+  			"text": "我的", 
+  			"pagePath": "pages/user/index",
+  			"iconPath": "static/img/tabBar/my.png",
+  			"selectedIconPath": "static/img/tabBar/my-h.png"
+  		}
+  	]
+  },
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
@@ -353,11 +407,7 @@
 				"van-toast": "/wxcomponents/vant/toast/index",
 				"van-rate": "/wxcomponents/vant/rate/index",
 				"van-loading": "/wxcomponents/vant/loading/index",
-				"van-progress": "/wxcomponents/vant/progress/index",
-				"health-card-login": "plugin://healthCardPlugins/healthCardLogin",
-				"health-card-users": "plugin://healthCardPlugins/healthCardUsers",
-				"health-card-create-card": "plugin://healthCardPlugins/healthCardCreateCard",
-				"health-card-query-comp": "plugin://healthCardPlugins/healthCardQueryComp"
+				"van-progress": "/wxcomponents/vant/progress/index"
 		},
 		"permission":{
 			"scope.userLocation":{

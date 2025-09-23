@@ -152,7 +152,7 @@
 			getHospitalizationRecord() {
 				let data = {
 					operId: 'YPZ',
-					cardNo: this.defaultValue.patientCard,
+					cardNo: this.defaultValue != undefined ? this.defaultValue.patientCard : '',
 					cardType:'',
 					patientId: ''
 				}

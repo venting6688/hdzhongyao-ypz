@@ -117,7 +117,7 @@
 					'/sub_packages/record/index', //3
 					'/sub_packages/report/index', //4
 					'/sub_packages/medicine/index', //5
-				  '/sub_packages/family/familyManage', //6
+				  '/sub_packages_healthcard/family/familyManage', //6
 					'/sub_packages/convenientModule/index', //7
 					'/sub_packages/deposit/index', //8
 				],
