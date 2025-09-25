@@ -2,7 +2,7 @@
 	<view>
 		<view class="stack-container">
 			<view class="layer top-layer">
-				<view class="patients" v-if="footData.patientName || defaultVal.patientName">
+				<view class="patients" v-if="footData.patientName != undefined || defaultVal.patientName != undefined">
 					<view class="info" @click="cutPatient">
 						<view class="name">
 							<text>{{footData.patientName ? footData.patientName : defaultVal.patientName}}</text>
@@ -125,8 +125,8 @@
 			
 			loginData(){
 				let loginValue = uni.getStorageSync("loginData");
-				if(loginValue){
-					this.registerData = JSON.parse(loginValue)
+				if(loginValue != undefined){
+					this.registerData = loginValue
 					this.defaultVal = this.registerData.defaultArchives
 					this.personageObj.list = this.registerData && this.registerData.archivesList
 					this.personageObj.sole = this.footData

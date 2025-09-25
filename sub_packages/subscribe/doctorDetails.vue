@@ -327,7 +327,7 @@
 													this.toastObj = {
 														state:true,
 														message: uploadResult.msg,
-														url:'/pages/more/index',
+														url:'/pages/home/index',
 													}
 												}
 											});

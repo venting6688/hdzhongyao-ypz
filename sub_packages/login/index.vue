@@ -51,7 +51,7 @@
 				})
 			},
 			back(){
-				wx.reLaunch({url:`/pages/more/index`})
+				wx.reLaunch({url:`/pages/user/index`})
 			},
 			btn(){
 				if(!this.agreementState){

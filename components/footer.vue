@@ -73,7 +73,7 @@
             type: 2,
           },
           {
-            pagePath: "/pages/more/index",
+            pagePath: "/pages/home/index",
             iconPath: 'https://aiwz.sdtyfy.com:8099/img/footNavigation2+.png',
             selectedIconPath: 'https://aiwz.sdtyfy.com:8099/img/footNavigation2.png',
             name: '更多服务',

@@ -5,7 +5,7 @@
 			
 			if (JSON.stringify(loginData) != '{}' && loginData.defaultArchives) {
 				setTimeout(() => {
-					uni.reLaunch({ url: '/pages/more/index' });
+					uni.reLaunch({ url: '/pages/user/index' });
 				}, 100);
 			}
 			if (loginData.phoneNum != undefined && !loginData.defaultArchives) {
