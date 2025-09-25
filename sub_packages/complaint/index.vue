@@ -6,17 +6,17 @@
 		</view>
 		<view class="head">
 			<view class="left">
-				<image src="https://aiwz.sdtyfy.com:8099/img/text-ts.png" />
+				<image src="@/static/image/投诉与建议.png" />
 				<text>若您对就医过程中的服务、流程等有不满意的地方，请告诉我们，以便于督促我们不断改进。</text>
 			</view>
-			<image src="https://aiwz.sdtyfy.com:8099/img/manyi.png" mode="aspectFit" />
+			<image src="@/static/image/image 50.png" mode="aspectFit" />
 		</view>
 		<view class="content">
 		  <uni-segmented-control
 				:current="currentTab"
 				:values="tabs"
 				styleType="button"
-				activeColor="#4286FF"
+				activeColor="#87653A"
 				@clickItem="onTabClick"
 				class="tabs"
 			/>
@@ -264,7 +264,7 @@
 			height: 30px;
 			border: 1rpx solid rgba(255, 255, 255, 0.3);
 			border-radius: 35px;
-			background: rgba(66, 134, 255);
+			background: #87653A;
 			display: flex;
 			align-items: center;
 			justify-content: center;

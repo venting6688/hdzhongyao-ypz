@@ -192,7 +192,7 @@
 				display: flex;
 				align-items: center;
 				font-size: 32rpx;
-				color: #02134E;
+				color: #333333;
 				text {
 					line-height: 1;
 					display: inline-block;

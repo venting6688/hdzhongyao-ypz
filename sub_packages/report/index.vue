@@ -298,7 +298,7 @@
 					border-radius: 8rpx;
 				}
 				.blue {
-					background: #4286ff;
+					background: #87653A;
 				}
 				.black {
 					color: #000000;

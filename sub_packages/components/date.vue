@@ -106,7 +106,7 @@
 			align-items: center;
 			padding: 24rpx 30rpx;
 			.blue {
-				background: #4286ff !important;
+				background: #87653A !important;
 				color: #ffffff !important;
 			}
 			.date {
@@ -114,10 +114,10 @@
 					height: 56rpx;
 					font-size: 28rpx;
 					line-height: 56rpx;
-					border: 2rpx solid #4286ff;
+					border: 2rpx solid #87653A;
 					border-radius: 15rpx;
 					padding: 0 50rpx;
-					color: #076aff;
+					color: #87653A;
 				}
 				.birth{
 					height: 86rpx;
@@ -149,10 +149,10 @@
 					height: 56rpx;
 					font-size: 28rpx;
 					line-height: 28rpx;
-					border: 2rpx solid #4286ff;
+					border: 2rpx solid #87653A;
 					border-radius: 15rpx;
 					padding: 0 20rpx;
-					color: #076aff;
+					color: #87653A;
 					margin-left: 20rpx;
 				}
 				

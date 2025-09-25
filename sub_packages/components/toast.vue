@@ -15,20 +15,25 @@
 <script>
 	export default {
 		props: {
+				// 弹窗显示市场，默认5秒后关闭
 				second: {
 						type: Number,
 						default: 5,
 				},
+				// 弹窗类型，如果是fail，则字体变为红色
 				type: {
 						type: String,
 				},
+				// 弹窗消息内容
 				message: {
 						type: String,
 				},
+				// 弹窗提示时间后缀内容
 				tips: {
 						type: String,
 						default:'秒后关闭',
 				},
+				// 弹窗跳转url，弹窗消失后，路由跳转至该地址
 				url: {
 						type: String,
 				},

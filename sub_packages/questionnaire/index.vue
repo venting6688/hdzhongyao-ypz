@@ -6,10 +6,10 @@
 		</view>
 		<view class="head">
 			<view class="left">
-				<image src="https://aiwz.sdtyfy.com:8099/img/text-my.png" />
+				<image src="@/static/image/满意度调查.png" />
 				<text>为了更好提升我院服务质量，占用您宝贵的1分钟时间，邀请您填写调查问卷</text>
 			</view>
-			<image src="https://aiwz.sdtyfy.com:8099/img/manyi.png" mode="aspectFit" />
+			<image src="@/static/image/image 50.png" mode="aspectFit" />
 		</view>
 		<view class="content">
 		  <uni-segmented-control

@@ -824,7 +824,7 @@
 						}
 							
 							.center{
-									color: #02134E;
+									color: #333333;
 							    padding:20rpx 24rpx;
 							    background: rgba(255,255,255,0.80);
 							    border-radius: 12rpx;
