@@ -87,7 +87,7 @@
 			
 			code(){
 				if (this.footData.healthCardData != null) {
-					let hospitalId = '40237';
+					let hospitalId = '40088';
 					let healthCardId = this.footData.patientCard;
 					let webviewUrl = '/pages/webview/webview?url=$url';
 					let redirectUrl = '';
