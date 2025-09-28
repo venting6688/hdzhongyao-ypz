@@ -16,7 +16,7 @@
 				:current="currentTab"
 				:values="tabs"
 				styleType="button"
-				activeColor="#4286FF"
+				activeColor="#87653A"
 				@clickItem="onTabClick"
 				class="tabs"
 			/>
