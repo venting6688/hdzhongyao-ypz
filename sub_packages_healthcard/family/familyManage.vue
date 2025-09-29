@@ -358,7 +358,7 @@ export default {
 						},
 						healthCard: {
 							name: item.real_name,
-							idCard: `${item.id_card.slice(0, 4)}${'*'.repeat(item.id_card.length - 10)}${item.id_card.slice(-2)}`,
+							idCard: item.id_card ? `${item.id_card.slice(0, 4)}${'*'.repeat(item.id_card.length - 10)}${item.id_card.slice(-2)}` : '',
 							idNo: item.id_card,
 							healthCardId: item.health_card_no,
 							phone: item.phonenumber,
