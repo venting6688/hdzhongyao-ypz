@@ -260,20 +260,39 @@
 					})
 				}
 			},
-			// 刷新用户信息
-			async refreshUserInfo(){
-				try{
-				    const res = await filingApi.archiveQuery({phone: this.loginPhoneNum}).then(res => {
-						let result = res.data.data;
-						if(res.data.code === 200){
-							this.setFootData(result.defaultArchives);
-							uni.setStorageSync('loginData', result);
-						}
-					})
-				}catch(e){
-					console.log(e);
-				}
-			},
+		// 刷新用户信息
+		async refreshUserInfo() {
+			try {
+				const res = await getDefaultPatientApi({ ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId }).then(res => {
+					let defaultPatient = res.data.data;
+					const loginData = uni.getStorageSync("loginData");
+					if (res.data.code === 200) {
+
+						const newLoginData = {
+							defaultArchives: {
+								// id: loginInfo.userId,
+								userId: loginData.defaultArchives.userId,
+								patientName: loginData.defaultArchives.patientName,
+								phoneNum: defaultPatient.phonenumber,
+								idNum: defaultPatient.id_card,
+								patientCard: defaultPatient.id_card,
+								// qrCodeText: "",// !! 这还有问题
+								// linkHealthCard: ""// !! 这还有问题
+							},
+							xcxOpenId: loginData.xcxOpenId,
+						};
+
+						uni.setStorageSync('loginData', newLoginData);
+						this.setFootData(newLoginData.defaultArchives);
+
+						// this.setFootData(result.defaultArchives);
+						// uni.setStorageSync('loginData', result);
+					}
+				})
+			} catch (e) {
+				console.log(e);
+			}
+		},
 			count(time) {
 			    if (time) {
 			        this.time = time

@@ -93,23 +93,39 @@
 				}
 				
 			},
-			// 刷新用户信息
-			async refreshUserInfo(phoneNum){
-				try{
-				    const res = await HeaderbarApi
-					.refreshUserInfo(phoneNum)
-					.then((result) => {
-						if(result.data.code === 200){
-							let data = result.data.data
-							this.setFootData(data.defaultArchives)
-							let items = JSON.stringify(data)
-							uni.setStorageSync('loginData', items)
-						}
-					})
-				}catch(e){
-					console.log('45',e);
-				}
-			},
+		// 刷新用户信息
+		async refreshUserInfo() {
+			try {
+				const res = await getDefaultPatientApi({ ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId }).then(res => {
+					let defaultPatient = res.data.data;
+					const loginData = uni.getStorageSync("loginData");
+					if (res.data.code === 200) {
+
+						const newLoginData = {
+							defaultArchives: {
+								// id: loginInfo.userId,
+								userId: loginData.defaultArchives.userId,
+								patientName: loginData.defaultArchives.patientName,
+								phoneNum: defaultPatient.phonenumber,
+								idNum: defaultPatient.id_card,
+								patientCard: defaultPatient.id_card,
+								// qrCodeText: "",// !! 这还有问题
+								// linkHealthCard: ""// !! 这还有问题
+							},
+							xcxOpenId: loginData.xcxOpenId,
+						};
+
+						uni.setStorageSync('loginData', newLoginData);
+						this.setFootData(newLoginData.defaultArchives);
+
+						// this.setFootData(result.defaultArchives);
+						// uni.setStorageSync('loginData', result);
+					}
+				})
+			} catch (e) {
+				console.log(e);
+			}
+		},
 			recharge(num){
 				this.$emit('handle','')
 				if(num===1){

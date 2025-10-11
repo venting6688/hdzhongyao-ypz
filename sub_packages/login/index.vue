@@ -29,6 +29,7 @@ import { mapMutations } from 'vuex'
 import loginApi from '@/api/loginApi.js'
 import filingApi from '@/api/filingApi.js'
 import guideApi from '@/api/guideApi.js'
+import { getDefaultPatientApi } from '@/api/familyApi.js'
 
 export default {
 	data() {
@@ -68,28 +69,54 @@ export default {
 		onGetPhoneNumber(e) {
 			this.loginFn().then(res => {  // 微信登录&服务端获取openid
 				this.getPhoneNumberFn(e.detail.code, res.code).then(data => { // 服务端获取手机号
-					console.log(JSON.stringify(data.data));
 					let phone = data.data.profileInfo.phonenumber;
+					const { loginInfo, defaultPatient, profileInfo, accessToken } = data.data;
+					uni.setStorageSync('loginToken', accessToken)
+					this.setLoginToken(accessToken);
 
-					uni.setStorageSync('loginToken', data.data.accessToken)
-					this.setLoginToken(data.data.accessToken);
-					console.log(JSON.stringify(data.data.loginInfo));
-					// if (!data.data.patientName) {
-					// 	let data = { phone }
-					// 	filingApi.archiveQuery(data).then(res => {
-					// 		let result = res.data.data;
-					uni.setStorageSync('loginData', data.data.loginInfo);
-					// 		if (!result.defaultArchives) {
-					// 			uni.navigateTo({ url:"/sub_packages_healthcard/family/familyManage" })
-					// 		} else {
-					this.setFootData(data.data.profileInfo);
-					this.setLoginStatus('login');
-					uni.switchTab({ url: "/pages/virtualNurse/index" })
-					// 		}
-					// 	});
-					// }
+					getDefaultPatientApi({ ownerUserId: loginInfo.userId }).then(({ data, code }) => {
+						if (code === 200) {
+							this.handleLoginSuccess(loginInfo, data, profileInfo);
+						}
+					})
+
+// // if (!data.data.patientName) {
+// // let data = { phone }
+// // filingApi.archiveQuery(data).then(res => {
+// // let result = res.data.data;
+					// uni.setStorageSync('loginData', loginInfo);
+					// // if (!result.defaultArchives) {
+					// // 	uni.navigateTo({ url: "/sub_packages_healthcard/family/familyManage" })
+					// // } else {
+					// this.setFootData(defaultPatient);
+					// this.setLoginStatus('login');
+					// uni.switchTab({ url: "/pages/virtualNurse/index" })
+					// // }
+					// // 		});
+					// // 	}
 				})
 			})
+		},
+		// 处理登录成功后的逻辑
+		handleLoginSuccess(loginInfo, defaultPatient, profileInfo) {
+			const loginData = {
+				defaultArchives: {
+					// id: loginInfo.userId,
+					userId: loginInfo.userId,
+					patientName: profileInfo.realName,
+					phoneNum: defaultPatient?.phonenumber,
+					idNum: defaultPatient?.id_card,
+					patientCard: defaultPatient?.id_card,
+					// qrCodeText: "",// !! 这还有问题
+					// linkHealthCard: ""// !! 这还有问题
+				},
+				xcxOpenId: loginInfo.openid,
+			}
+
+			uni.setStorageSync('loginData', loginData);
+			this.setFootData(loginData.defaultArchives);
+			this.setLoginStatus('login');
+			uni.switchTab({ url: "/pages/virtualNurse/index" })
 		},
 		// 微信登录
 		loginFn() {
