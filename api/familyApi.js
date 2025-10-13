@@ -40,3 +40,30 @@ export async function setDefaultMemberApi(params) {
 	);
 	return res?.data || {};
 }
+
+// 查询默认就诊人
+export async function getDefaultPatientApi(params) {
+	const url = `getDefautlPatient?userId=${params.ownerUserId}`;
+	const res = await cjRequest(
+		{
+			url: url,
+			method: "get",
+		},
+		2
+	);
+	return res?.data || {};
+}
+
+// 删除某一就诊人
+export async function deleteMemberApi(params) {
+	const url = `member/delete/${params.familyId}/${params.ownerUserId}`;
+	const res = await cjRequest(
+		{
+			url: url,
+			method: "delete",
+			data: params,
+		},
+		2
+	);
+	return res?.data || {};
+}
