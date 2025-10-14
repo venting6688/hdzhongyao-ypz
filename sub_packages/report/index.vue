@@ -68,12 +68,12 @@
 			</ul>
 			<zanwu v-else />
 		</view>
-		<auth-popup
+		<!-- <auth-popup
 			ref="authPopup"
 			@success="authSuccess"
 			@fail="authFail"
 			@cancel="authCancel"
-		/>
+		/> -->
 	</view>
 </template>
 
@@ -83,14 +83,14 @@
 	import elseApi from '@/api/elseApi.js'
 	import healthCard from '@/api/healthCard.js'
 	import zanwu from '../components/zanwu.vue'
-  import AuthPopup from '../components/auth-popup.vue'
+//   import AuthPopup from '../components/auth-popup.vue'
 	import { mapState } from 'vuex'
 	export default {
 		components:{
 			bar,
 			date,
 			zanwu,
-			AuthPopup,
+			// AuthPopup,
 		},
 		data(){
 			return {
@@ -111,12 +111,12 @@
 			this.loginData = uni.getStorageSync('loginData');
 			this.siginData = this.loginData.defaultArchives ? this.loginData.defaultArchives : {};
 			this.registerOrderId = e.registerOrderId ? e.registerOrderId : '';
-			if (this.registerOrderId == '') {
-				this.healthcardVerify();
-			}
-			if (this.registerOrderId != '') {
-				this.checkUniformVerifyResult();
-			}
+			// if (this.registerOrderId == '') {
+			// 	this.healthcardVerify();
+			// }
+			// if (this.registerOrderId != '') {
+			// 	this.checkUniformVerifyResult();
+			// }
 		},
 		methods: {
 			show(time){
@@ -136,18 +136,18 @@
 			},
 			
 			//实人验证
-			healthcardVerify() {
-				var plugin = requirePlugin("healthCardPlugins");
-				plugin.login((isok, res) => {
-					if (!isok && res.result.toLogin) {
-						this.$refs.authPopup.open();
-					} else {
-						this.verifyOrder(res);
-					}
-				}, {
-					wechatCode: true,
-				});
-			},
+			// healthcardVerify() {
+			// 	var plugin = requirePlugin("healthCardPlugins");
+			// 	plugin.login((isok, res) => {
+			// 		if (!isok && res.result.toLogin) {
+			// 			this.$refs.authPopup.open();
+			// 		} else {
+			// 			this.verifyOrder(res);
+			// 		}
+			// 	}, {
+			// 		wechatCode: true,
+			// 	});
+			// },
 			
 			//实人验证生成orderid
 			verifyOrder(val) {
