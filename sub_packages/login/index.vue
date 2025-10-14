@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations } from 'vuex';
 import loginApi from '@/api/loginApi.js'
 import filingApi from '@/api/filingApi.js'
 import guideApi from '@/api/guideApi.js'
