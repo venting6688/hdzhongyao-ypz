@@ -3,13 +3,13 @@
 		<view class="stack-container">
 			<view class="layer top-layer">
 				<view class="patients" v-if="footData.patientName != undefined || defaultVal.patientName != undefined">
-					<view class="info" @click="cutPatient">
+					<view class="info">
 						<view class="name">
 							<text>{{footData.patientName ? footData.patientName : defaultVal.patientName}}</text>
-							<view class="change">
+							<!-- <view class="change">
 								<uni-icons type="person" class="icon" color="$global-color" />
 								<text :class="fontMode === 'elder' ? 'text-elder' : ''">切换就诊人</text>
-							</view>
+							</view> -->
 						</view>
 						<view class="id">{{pixelateNumber(footData.idNum ? footData.idNum : defaultVal.idNum)}}</view>
 					</view>
@@ -32,9 +32,9 @@
 				<!-- <uv-qrcode ref="qrcode" size="500rpx" :value="qrCode"></uv-qrcode> -->
 			</view>
 		</uni-popup>
-		<uni-popup class="cutPatientDialog" @maskClick="cutPatientPopupClick" :safe-area="false"  ref="cutPatientPopup" type="bottom">
+		<!-- <uni-popup class="cutPatientDialog" @maskClick="cutPatientPopupClick" :safe-area="false"  ref="cutPatientPopup" type="bottom">
 		   <popupFamily v-if="cutPatientPopupState" :personageObj="personageObj" @handle="show" />
-		</uni-popup>
+		</uni-popup> -->
 	</view>
 </template>
 
@@ -78,7 +78,7 @@
 		},
 		methods: {
 			show(){
-				this.$refs.cutPatientPopup.close()
+				// this.$refs.cutPatientPopup.close()
 			},
 			
 			onPatientClick() {
@@ -110,18 +110,18 @@
 				},1500)
 			},
 			
-			cutPatient(){
-				if(this.timer){
-					clearTimeout(this.timer)
-					this.timer = null
-					this.cutPatientPopupState = false
-				}
-				this.$nextTick(() => {
-					this.loginData()
-					this.cutPatientPopupState = true
-					this.$refs.cutPatientPopup.open('bottom')   //弹框
-				});
-			},
+			// cutPatient(){
+			// 	if(this.timer){
+			// 		clearTimeout(this.timer)
+			// 		this.timer = null
+			// 		this.cutPatientPopupState = false
+			// 	}
+			// 	this.$nextTick(() => {
+			// 		this.loginData()
+			// 		this.cutPatientPopupState = true
+			// 		this.$refs.cutPatientPopup.open('bottom')   //弹框
+			// 	});
+			// },
 			
 			loginData(){
 				let loginValue = uni.getStorageSync("loginData");
