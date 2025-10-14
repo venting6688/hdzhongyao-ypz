@@ -195,7 +195,7 @@
 				});
 			},
 			submit() {
-				if (!this.footData.patientUniquelyIdentifies) {
+				if (!this.footData.idNum) {
 					login.loginData().catch((error) => {});
 				} else {
 					if (!this.form.name ||!this.form.phone ||!this.form.departmentComplainedAgainst || !this.form.specificContent) {
@@ -209,7 +209,7 @@
 						if (!phoneReg.test(this.form.phone)) {
 							uni.showToast({ title: '手机号格式不正确', icon: 'none' });
 						} else {
-							this.form.patientId = this.footData.patientUniquelyIdentifies,
+							this.form.patientId = this.footData.idNum,
 							this.form.complaintSection = this.complaintSection.join(',');
 							questionnaireApi.addComplaintContent(this.form).then(res => {
 								if (res.data.code == 200) {

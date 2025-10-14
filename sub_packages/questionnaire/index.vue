@@ -251,7 +251,7 @@
 			  return /^1[3-9]\d{9}$/.test(phone);
 			},
 			submit() {
-				if (!this.footData.patientUniquelyIdentifies) {
+				if (!this.footData.idNum) {
 					login.loginData().catch((error) => {});
 				} else {
 					let currentQuestions = this.questionsList[this.currentTab];
@@ -284,7 +284,7 @@
 
 					detail = JSON.stringify(detail)
 					let payload = {
-						patientId: this.footData.patientUniquelyIdentifies,
+						patientId: this.footData.idNum,
 						name: this.name,
 						phone: this.phone,
 						detail,
