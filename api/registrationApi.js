@@ -126,7 +126,37 @@ const patient = {
 			data
 		})
 		return res
-	}
+	},
+	
+	//挂号/预约挂号 发送消息
+	async registrationSuccessNotificationMsg(data) {
+		const res = await cjRequest({
+			url: `registrationSuccessNotificationMsg`,
+			method: "post",
+			data
+		})
+		return res
+	},
+	
+	//取消挂号 发送消息
+	async cancelRegistrationMsg(data) {
+		const res = await cjRequest({
+			url: `cancelRegistrationMsg`,
+			method: "post",
+			data
+		})
+		return res
+	},
+	
+	//退费 发送消息
+	async wxRefund(data) {
+		const res = await cjRequest({
+			url: `wxRefund`,
+			method: "post",
+			data
+		})
+		return res
+	},
 	
 }
  

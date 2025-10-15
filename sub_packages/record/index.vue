@@ -134,11 +134,13 @@
 			},
 			
 			show(time){
+				console.log(time,'=s=s=s=s=s')
 				const datePattern = /^\d{4}-\d{2}-\d{2}$/.test(time.startTime);
 				if(datePattern){
 					this.date = time
 					this.getVisitRecord();
 				}
+				
 			},
 			information(item){
 				let data = {...this.date,...item}

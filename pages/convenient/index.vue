@@ -132,12 +132,13 @@
 </template>
 <script>
 	import dayjs from 'dayjs'
-	import {mapState,mapMutations} from 'vuex'
-	import zanwu from '@/sub_packages/components/zanwu.vue'
-	import guideApi from '@/api/guideApi.js'
-	import registrationApi from '@/api/registrationApi.js'
 	import mixin from '@/mixins/mixin'
 	import bus from '@/utils/bus.js'
+	import {mapState,mapMutations} from 'vuex'
+	import guideApi from '@/api/guideApi.js'
+	import subMessage from '@/utils/subscribe.js'
+	import registrationApi from '@/api/registrationApi.js'
+	import zanwu from '@/sub_packages/components/zanwu.vue'
 	export default {
 		data() {
 			return {
@@ -148,6 +149,7 @@
 				timer:null,
 				convenientState:true,
 				signData: {},
+				loginData: {},
 				barList: [{
 						name:'预约',
 						number:'1',
@@ -178,6 +180,7 @@
 		},
 		mounted() {
 			let data = uni.getStorageSync('loginData');
+			this.loginData = data;
 			this.signData = data.defaultArchives ? data.defaultArchives : {};
 			if (JSON.stringify(this.signData) == "{}") {
 				uni.reLaunch({ url: '/pages/user/index' });
@@ -302,16 +305,53 @@
 								//退号
 								guideApi.cancelAppointOrRegister(data).then((res) => {
 									if (res.data.code === 200) {
+										let sendMsg = {
+											openId: this.loginData.xcxOpenId,
+											doctorName: this.subscribeObj.doctName,
+											patientName: this.signData.patientName,
+											time: this.subscribeObj.medDate+' '+this.subscribeObj.medTime,
+											department: this.subscribeObj.deptName,
+											remind: '退号成功',
+										}
+										let tmplIds = [
+											'jOQsjrlz8Ht1EYUjBgepx0TxFLl2h2Hpz7mRBYU9Zr8', //退号
+											'7v4V3Z9SgJl95mjj5ujcUSa0j5cqEpW0qXIjhm3ab7c', //退费
+										];
+										subMessage.subscribeRegisterNotice(
+											tmplIds,
+											registrationApi.cancelRegistrationMsg, 
+											sendMsg
+										).then(res => {
+											
+										});
 										//退款
 										registrationApi.refund({merOrderId: payOrderNo, refundAmount: item.regAmount, targerOrderId: ''}).then(r => {
 											let refundRes = r.data
 											if (refundRes.code === 200) {
-												uni.showToast({
-													title: '退号成功',
-													icon: 'none',   
-													duration: 2000 
-												})
-												this.getFirstVisit();
+												let amount = parseFloat(item.regAmount/100).toFixed(2)
+												let strs = {
+													openId: this.loginData.xcxOpenId,
+													patientName: this.signData.patientName,
+													amount,
+													orderNumber: payOrderNo,
+													type: '挂号',
+													remind: '退款成功，请查收',
+												}
+												let ids = [
+													'7v4V3Z9SgJl95mjj5ujcUSa0j5cqEpW0qXIjhm3ab7c', //退费
+												];
+												subMessage.subscribeRegisterNotice(
+													ids,
+													registrationApi.wxRefund, 
+													strs
+												).then((res) => {
+														uni.showToast({
+															title: '退号成功',
+															icon: 'none',   
+															duration: 2000 
+														})
+														this.getFirstVisit();
+													})
 											} else {
 												this.getFirstVisit();
 												uni.showToast({

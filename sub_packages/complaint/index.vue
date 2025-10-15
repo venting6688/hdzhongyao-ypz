@@ -6,7 +6,7 @@
 		</view>
 		<view class="head">
 			<view class="left">
-				<image src="@/static/image/投诉与建议.png" />
+				<image src="@/static/image/ts.png" />
 				<text>若您对就医过程中的服务、流程等有不满意的地方，请告诉我们，以便于督促我们不断改进。</text>
 			</view>
 			<image src="@/static/image/image 50.png" mode="aspectFit" />

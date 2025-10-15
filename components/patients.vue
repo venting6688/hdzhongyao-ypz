@@ -6,10 +6,6 @@
 					<view class="info">
 						<view class="name">
 							<text>{{footData.patientName ? footData.patientName : defaultVal.patientName}}</text>
-							<!-- <view class="change">
-								<uni-icons type="person" class="icon" color="$global-color" />
-								<text :class="fontMode === 'elder' ? 'text-elder' : ''">切换就诊人</text>
-							</view> -->
 						</view>
 						<view class="id">{{pixelateNumber(footData.idNum ? footData.idNum : defaultVal.idNum)}}</view>
 					</view>
@@ -32,15 +28,11 @@
 				<!-- <uv-qrcode ref="qrcode" size="500rpx" :value="qrCode"></uv-qrcode> -->
 			</view>
 		</uni-popup>
-		<!-- <uni-popup class="cutPatientDialog" @maskClick="cutPatientPopupClick" :safe-area="false"  ref="cutPatientPopup" type="bottom">
-		   <popupFamily v-if="cutPatientPopupState" :personageObj="personageObj" @handle="show" />
-		</uni-popup> -->
 	</view>
 </template>
 
 <script>
 	import mixin from '@/mixins/mixin.js'
-	import popupFamily from './popupFamily.vue';
 	import { mapState, mapMutations } from 'vuex'
 	
 	export default {
@@ -50,9 +42,6 @@
 		    type: String,
 		    default: 'normal'
 		  }
-		},
-		components:{
-			popupFamily,
 		},
 		computed: {
 			...mapState(['footData']),
@@ -77,28 +66,24 @@
 			this.loginData()
 		},
 		methods: {
-			show(){
-				// this.$refs.cutPatientPopup.close()
-			},
-			
 			onPatientClick() {
 				uni.navigateTo({ url: '/sub_packages_healthcard/family/familyManage' })
 			},
 			
 			code(){
-				if (this.footData.healthCardData != null) {
+				if (this.defaultVal.linkHealthCard) {
 					let hospitalId = '40088';
-					let healthCardId = this.footData.patientCard;
+					let healthCardId = this.defaultVal.healthCardNum;
 					let webviewUrl = '/pages/webview/webview?url=$url';
 					let redirectUrl = '';
 					let fieldCode = '';
 					wx.navigateTo({
 						url: `plugin://healthCardPlugins/healthcode?hospitalId=${hospitalId}&healthCardId=${healthCardId}&webviewUrl=${encodeURIComponent(webviewUrl)}&redirectUrl=${encodeURIComponent(redirectUrl)}`,
-					});	
+					});
 				} else {
-					this.qrCode = this.footData.qrCode
-					this.$refs.uvQrcode.open('center')   //弹框
-					this.qrcodeState = true
+					// this.qrCode = this.defaultVal.qrCodeText
+					// this.$refs.uvQrcode.open('center')   //弹框
+					// this.qrcodeState = true
 				}
 			},
 			
@@ -109,19 +94,6 @@
 					this.timer = null
 				},1500)
 			},
-			
-			// cutPatient(){
-			// 	if(this.timer){
-			// 		clearTimeout(this.timer)
-			// 		this.timer = null
-			// 		this.cutPatientPopupState = false
-			// 	}
-			// 	this.$nextTick(() => {
-			// 		this.loginData()
-			// 		this.cutPatientPopupState = true
-			// 		this.$refs.cutPatientPopup.open('bottom')   //弹框
-			// 	});
-			// },
 			
 			loginData(){
 				let loginValue = uni.getStorageSync("loginData");
