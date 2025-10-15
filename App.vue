@@ -1,28 +1,21 @@
-<script>
-	export default {
-		onLaunch: function() {
-			let loginData = uni.getStorageSync("loginData");
+// <script>
+// 	export default {
+// 		onLaunch: function() {
+// 			let loginData = uni.getStorageSync("loginData");
 			
-			if (JSON.stringify(loginData) != '{}' && loginData.defaultArchives) {
-				setTimeout(() => {
-					uni.reLaunch({ url: '/pages/user/index' });
-				}, 100);
-			}
-			if (loginData.phoneNum != undefined && !loginData.defaultArchives) {
-				setTimeout(() => {
-					uni.reLaunch({ url: '/sub_packages_healthcard/family/familyManage' });
-				}, 100);
-			}
-		},
-		// onShow: function() {
-		// 	console.log('App Show')
-		// 	  wx.hideTabBar();
-		// },
-		// onHide: function() {
-		// 	console.log('App Hide')
-		// }
-	}
-</script>
+// 			if (JSON.stringify(loginData) != '{}' && loginData.defaultArchives) {
+// 				setTimeout(() => {
+// 					uni.reLaunch({ url: '/pages/user/index' });
+// 				}, 100);
+// 			}
+// 			if (loginData.phoneNum != undefined && !loginData.defaultArchives) {
+// 				setTimeout(() => {
+// 					uni.reLaunch({ url: '/sub_packages_healthcard/family/familyManage' });
+// 				}, 100);
+// 			}
+// 		},
+// 	}
+// </script>
 
 
 <style>

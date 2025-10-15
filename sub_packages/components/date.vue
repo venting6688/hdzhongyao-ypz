@@ -60,15 +60,16 @@
 			dateChange: function(e) {
 				this.dateState = 0
 				this.selectDate = e.detail.value;
-				let year = this.selectDate.split('-')[0];
-				let month = this.selectDate.split('-')[1];
-				let startDate = dayjs({year: year, month: month - 1, day: 1}).startOf('month');
-				let endDate = dayjs(startDate).endOf('month');
+				const [year, month] = this.selectDate.split('-')
+				const start = `${year}-${month}-01`
+				const endDate = new Date(year, month, 0) // 注意：month 不需要 -1
+				const end = `${year}-${month}-${String(endDate.getDate()).padStart(2, '0')}`
+				
 				this.date = {
-					startTime: dayjs(startDate).format('YYYY-MM-DD'),
-					endTime: dayjs(endDate).format('YYYY-MM-DD'),
+					startTime: dayjs(start).format('YYYY-MM-DD'),
+					endTime: dayjs(end).format('YYYY-MM-DD'),
 				}
-				this.$emit('handle',this.date)
+				this.$emit('handle', this.date)
 			},
 			getDate(type) { //年月日
 			    const date = new Date();
