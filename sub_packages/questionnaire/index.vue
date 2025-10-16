@@ -165,11 +165,16 @@
 				answersList: [[], [], []],
 				name: '',
 				phone: '',
-				otherText: ''
+				otherText: '',
+				defaultData: {},
+				loginVal: {},
 			}
 		},
 		//格式化数据
 		onLoad() {
+			let data = uni.getStorageSync('loginData');
+			this.loginVal = data;
+			this.defaultData = data.defaultArchives ? data.defaultArchives : {};
 			this.getComplaintContent();
 			//环境
 			let environmentQuestions = this.envQuestions.map(title => ({
@@ -251,7 +256,7 @@
 			  return /^1[3-9]\d{9}$/.test(phone);
 			},
 			submit() {
-				if (!this.footData.idNum) {
+				if (!this.defaultData.idNum) {
 					login.loginData().catch((error) => {});
 				} else {
 					let currentQuestions = this.questionsList[this.currentTab];
@@ -284,12 +289,14 @@
 
 					detail = JSON.stringify(detail)
 					let payload = {
-						patientId: this.footData.idNum,
+						patientId: this.defaultData.idNum,
 						name: this.name,
 						phone: this.phone,
 						detail,
-						type: this.currentTab+1
+						type: this.currentTab+1,
+						openid: this.loginVal.xcxOpenId
 					};
+					console.log(JSON.stringify(payload),'=s=s=s=s=s=s');
 					questionnaireApi.submitAnswers(payload).then(res => {
 						if (res.data.code === 200) {
 							// 清空数据
