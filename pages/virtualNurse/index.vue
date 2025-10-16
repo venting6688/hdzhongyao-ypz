@@ -1,11 +1,5 @@
 <template>
 	<view class="virtual">
-		<!-- <aiNotice
-		ref="notice" 
-		:tipMsg="tipMsg" 
-		@confirmed="handleConfirm" 
-		/> -->
-		
 		<view class=""   :animation="anData"  style="height:0rpx;"></view>
 		<image class="background" src="../../static/image/virtualBg.png"></image>
 		<view class="head">
@@ -195,12 +189,8 @@
 	import bus from "@/utils/bus";
 	import login from '@/utils/login.js'
 	import { parse } from 'best-effort-json-parser'
-	import aiNotice from '@/components/aiNotice.vue'
 	
 	export default {
-	components:{
-		aiNotice
-	},
 		data() {
 			return {
 				md: new MarkdownIt(),
@@ -726,7 +716,7 @@
 		.tubiao {
 			margin: 0 10rpx;
 		  image {
-			 width: 84rpx;
+				width: 72rpx;
 		  }
 		}
 		
@@ -753,7 +743,7 @@
 			display: flex;
 			flex-direction: column;  
 			.scroll-Y {
-				margin-top: 86rpx;
+				margin-top: 195rpx;
 				width: 750rpx;
 				flex: auto;
 				overflow: auto;
@@ -764,7 +754,7 @@
 					font-size: 37rpx;
 					color: #000;
 					&:nth-of-type(1){
-						padding-top: 140rpx;
+						// padding-top: 140rpx;
 						padding-bottom: 0 !important;
 					}
 					.my {

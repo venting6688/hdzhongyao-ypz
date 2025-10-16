@@ -83,6 +83,7 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+	margin-top: 100rpx;
 }
 
 .popup-title {
