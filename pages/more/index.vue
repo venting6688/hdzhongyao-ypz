@@ -23,17 +23,14 @@
 			  </van-grid-item>
 			</van-grid>
 		</view>
-		<foot :footState="footState"/>
 	</view>
 </template>
 <script>
 	import bus from "@/utils/bus";
 	import HeaderBar from '@/components/HeaderBar.vue';
 	import {mapState,mapMutations} from 'vuex'
-	import foot from '@/components/footer.vue'
 	export default {
 		components:{
-			foot,
 			HeaderBar,
 		},
 		computed: {

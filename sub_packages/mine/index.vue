@@ -68,13 +68,9 @@
 
 <script>
 	import mixin from '@/mixins/mixin'
-	import foot from '@/components/footer.vue'
 	import {mapState} from 'vuex'
 	export default {
 		mixins: [mixin],
-		components:{
-			foot,
-		},
 		data(){
 			return {
 				footState:2,

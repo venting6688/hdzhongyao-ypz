@@ -1,11 +1,5 @@
 <template>
 	<view class="virtual">
-		<!-- <aiNotice
-		ref="notice" 
-		:tipMsg="tipMsg" 
-		@confirmed="handleConfirm" 
-		/> -->
-		
 		<view class=""   :animation="anData"  style="height:0rpx;"></view>
 		<image class="background" src="../../static/image/virtualBg.png"></image>
 		<view class="head">
@@ -195,12 +189,8 @@
 	import bus from "@/utils/bus";
 	import login from '@/utils/login.js'
 	import { parse } from 'best-effort-json-parser'
-	import aiNotice from '@/components/aiNotice.vue'
 	
 	export default {
-	components:{
-		aiNotice
-	},
 		data() {
 			return {
 				md: new MarkdownIt(),
