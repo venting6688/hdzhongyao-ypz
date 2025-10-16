@@ -123,10 +123,8 @@ export default {
             const datePattern = /^\d{4}-\d{2}-\d{2}$/.test(time.startTime);
             if(datePattern){
                 this.date = time
-                if (this.isVerify) {
-                    let type = this.headIndex === 1 ? 'jiancha' : 'jianyan';
-                    this.getVisitRecord(type)
-                }
+                let type = this.headIndex === 1 ? 'jiancha' : 'jianyan';
+                this.getVisitRecord(type)
             }
         },
         headBtn(num){
