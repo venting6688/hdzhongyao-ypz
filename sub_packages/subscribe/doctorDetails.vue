@@ -95,6 +95,7 @@
 	import registrationApi from '@/api/registrationApi.js'
 	import guideApi from '@/api/guideApi.js'
 	import healthCard from '@/api/healthCard.js'
+	import subMessage from '@/utils/subscribe.js'
 	
 	export default {
 		components:{
@@ -303,11 +304,28 @@
 											registrationApi.registrationSettlement(uploadOrder).then(uploadRes => {
 												let uploadResult = JSON.parse(uploadRes.data.msg);
 												if (uploadResult.success) {
-													this.toastObj = {
-														state:true,
-														message:'预约成功',
-														url:'/pages/convenient/index',
+													let sendMsg = {
+														openId: this.loginValue.xcxOpenId,
+														doctorName: this.doctor.DoctorName,
+														patientName: this.siginData.patientName,
+														time: this.doctorInfo.medDate+' '+this.doctor.StartTime,
+														department: this.doctor.clinic,
+														remind: '请提前30分钟到达',
 													}
+													let tmplIds = [
+														'fAoB9PETEboAL2J0huVU-EYXd1udvMZo_Q2CxBZ8Lb0',
+													];
+													subMessage.subscribeRegisterNotice(
+														tmplIds,
+														registrationApi.registrationSuccessNotificationMsg, 
+														sendMsg
+													).then((res) => {
+														this.toastObj = {
+															state:true,
+															message:'预约成功',
+															url:'/pages/convenient/index',
+														}
+													})
 												} else {
 													//上传失败进行解锁+退款
 													let refundData = {

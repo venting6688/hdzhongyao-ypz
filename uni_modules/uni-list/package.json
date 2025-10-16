@@ -1,19 +1,21 @@
 {
-  "id": "uni-icons",
-  "displayName": "uni-icons 图标",
-  "version": "2.0.12",
-  "description": "图标组件，用于展示移动端常见的图标，可自定义颜色、大小。",
+  "id": "uni-list",
+  "displayName": "uni-list 列表",
+  "version": "1.2.17",
+  "description": "List 组件 ，帮助使用者快速构建列表。",
   "keywords": [
+    "",
     "uni-ui",
     "uniui",
-    "icon",
-    "图标"
+    "列表",
+    "",
+    "list"
 ],
   "repository": "https://github.com/dcloudio/uni-ui",
   "engines": {
-    "HBuilderX": "^3.2.14",
+    "HBuilderX": "",
     "uni-app": "^4.08",
-    "uni-app-x": "^4.61"
+    "uni-app-x": ""
   },
   "directories": {
     "example": "../../temps/example_temps"
@@ -43,7 +45,8 @@
   },
   "uni_modules": {
     "dependencies": [
-      "uni-scss"
+      "uni-badge",
+      "uni-icons"
     ],
     "encrypt": [],
     "platforms": {
@@ -65,10 +68,7 @@
           "app": {
             "vue": "√",
             "nvue": "-",
-            "android": {
-                "extVersion": "",
-                "minVersion": "29"
-            },
+            "android": "√",
             "ios": "√",
             "harmony": "√"
           },
@@ -90,19 +90,16 @@
         },
         "uni-app-x": {
           "web": {
-            "safari": "√",
-            "chrome": "√"
+            "safari": "-",
+            "chrome": "-"
           },
           "app": {
-            "android": {
-                "extVersion": "",
-                "minVersion": "29"
-            },
-            "ios": "√",
-            "harmony": "√"
+            "android": "-",
+            "ios": "-",
+            "harmony": "-"
           },
           "mp": {
-            "weixin": "√"
+            "weixin": "-"
           }
         }
       }

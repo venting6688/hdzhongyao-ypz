@@ -40,21 +40,29 @@
 		data() {
 			return {
 				gridData: [
-					{
-						title: '健康数据',
-						list: [
-							{ icon: '../../static/img/icon/shuju.png', label: '健康数据' },
-							{ icon: '../../static/img/icon/zhengzhuang.png', label: '症状管理' },
-							{ icon: '../../static/img/icon/jiankang.png', label: '健康史' },
-							{ icon: '../../static/img/icon/life.png', label: '生活方式' }
-						]
-					},
+					// {
+					// 	title: '健康数据',
+					// 	list: [
+					// 		{ icon: '../../static/img/icon/shuju.png', label: '健康数据' },
+					// 		{ icon: '../../static/img/icon/zhengzhuang.png', label: '症状管理' },
+					// 		{ icon: '../../static/img/icon/jiankang.png', label: '健康史' },
+					// 		{ icon: '../../static/img/icon/life.png', label: '生活方式' }
+					// 	]
+					// },
 					{
 						title: '常用功能',
 						list: [
 							{ icon: '../../static/img/icon/jiuzhen.png', label: '就诊人管理', url: '/sub_packages_healthcard/family/familyManage' },
 							{ icon: '../../static/img/icon/manyi.png', label: '满意度调查', url: '/sub_packages/questionnaire/index' },
 							{ icon: '../../static/img/icon/tousu.png', label: '投诉与建议', url: '/sub_packages/complaint/index' }
+						]
+					},
+					{
+						title: '我的商城',
+						list: [
+							{ icon: '../../static/img/icon/car.png', label: '购物车' },
+							{ icon: '../../static/img/icon/order.png', label: '我的订单' },
+							{ icon: '../../static/img/icon/address.png', label: '地址管理' }
 						]
 					}
 				]

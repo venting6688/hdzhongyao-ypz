@@ -139,6 +139,7 @@
 					this.date = time
 					this.getVisitRecord();
 				}
+				
 			},
 			information(item){
 				let data = {...this.date,...item}
