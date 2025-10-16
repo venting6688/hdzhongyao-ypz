@@ -89,7 +89,7 @@
 						{ img: '../../static/img/navigation/jiuzhen.png', name: '就诊记录', url: '/sub_packages/record/index' },
 					],
 					[
-						{ img: '../../static/img/navigation/dengji.png', name: '入院登记'}, //, url: '/sub_packages/beHospitalizedRegister/index'
+						// { img: '../../static/img/navigation/dengji.png', name: '入院登记', url: '/sub_packages/beHospitalizedRegister/index'}, 
 						{ img: '../../static/img/navigation/yujiaojin.png', name: '住院预交金', url: '/sub_packages/deposit/index' },
 						{ img: '../../static/img/navigation/feiyong.png', name: '住院费用', url: '/sub_packages/convenientModule/index' },
 						{ img: '../../static/img/navigation/zy-report.png', name: '住院报告'}, //, url: '/sub_packages/report/hospitalization' 

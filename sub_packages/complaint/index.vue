@@ -132,6 +132,8 @@
 				],
 				complaintSteps: [],
 				complaintSection: [],
+				defaultData: {},
+				loginVal: {},
 				status: [],
 				lists: [],
 			}
@@ -174,7 +176,7 @@
 			  });
 			},
 			getList() {
-				let data = { patientId: this.footData.patientUniquelyIdentifies };
+				let data = { openid: this.loginVal.xcxOpenId };
 				questionnaireApi.getComplaintsAndSuggestionsList(data).then((res) => {
 					this.lists = [];
 					if (res.data.list) {
@@ -191,11 +193,12 @@
 						});
 						
 						this.lists.sort((a, b) => b.createTimeForSort - a.createTimeForSort);
+						// console.log(JSON.stringify(this.lists),'=s=s=s=e=e==e=e');
 					}
 				});
 			},
 			submit() {
-				if (!this.footData.idNum) {
+				if (!this.defaultData.idNum) {
 					login.loginData().catch((error) => {});
 				} else {
 					if (!this.form.name ||!this.form.phone ||!this.form.departmentComplainedAgainst || !this.form.specificContent) {
@@ -209,7 +212,8 @@
 						if (!phoneReg.test(this.form.phone)) {
 							uni.showToast({ title: '手机号格式不正确', icon: 'none' });
 						} else {
-							this.form.patientId = this.footData.idNum,
+							this.form.patientId = this.defaultData.idNum;
+							this.form.openid = this.loginVal.xcxOpenId;
 							this.form.complaintSection = this.complaintSection.join(',');
 							questionnaireApi.addComplaintContent(this.form).then(res => {
 								if (res.data.code == 200) {
@@ -238,8 +242,12 @@
 			}
 		},
 		mounted() {
+			let data = uni.getStorageSync('loginData');
+			this.loginVal = data;
+			this.defaultData = data.defaultArchives ? data.defaultArchives : {};
+			
 			this.getComplaintContent('cloud_complaint_section');
-			if (this.footData.patientUniquelyIdentifies) {
+			if (this.defaultData.idNum) {
 				this.getComplaintContent('cloud_complaint_status').then(() => {
 					this.getList();
 				});
