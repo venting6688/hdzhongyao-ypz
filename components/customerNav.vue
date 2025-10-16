@@ -47,6 +47,7 @@
 			align-items: center;
 			.title {
 				font-size: 18px;
+				font-weight: bold;
 				color: #333;
 			}
 			.search {

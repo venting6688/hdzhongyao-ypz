@@ -716,7 +716,7 @@
 		.tubiao {
 			margin: 0 10rpx;
 		  image {
-			 width: 84rpx;
+				width: 72rpx;
 		  }
 		}
 		
@@ -743,7 +743,7 @@
 			display: flex;
 			flex-direction: column;  
 			.scroll-Y {
-				margin-top: 86rpx;
+				margin-top: 195rpx;
 				width: 750rpx;
 				flex: auto;
 				overflow: auto;
@@ -754,7 +754,7 @@
 					font-size: 37rpx;
 					color: #000;
 					&:nth-of-type(1){
-						padding-top: 140rpx;
+						// padding-top: 140rpx;
 						padding-bottom: 0 !important;
 					}
 					.my {

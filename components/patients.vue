@@ -2,12 +2,12 @@
 	<view>
 		<view class="stack-container">
 			<view class="layer top-layer">
-				<view class="patients" v-if="footData.patientName != undefined || defaultVal.patientName != undefined">
+				<view class="patients" v-if="defaultVal.patientName != undefined || defaultVal.patientName != undefined">
 					<view class="info">
 						<view class="name">
-							<text>{{footData.patientName ? footData.patientName : defaultVal.patientName}}</text>
+							<text>{{defaultVal.patientName ? defaultVal.patientName : defaultVal.patientName}}</text>
 						</view>
-						<view class="id">{{pixelateNumber(footData.idNum ? footData.idNum : defaultVal.idNum)}}</view>
+						<view class="id">{{pixelateNumber(defaultVal.idNum ? defaultVal.idNum : defaultVal.idNum)}}</view>
 					</view>
 					<view class="code" @click="code">
 						<image src="https://aiwz.sdtyfy.com:8099/img/qrcode.png" mode="aspectFit" />
@@ -152,7 +152,7 @@
 	}
 	.patients {
 		display: flex;
-		padding: 30rpx;
+		padding: 30rpx 50rpx;
 		justify-content: space-between;
 	  align-items: center;
 		height: 100%;
@@ -164,7 +164,7 @@
 				display: flex;
 				align-items: center;
 				font-size: 32rpx;
-				color: #333333;
+				color: #2E1A00;
 				text {
 					line-height: 1;
 					display: inline-block;
@@ -174,7 +174,7 @@
 				}
 			}
 			.id {
-			  color: #6C7AAA;
+			  color: #87653A;
 			  margin-top: 20rpx;
 			  font-size: 30rpx;
 				line-height: 1;
@@ -201,7 +201,7 @@
 			}
 		}
 		.code {
-			background: #F3F7FF;
+			background: #f1ede9;
 			border-radius: 15rpx;
 			height: 155rpx;
 			padding: 15rpx;
