@@ -96,24 +96,25 @@
 		// 刷新用户信息
 		async refreshUserInfo() {
 			try {
-				const res = await getDefaultPatientApi({ ownerUserId: this.registerData?.defaultArchives?.userId }).then(res => {
+				const res = await getDefaultPatientApi({ ownerUserId: this.registerData?.userId }).then(res => {
 					let defaultPatient = res.data.data;
 					const loginData = uni.getStorageSync("loginData");
 					if (res.data.code === 200) {
 
-						const newLoginData = {
-							defaultArchives: {
-								// id: loginInfo.userId,
-								userId: loginData.defaultArchives.userId,
-								patientName: loginData.defaultArchives.patientName,
-								phoneNum: defaultPatient.phonenumber,
-								idNum: defaultPatient.id_card,
-								patientCard: defaultPatient.id_card,
+                        const newLoginData = {
+							userId: loginData?.userId,
+							xcxOpenId: loginData.xcxOpenId,
+                            defaultArchives: {
+                                // id: loginInfo.userId,
+                                patientName: defaultPatient?.patientName,
+                                phoneNum: defaultPatient?.phonenumber,
+                                idNum: defaultPatient?.id_card,
+                                patientCard: defaultPatient?.id_card,
+                                healthCardNum: '',
 								// qrCodeText: "",// !! 这还有问题
 								// linkHealthCard: ""// !! 这还有问题
-							},
-							xcxOpenId: loginData.xcxOpenId,
-						};
+                            },
+                        };
 
 						uni.setStorageSync('loginData', newLoginData);
 						this.setFootData(newLoginData.defaultArchives);
