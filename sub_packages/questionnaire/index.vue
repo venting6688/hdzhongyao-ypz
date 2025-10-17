@@ -296,7 +296,6 @@
 						type: this.currentTab+1,
 						openid: this.loginVal.xcxOpenId
 					};
-					console.log(JSON.stringify(payload),'=s=s=s=s=s=s');
 					questionnaireApi.submitAnswers(payload).then(res => {
 						if (res.data.code === 200) {
 							// 清空数据

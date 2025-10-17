@@ -2,12 +2,12 @@
 	<view>
 		<view class="stack-container">
 			<view class="layer top-layer">
-				<view class="patients" v-if="defaultVal.patientName != undefined || defaultVal.patientName != undefined">
+				<view class="patients" v-if="siginVal.patientName != undefined">
 					<view class="info">
 						<view class="name">
-							<text>{{defaultVal.patientName ? defaultVal.patientName : defaultVal.patientName}}</text>
+							<text>{{siginVal.patientName ? siginVal.patientName : defaultVal.patientName}}</text>
 						</view>
-						<view class="id">{{pixelateNumber(defaultVal.idNum ? defaultVal.idNum : defaultVal.idNum)}}</view>
+						<view class="id">{{pixelateNumber(siginVal.idNum ? siginVal.idNum : defaultVal.idNum)}}</view>
 					</view>
 					<view class="code" @click="code">
 						<image src="https://aiwz.sdtyfy.com:8099/img/qrcode.png" mode="aspectFit" />
@@ -41,7 +41,11 @@
 		  fontMode: {
 		    type: String,
 		    default: 'normal'
-		  }
+		  },
+			siginVal: {
+				type: Object,
+				default: {},
+			}
 		},
 		computed: {
 			...mapState(['footData']),
@@ -117,7 +121,7 @@
 		margin: -10rpx auto 25rpx;
 		.layer {
 		  position: absolute;
-		  width: 100%;
+		  width: 98%;
 		  height: 200rpx;
 		  border-radius: 20rpx;
 		  color: #fff;

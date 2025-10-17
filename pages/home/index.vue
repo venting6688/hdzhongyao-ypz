@@ -16,7 +16,7 @@
 				mode="aspectFit"
 				@click="onJumpClick(item)"
 			/>
-			<patients />
+			<patients :siginVal="defaultVal" />
 		</view>
 		<view class="video">
 			<image src="../../static/image/wenzhen.png" mode="aspectFit" @click="inquiry"></image>
@@ -75,6 +75,7 @@
 				showMain: false,
 				fontMode: 'normal',
 				current: 0,
+				defaultVal: {},
 				list: [
 					{ img: '../../static/img/yuyue.png', url: "/sub_packages/subscribe/departments" },
 					{ img: '../../static/img/menzhen.png', url: "/sub_packages/report/index" },
@@ -103,6 +104,8 @@
 			}
 		},
 	  onLoad() {
+			let loginValue = uni.getStorageSync("loginData");
+			this.defaultVal = JSON.stringify(loginValue) != '{}' ? loginValue.defaultArchives : {};
 		  const confirmed = uni.getStorageSync('popupConfirmed');
 			if (!confirmed) {
 				this.$nextTick(() => {
@@ -168,7 +171,7 @@
 			gap: 12rpx;
 			justify-content: space-around;
 			.icon-card {
-			  width: 230rpx;
+			  width: 220rpx;
 				height: 220rpx;
 			}
 		}
