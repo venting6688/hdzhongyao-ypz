@@ -2,7 +2,7 @@
 	<view class="manage">
 		<view class="information">
 			<ul v-if="healthCardList.length">
-				<li v-for="(item, index) in healthCardList" :key="item.archiveId">
+				<li v-for="(item, index) in healthCardList" :key="item.archives.archiveId">
 					<view class="title">
 						<view class="name">
 							<text class="big">{{
@@ -14,7 +14,7 @@
 								item.archives.sex != null ? item.archives.sex : ""
 							}}</text>
 							<text class="relation">{{
-								item.relation != null ? item.relation : "其他"
+								item.archives.relation != null ? item.archives.relation : "其他"
 							}}</text>
 						</view>
 						<view class="ok" @click="defaultPatients_throttle(item)">
@@ -431,6 +431,7 @@ export default {
 							relation: item.relationship,
 						}
 					}));
+                    console.log("this.healthCardList", this.healthCardList);
 				}
 			} else {
 				uni.showToast({
@@ -528,6 +529,7 @@ export default {
 									archiveId,
 									phone: this.loginValue.phoneNum,
 								}
+                                console.log(data);
 								deleteMemberApi({
 									familyId: data.archiveId,
 									ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
@@ -538,7 +540,7 @@ export default {
 											icon: "none",
 										});
 										this.getHealthCardList();
-										this.refreshUserInfo({ phone: this.loginValue.phoneNum });
+										this.refreshUserInfo();
 									} else {
 										uni.showToast({
 											title: "删除失败",
