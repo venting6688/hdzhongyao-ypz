@@ -2,12 +2,12 @@
 	<view>
 		<view class="stack-container">
 			<view class="layer top-layer">
-				<view class="patients" v-if="siginVal.patientName != undefined">
+				<view class="patients" v-if="footData.patientName != undefined">
 					<view class="info">
 						<view class="name">
-							<text>{{siginVal.patientName ? siginVal.patientName : defaultVal.patientName}}</text>
+							<text>{{footData.patientName ? footData.patientName : defaultVal.patientName}}</text>
 						</view>
-						<view class="id">{{pixelateNumber(siginVal.idNum ? siginVal.idNum : defaultVal.idNum)}}</view>
+						<view class="id">{{pixelateNumber(footData.idNum ? footData.idNum : defaultVal.idNum)}}</view>
 					</view>
 					<view class="code" @click="code">
 						<image src="https://aiwz.sdtyfy.com:8099/img/qrcode.png" mode="aspectFit" />
