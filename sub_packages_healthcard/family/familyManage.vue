@@ -226,7 +226,11 @@ export default {
     },
     onLoad(e) {
         this.loginValue = uni.getStorageSync("loginData");
-        this.defaultVal = uni.getStorageSync("loginData").defaultArchives;
+        if (this.loginValue) {
+            this.defaultVal = uni.getStorageSync("loginData").defaultArchives;
+        } else {
+			throw new Error("未登录");
+        }
         this.healthCode = e.healthCode ? e.healthCode : "";
         this.regInfoCode = e.regInfoCode ? e.regInfoCode : "";
         this.authCode = e.authCode ? e.authCode : "";
@@ -355,54 +359,50 @@ export default {
                 let ext = JSON.parse(data.ext);
                 let relation = this.relation[ext.relationship];
 
-                const { rows, code, msg } = await family.getMemberListApi({
-                    ownerUserId: this.defaultVal?.userId,
-                });
-                if (code === 200) {
-                    const isFirst = rows.length === 0;
+                await this.getHealthCardList();
+				const isFirst = this.healthCardList.length === 0;
 
-                    let archiveStr = {
-                        ownerUserId: this.defaultVal?.userId,
-                        nickname: data.name,
-                        realName: data.name,
-                        gender: data.gender == "男" ? 1 : 2,
-                        birthday: data.birthday,
-                        phoneNumber: data.phone1,
-                        relationship: relation,
-                        defaultPatient: isFirst,
-                        healthCardNo: data.healthCardId,
-                        idCard: idCard,
+				let archiveStr = {
+					ownerUserId: this.defaultVal?.userId,
+					nickname: data.name,
+					realName: data.name,
+					gender: data.gender == "男" ? 1 : 2,
+					birthday: data.birthday,
+					phoneNumber: data.phone1,
+					relationship: relation,
+					defaultPatient: isFirst,
+					healthCardNo: data.healthCardId,
+					idCard: idCard,
 
-						// idNo: data.idNumber,
-						// idType: hisCardType,
-						// patientName: data.name,
-						// patientType: '自费',
-						// guarderId: '',
-						// sex: data.gender,
-						// birthday: data.birthday,
-						// phone: data.phone1,
-						// address: data.address,
-						// nation: data.nation,
-						// cardType: '1',
-						// isDefault: false,
-						// cardNo: idCard,
-						// loginPhoneNum: '13964017682',//this.loginValue.phoneNum,
-						// healthCardId: data.healthCardId,
-						// qrCodeText: data.qrCodeText,
-						// relation, 
-                    }
+					// idNo: data.idNumber,
+					// idType: hisCardType,
+					// patientName: data.name,
+					// patientType: '自费',
+					// guarderId: '',
+					// sex: data.gender,
+					// birthday: data.birthday,
+					// phone: data.phone1,
+					// address: data.address,
+					// nation: data.nation,
+					// cardType: '1',
+					// isDefault: false,
+					// cardNo: idCard,
+					// loginPhoneNum: '13964017682',//this.loginValue.phoneNum,
+					// healthCardId: data.healthCardId,
+					// qrCodeText: data.qrCodeText,
+					// relation, 
+				}
 
-                    const result = await family.addMemberApi(archiveStr);
-                    if (result.code === 200) {
-                        uni.showToast({
-                            title: "添加成功",
-                            icon: "success",
-                            duration: 2000,
-                        });
-                        this.getHealthCardList();
-                        this.refreshUserInfo();
-                    };
-                };
+				const result = await family.addMemberApi(archiveStr);
+				if (result.code === 200) {
+					uni.showToast({
+						title: "添加成功",
+						icon: "success",
+						duration: 2000,
+					});
+					this.getHealthCardList();
+					this.refreshUserInfo();
+				};
             }
         },
 
@@ -412,32 +412,29 @@ export default {
                 ownerUserId: this.defaultVal?.userId,
             });
             if (code === 200) {
-                if (rows.length > 0) {
-                    this.healthCardList = rows.map((item, index) => ({
-                        archives: {
-                            archiveId: item.family_id,
-                            patientName: item.real_name,
-                            sex: item.gender == 1 ? '男' : '女',
-                            relation: item.relationship,
-                            phoneNum: item.phonenumber,
-                            patientCard: item.id_card,
-                            familyId: item.family_id,
-                            defaultType: item.default_patient,
-                        },
-                        healthCard: {
-                            name: item.real_name,
-                            idCard: item.id_card ? `${item.id_card.slice(0, 4)}${'*'.repeat(item.id_card.length - 10)}${item.id_card.slice(-2)}` : '',
-                            idNo: item.id_card,
-                            healthCardId: item.health_card_no,
-                            phone: item.phonenumber,
-                            relation: item.relationship,
-                        }
-                    }));
-                    console.log("this.healthCardList", this.healthCardList);
-                }
+				this.healthCardList = rows?.map((item, index) => ({
+					archives: {
+						archiveId: item.family_id,
+						patientName: item.real_name,
+						sex: item.gender == 1 ? '男' : '女',
+						relation: item.relationship,
+						phoneNum: item.phonenumber,
+						patientCard: item.id_card,
+						familyId: item.family_id,
+						defaultType: item.default_patient,
+					},
+					healthCard: {
+						name: item.real_name,
+						idCard: item.id_card ? `${item.id_card.slice(0, 4)}${'*'.repeat(item.id_card.length - 10)}${item.id_card.slice(-2)}` : '',
+						idNo: item.id_card,
+						healthCardId: item.health_card_no,
+						phone: item.phonenumber,
+						relation: item.relationship,
+					}
+				})) ?? [];
             } else {
                 uni.showToast({
-                    title: msg,
+                    title: "获取健康卡列表失败",
                     icon: "none",
                     duration: 2000,
                 });
