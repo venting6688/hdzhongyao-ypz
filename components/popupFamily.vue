@@ -97,16 +97,16 @@
 		async refreshUserInfo() {
 			try {
 				const res = await getDefaultPatientApi({ ownerUserId: this.registerData?.userId }).then(res => {
-					let defaultPatient = res.data.data;
+					let defaultPatient = res.data?.memberDetail;
 					const loginData = uni.getStorageSync("loginData");
-					if (res.data.code === 200) {
+					if (res.code === 200) {
 
                         const newLoginData = {
 							userId: loginData?.userId,
 							xcxOpenId: loginData.xcxOpenId,
                             defaultArchives: {
                                 // id: loginInfo.userId,
-                                patientName: defaultPatient?.patientName,
+                                patientName: defaultPatient?.real_name,
                                 phoneNum: defaultPatient?.phonenumber,
                                 idNum: defaultPatient?.id_card,
                                 patientCard: defaultPatient?.id_card,

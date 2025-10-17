@@ -456,15 +456,15 @@ export default {
         async refreshUserInfo() {
             try {
                 const res = await family.getDefaultPatientApi({ ownerUserId: this.loginValue?.userId }).then(res => {
-                    let defaultPatient = res.data.data;
+                    let defaultPatient = res.data?.memberDetail;
                     const loginData = uni.getStorageSync("loginData");
-                    if (res.data.code === 200) {
+                    if (res.code === 200) {
                         const newLoginData = {
 							userId: loginData?.userId,
 							xcxOpenId: loginData.xcxOpenId,
                             defaultArchives: {
                                 // id: loginInfo.userId,
-                                patientName: defaultPatient?.patientName,
+                                patientName: defaultPatient?.real_name,
                                 phoneNum: defaultPatient?.phonenumber,
                                 idNum: defaultPatient?.id_card,
                                 patientCard: defaultPatient?.id_card,
@@ -476,6 +476,7 @@ export default {
 
                         uni.setStorageSync('loginData', newLoginData);
                         this.setFootData(newLoginData.defaultArchives);
+                        console.log("setFootData" ,newLoginData.defaultArchives);
                     }
                 });
             } catch (e) {
@@ -496,6 +497,7 @@ export default {
                     duration: 2000,
                 });
                 this.getHealthCardList();
+                console.log("refreshUserInfo");
                 this.refreshUserInfo();
             } else {
                 uni.showToast({
