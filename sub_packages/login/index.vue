@@ -29,7 +29,7 @@ import { mapMutations } from 'vuex'
 import loginApi from '@/api/loginApi.js'
 import filingApi from '@/api/filingApi.js'
 import guideApi from '@/api/guideApi.js'
-import { getDefaultPatientApi } from '@/api/familyApi.js'
+import family from '@/api/familyApi.js'
 
 export default {
 	data() {
@@ -74,7 +74,7 @@ export default {
 					uni.setStorageSync('loginToken', accessToken)
 					this.setLoginToken(accessToken);
 
-					getDefaultPatientApi({ ownerUserId: loginInfo.userId }).then(({ data, code }) => {
+					family.getDefaultPatientApi({ ownerUserId: loginInfo.userId }).then(({ data, code }) => {
 						if (code === 200) {
 							this.handleLoginSuccess(loginInfo, data?.memberDetail, profileInfo);
 						}

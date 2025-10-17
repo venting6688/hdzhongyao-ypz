@@ -168,208 +168,208 @@ import { mapMutations, mapState } from 'vuex'
 import Toast from '../components/toast.vue'
 import filingApi from '@/api/filingApi.js'
 import healthCard from '@/api/healthCard.js'
-import { addMemberApi, getMemberListApi, setDefaultMemberApi, getDefaultPatientApi, deleteMemberApi } from "@/api/familyApi.js";
+import family from "@/api/familyApi.js";
 import patient from '../../api/loginApi'
 // import AuthPopup from '../components/auth-popup.vue'
 
 export default {
-	mixins: [mixin],
-	components: {
-		// AuthPopup,
-		Toast,
-	},
-	data() {
-		return {
-			showAuth: false,
-			patientList: [],
-			showBtn: false,
-			healthCode: "",
-			regInfoCode: "",
-			authCode: "",
-			loginValue: {},
-			healthCardList: [],
-			healthCardType: [
-				{ index: "01", value: "身份证" },
-				{ index: "02", value: "居民户口簿" },
-				{ index: "03", value: "护照" },
-				{ index: "04", value: "军人证" },
-				{ index: "05", value: "驾驶证" },
-				{ index: "06", value: "港澳通行证	" },
-				{ index: "07", value: "台湾居住证" },
-				{ index: "08", value: "出生医学证明" },
-				{ index: "15", value: "外国人永久居留身份证" },
-				{ index: "17", value: "港澳居住证" },
-				{ index: "16", value: "新生儿证件（3个月无证件儿童）" },
-				{ index: "99", value: "其他法定有效证件	" },
-			],
-			hisCardType: [
-				{ index: "1", value: "身份证" },
-				{ index: "4", value: "护照" },
-				{ index: "3", value: "军人证" },
-				{ index: "7", value: "驾驶证" },
-				{ index: "11", value: "港澳通行证	" },
-				{ index: "26", value: "台湾居住证" },
-				{ index: "27", value: "出生医学证明" },
-				{ index: "28", value: "外国人永久居留身份证" },
-				{ index: "25", value: "港澳居住证" },
-			],
-			relation: ["本人", "父母", "子女", "夫妻", "亲属", "朋友", "其他"],
-			isSave: false,
-			toastObj: {
-				state: false,
-			},
-			cardNum: "",
-			isShowHealthCard: false,
-			defaultPatients_throttle: null,
-		}
-	},
-	onLoad(e) {
-		this.loginValue = uni.getStorageSync("loginData");
-		this.healthCode = e.healthCode ? e.healthCode : "";
-		this.regInfoCode = e.regInfoCode ? e.regInfoCode : "";
-		this.authCode = e.authCode ? e.authCode : "";
-		this.defaultPatients_throttle = this.throttle(this.defaultPatients, 5000)
-		this.getHealthCardList();
-		if (this.healthCode != "") {
-			this.getHealthCard();
-		}
-	},
+    mixins: [mixin],
+    components: {
+        // AuthPopup,
+        Toast,
+    },
+    data() {
+        return {
+            showAuth: false,
+            patientList: [],
+            showBtn: false,
+            healthCode: "",
+            regInfoCode: "",
+            authCode: "",
+            loginValue: {},
+            healthCardList: [],
+            healthCardType: [
+                { index: "01", value: "身份证" },
+                { index: "02", value: "居民户口簿" },
+                { index: "03", value: "护照" },
+                { index: "04", value: "军人证" },
+                { index: "05", value: "驾驶证" },
+                { index: "06", value: "港澳通行证	" },
+                { index: "07", value: "台湾居住证" },
+                { index: "08", value: "出生医学证明" },
+                { index: "15", value: "外国人永久居留身份证" },
+                { index: "17", value: "港澳居住证" },
+                { index: "16", value: "新生儿证件（3个月无证件儿童）" },
+                { index: "99", value: "其他法定有效证件	" },
+            ],
+            hisCardType: [
+                { index: "1", value: "身份证" },
+                { index: "4", value: "护照" },
+                { index: "3", value: "军人证" },
+                { index: "7", value: "驾驶证" },
+                { index: "11", value: "港澳通行证	" },
+                { index: "26", value: "台湾居住证" },
+                { index: "27", value: "出生医学证明" },
+                { index: "28", value: "外国人永久居留身份证" },
+                { index: "25", value: "港澳居住证" },
+            ],
+            relation: ["本人", "父母", "子女", "夫妻", "亲属", "朋友", "其他"],
+            isSave: false,
+            toastObj: {
+                state: false,
+            },
+            cardNum: "",
+            isShowHealthCard: false,
+            defaultPatients_throttle: null,
+        }
+    },
+    onLoad(e) {
+        this.loginValue = uni.getStorageSync("loginData");
+        this.healthCode = e.healthCode ? e.healthCode : "";
+        this.regInfoCode = e.regInfoCode ? e.regInfoCode : "";
+        this.authCode = e.authCode ? e.authCode : "";
+        this.defaultPatients_throttle = this.throttle(this.defaultPatients, 5000)
+        this.getHealthCardList();
+        if (this.healthCode != "") {
+            this.getHealthCard();
+        }
+    },
 
-	methods: {
-		...mapMutations({
-			setFootData: "SET_FOOT_DATA",
-		}),
-		closeToast(state) {
-			this.toastObj = {
-				state: state,
-			};
-		},
-		returnIndex() {
-			uni.switchTab({ url: "/pages/virtualNurse/index" });
-		},
-		//院内就诊卡
-		increase() {
-			uni.navigateTo({ url: "/sub_packages/filing/information" });
-		},
-		showHealthCard(num) {
-			this.cardNum = num;
-			this.isShowHealthCard = !this.isShowHealthCard;
-		},
-		//电子健康卡
-		linkHealthCard() {
-			if (!this.loginValue) {
-				uni.navigateTo({
-					url: "/sub_packages/login/index?title=青岛西海岸新区第二中医医院",
-				});
-			} else {
-				var plugin = requirePlugin("healthCardPlugins");
-				plugin.login(
-					(isok, res) => {
-						if (!isok && res.result.toLogin) {
-							this.showAuth = true;
-							this.$refs.popup.open();
-						} else {
-							// 用户在微信授权过，可直接获取登录信息，处理后续业务
-							this.todo(res);
-						}
-					},
-					{
-						wechatCode: true,
-					}
-				);
-			}
-		},
+    methods: {
+        ...mapMutations({
+            setFootData: "SET_FOOT_DATA",
+        }),
+        closeToast(state) {
+            this.toastObj = {
+                state: state,
+            };
+        },
+        returnIndex() {
+            uni.switchTab({ url: "/pages/virtualNurse/index" });
+        },
+        //院内就诊卡
+        increase() {
+            uni.navigateTo({ url: "/sub_packages/filing/information" });
+        },
+        showHealthCard(num) {
+            this.cardNum = num;
+            this.isShowHealthCard = !this.isShowHealthCard;
+        },
+        //电子健康卡
+        linkHealthCard() {
+            if (!this.loginValue) {
+                uni.navigateTo({
+                    url: "/sub_packages/login/index?title=青岛西海岸新区第二中医医院",
+                });
+            } else {
+                var plugin = requirePlugin("healthCardPlugins");
+                plugin.login(
+                    (isok, res) => {
+                        if (!isok && res.result.toLogin) {
+                            this.showAuth = true;
+                            this.$refs.popup.open();
+                        } else {
+                            // 用户在微信授权过，可直接获取登录信息，处理后续业务
+                            this.todo(res);
+                        }
+                    },
+                    {
+                        wechatCode: true,
+                    }
+                );
+            }
+        },
 
-		async todo(val) {
-			const { wechatCode } = val.result;
-			let data = {
-				weChatCode: wechatCode,
-				patientType: 0,
-				successRedirectUrl:
-					"mini:/sub_packages_healthcard/family/familyManage?healthCode=${healthCode}", //授权成功获取就诊人列表
-				failRedirectUrl:
-					"mini:/sub_packages_healthcard/family/familyManage?regInfoCode=${regInfoCode}",
-				userFormPageUrl:
-					"mini:/sub_packages_healthcard/family/registerHealth?authCode=${authCode}", //添加就诊人
-				faceUrl: `/sub_packages_healthcard/family/faceVerify`,
-				verifyFailRedirectUrl: `mini:/sub_packages_healthcard/family/familyManage`,
-				domainChannel: 3,
-				openId: this.loginValue.xcxOpenId,
-			}
-			await healthCard.cardVerification(data).then((res) => {
-				console.log('res', res);
-				if (res.data.code == 200) {
-					let url = res.data.data.rsp.bindCardUrl;
-					uni.redirectTo({
-						url: "/pages/webview/webview?url=" + encodeURIComponent(url),
-					});
-				}
-			});
-		},
+        async todo(val) {
+            const { wechatCode } = val.result;
+            let data = {
+                weChatCode: wechatCode,
+                patientType: 0,
+                successRedirectUrl:
+                    "mini:/sub_packages_healthcard/family/familyManage?healthCode=${healthCode}", //授权成功获取就诊人列表
+                failRedirectUrl:
+                    "mini:/sub_packages_healthcard/family/familyManage?regInfoCode=${regInfoCode}",
+                userFormPageUrl:
+                    "mini:/sub_packages_healthcard/family/registerHealth?authCode=${authCode}", //添加就诊人
+                faceUrl: `/sub_packages_healthcard/family/faceVerify`,
+                verifyFailRedirectUrl: `mini:/sub_packages_healthcard/family/familyManage`,
+                domainChannel: 3,
+                openId: this.loginValue.xcxOpenId,
+            }
+            await healthCard.cardVerification(data).then((res) => {
+                console.log('res', res);
+                if (res.data.code == 200) {
+                    let url = res.data.data.rsp.bindCardUrl;
+                    uni.redirectTo({
+                        url: "/pages/webview/webview?url=" + encodeURIComponent(url),
+                    });
+                }
+            });
+        },
 
-		//获取健康卡信息
-		async getHealthCard() {
-			let str = {
-				healthCode: this.healthCode,
-				openId: this.loginValue.xcxOpenId,
-			}
-			let res = await healthCard.getHealthCardByHealthCode(str);
-			if (res.data.code == 200) {
-				let data = res.data.data.rsp.card;
-				//展示数据
-				let idCard = data.idCard;
-				let firstFour = idCard.slice(0, 4);
-				let lastFour = idCard.slice(-4);
-				let cardNum = `${idCard.slice(0, 4)}${"*".repeat(
-					idCard.length - 10
-				)}${idCard.slice(-2)}`;
-				let name = data.name;
-				let formatName = "";
-				if (name.length == 1) {
-					formatName = `${name}*`;
-				} else {
-					formatName = `${name[0]}${"*".repeat(name.length - 2)}${name.slice(
-						-1
-					)}`;
-				}
+        //获取健康卡信息
+        async getHealthCard() {
+            let str = {
+                healthCode: this.healthCode,
+                openId: this.loginValue.xcxOpenId,
+            }
+            let res = await healthCard.getHealthCardByHealthCode(str);
+            if (res.data.code == 200) {
+                let data = res.data.data.rsp.card;
+                //展示数据
+                let idCard = data.idCard;
+                let firstFour = idCard.slice(0, 4);
+                let lastFour = idCard.slice(-4);
+                let cardNum = `${idCard.slice(0, 4)}${"*".repeat(
+                    idCard.length - 10
+                )}${idCard.slice(-2)}`;
+                let name = data.name;
+                let formatName = "";
+                if (name.length == 1) {
+                    formatName = `${name}*`;
+                } else {
+                    formatName = `${name[0]}${"*".repeat(name.length - 2)}${name.slice(
+                        -1
+                    )}`;
+                }
 
-				//健康卡建档
-				let idType = data.idType;
-				let filterHealthCard = this.healthCardType.filter(
-					(x) => x.index == idType
-				);
-				let healthVal = filterHealthCard.length
-					? filterHealthCard[0].value
-					: "";
-				let filterHisCard = this.hisCardType.filter(
-					(x) => x.value == healthVal
-				);
-				let hisCardType =
-					healthVal == "居民户口簿"
-						? 1
-						: filterHisCard.length > 0
-						? filterHisCard[0].index
-						: 98;
-				let ext = JSON.parse(data.ext);
-				let relation = this.relation[ext.relationship];
-			
-				const { rows, code, msg } = await getMemberListApi({
-					ownerUserId: uni.getStorageSync("loginData").defaultArchives.userId,
-				});
-				if (code === 200) {
-					const isFirst = rows.length === 0;
+                //健康卡建档
+                let idType = data.idType;
+                let filterHealthCard = this.healthCardType.filter(
+                    (x) => x.index == idType
+                );
+                let healthVal = filterHealthCard.length
+                    ? filterHealthCard[0].value
+                    : "";
+                let filterHisCard = this.hisCardType.filter(
+                    (x) => x.value == healthVal
+                );
+                let hisCardType =
+                    healthVal == "居民户口簿"
+                        ? 1
+                        : filterHisCard.length > 0
+                            ? filterHisCard[0].index
+                            : 98;
+                let ext = JSON.parse(data.ext);
+                let relation = this.relation[ext.relationship];
 
-					let archiveStr = {
-						ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
-						nickname: data.name,
-						realName: data.name,
-						gender: data.gender == "男" ? 1 : 2,
-						birthday: data.birthday,
-						phoneNumber: data.phone1,
-						relationship: relation,
-						defaultPatient: isFirst,
-						healthCardNo: data.healthCardId,
-						idCard: idCard,
+                const { rows, code, msg } = await family.getMemberListApi({
+                    ownerUserId: uni.getStorageSync("loginData").defaultArchives.userId,
+                });
+                if (code === 200) {
+                    const isFirst = rows.length === 0;
+
+                    let archiveStr = {
+                        ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
+                        nickname: data.name,
+                        realName: data.name,
+                        gender: data.gender == "男" ? 1 : 2,
+                        birthday: data.birthday,
+                        phoneNumber: data.phone1,
+                        relationship: relation,
+                        defaultPatient: isFirst,
+                        healthCardNo: data.healthCardId,
+                        idCard: idCard,
 
 						// idNo: data.idNumber,
 						// idType: hisCardType,
@@ -388,186 +388,186 @@ export default {
 						// healthCardId: data.healthCardId,
 						// qrCodeText: data.qrCodeText,
 						// relation, 
-					}
+                    }
 
-					const result = await addMemberApi(archiveStr);
-					if (result.code === 200) {
-						uni.showToast({
-							title: "添加成功",
-							icon: "success",
-							duration: 2000,
-						});
-						this.getHealthCardList();
-						this.refreshUserInfo();
-					};
-				};
-			}
-		},
+                    const result = await family.addMemberApi(archiveStr);
+                    if (result.code === 200) {
+                        uni.showToast({
+                            title: "添加成功",
+                            icon: "success",
+                            duration: 2000,
+                        });
+                        this.getHealthCardList();
+                        this.refreshUserInfo();
+                    };
+                };
+            }
+        },
 
-		//获取健康卡列表
-		async getHealthCardList() {
-			const { rows, code, msg } = await getMemberListApi({
-				ownerUserId: uni.getStorageSync("loginData").defaultArchives.userId,
-			});
-			if (code === 200) {
-				if (rows.length > 0) {
-					this.healthCardList = rows.map((item, index) => ({
-						archives: {
-							archiveId: item.family_id,
-							patientName: item.real_name,
-							sex: item.gender == 1 ? '男' : '女',
-							relation: item.relationship,
-							phoneNum: item.phonenumber,
-							patientCard: item.id_card,
-							familyId: item.family_id,
-							defaultType: item.default_patient,
-						},
-						healthCard: {
-							name: item.real_name,
-							idCard: item.id_card ? `${item.id_card.slice(0, 4)}${'*'.repeat(item.id_card.length - 10)}${item.id_card.slice(-2)}` : '',
-							idNo: item.id_card,
-							healthCardId: item.health_card_no,
-							phone: item.phonenumber,
-							relation: item.relationship,
-						}
-					}));
+        //获取健康卡列表
+        async getHealthCardList() {
+            const { rows, code, msg } = await family.getMemberListApi({
+                ownerUserId: uni.getStorageSync("loginData").defaultArchives.userId,
+            });
+            if (code === 200) {
+                if (rows.length > 0) {
+                    this.healthCardList = rows.map((item, index) => ({
+                        archives: {
+                            archiveId: item.family_id,
+                            patientName: item.real_name,
+                            sex: item.gender == 1 ? '男' : '女',
+                            relation: item.relationship,
+                            phoneNum: item.phonenumber,
+                            patientCard: item.id_card,
+                            familyId: item.family_id,
+                            defaultType: item.default_patient,
+                        },
+                        healthCard: {
+                            name: item.real_name,
+                            idCard: item.id_card ? `${item.id_card.slice(0, 4)}${'*'.repeat(item.id_card.length - 10)}${item.id_card.slice(-2)}` : '',
+                            idNo: item.id_card,
+                            healthCardId: item.health_card_no,
+                            phone: item.phonenumber,
+                            relation: item.relationship,
+                        }
+                    }));
                     console.log("this.healthCardList", this.healthCardList);
-				}
-			} else {
-				uni.showToast({
-					title: msg,
-					icon: "none",
-					duration: 2000,
-				});
-			}
-		},
+                }
+            } else {
+                uni.showToast({
+                    title: msg,
+                    icon: "none",
+                    duration: 2000,
+                });
+            }
+        },
 
-		//展码
-		showQRCode(healthCardId) {
-			let hospitalId = "40088";
-			let webviewUrl = "/pages/webview/webview?url=$url";
-			let redirectUrl = "";
-			let fieldCode = "";
+        //展码
+        showQRCode(healthCardId) {
+            let hospitalId = "40088";
+            let webviewUrl = "/pages/webview/webview?url=$url";
+            let redirectUrl = "";
+            let fieldCode = "";
 
-			wx.navigateTo({
-				url: `plugin://healthCardPlugins/healthcode?hospitalId=${hospitalId}&healthCardId=${healthCardId}&webviewUrl=${encodeURIComponent(
-					webviewUrl
-				)}&redirectUrl=${encodeURIComponent(redirectUrl)}`,
-			});
-		},
+            wx.navigateTo({
+                url: `plugin://healthCardPlugins/healthcode?hospitalId=${hospitalId}&healthCardId=${healthCardId}&webviewUrl=${encodeURIComponent(
+                    webviewUrl
+                )}&redirectUrl=${encodeURIComponent(redirectUrl)}`,
+            });
+        },
 
-		// 刷新用户信息
-		async refreshUserInfo() {
-			try {
-				const res = await getDefaultPatientApi({ ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId }).then(res => {
-					let defaultPatient = res.data.data;
-					const loginData = uni.getStorageSync("loginData");
-					if (res.data.code === 200) {
-						const newLoginData = {
-							defaultArchives: {
-								// id: loginInfo.userId,
-								userId: loginData.defaultArchives.userId,
-								patientName: loginData.defaultArchives.patientName,
-								phoneNum: defaultPatient.phonenumber,
-								idNum: defaultPatient.id_card,
-								patientCard: defaultPatient.id_card,
-								healthCardNum: '',
+        // 刷新用户信息
+        async refreshUserInfo() {
+            try {
+                const res = await family.getDefaultPatientApi({ ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId }).then(res => {
+                    let defaultPatient = res.data.data;
+                    const loginData = uni.getStorageSync("loginData");
+                    if (res.data.code === 200) {
+                        const newLoginData = {
+                            defaultArchives: {
+                                // id: loginInfo.userId,
+                                userId: loginData.defaultArchives.userId,
+                                patientName: loginData.defaultArchives.patientName,
+                                phoneNum: defaultPatient.phonenumber,
+                                idNum: defaultPatient.id_card,
+                                patientCard: defaultPatient.id_card,
+                                healthCardNum: '',
 								// qrCodeText: "",// !! 这还有问题
 								// linkHealthCard: ""// !! 这还有问题
-							},
-							xcxOpenId: loginData.xcxOpenId,
-						};
+                            },
+                            xcxOpenId: loginData.xcxOpenId,
+                        };
 
-						uni.setStorageSync('loginData', newLoginData);
-						this.setFootData(newLoginData.defaultArchives);
-					}
-				});
-			} catch (e) {
-				console.log(e);
-			}
-		},
+                        uni.setStorageSync('loginData', newLoginData);
+                        this.setFootData(newLoginData.defaultArchives);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
 
-		//设置默认就诊人
-		async defaultPatients(val) {
-			const { code, msg } = await setDefaultMemberApi({
-				familyId: val.archives?.familyId,
-				ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
-			});
-			if (code === 200) {
-				uni.showToast({
-					title: "设置成功",
-					icon: "none",
-					duration: 2000,
-				});
-				this.getHealthCardList();
-				this.refreshUserInfo();
-			} else {
-				uni.showToast({
-					title: msg,
-					icon: "none",
-					duration: 2000,
-				});
-			}
-		},
-		//删除就诊人
-		deletePatients(archiveId, isDefault) {
-			if (isDefault) {
-				this.toastObj = {
-					state: true,
-					message: "不允许删除默认就诊人，请先设置其他就诊人为默认就诊人",
-					url: "",
-					tips: "",
-				};
-			} else {
-				uni.showModal({
-					title: "提示",
-					content: "确定删除该就诊人吗？",
-					success: (res) => {
-						if (res.confirm) {
-							try {
-								let data = {
-									archiveId,
-									phone: this.loginValue.phoneNum,
-								}
+        //设置默认就诊人
+        async defaultPatients(val) {
+            const { code, msg } = await family.setDefaultMemberApi({
+                familyId: val.archives?.familyId,
+                ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
+            });
+            if (code === 200) {
+                uni.showToast({
+                    title: "设置成功",
+                    icon: "none",
+                    duration: 2000,
+                });
+                this.getHealthCardList();
+                this.refreshUserInfo();
+            } else {
+                uni.showToast({
+                    title: msg,
+                    icon: "none",
+                    duration: 2000,
+                });
+            }
+        },
+        //删除就诊人
+        deletePatients(archiveId, isDefault) {
+            if (isDefault) {
+                this.toastObj = {
+                    state: true,
+                    message: "不允许删除默认就诊人，请先设置其他就诊人为默认就诊人",
+                    url: "",
+                    tips: "",
+                };
+            } else {
+                uni.showModal({
+                    title: "提示",
+                    content: "确定删除该就诊人吗？",
+                    success: (res) => {
+                        if (res.confirm) {
+                            try {
+                                let data = {
+                                    archiveId,
+                                    phone: this.loginValue.phoneNum,
+                                }
                                 console.log(data);
-								deleteMemberApi({
-									familyId: data.archiveId,
-									ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
-								}).then(res => {
-									if (res.code === 200) {
-										uni.showToast({
-											title: "删除成功",
-											icon: "none",
-										});
-										this.getHealthCardList();
-										this.refreshUserInfo();
-									} else {
-										uni.showToast({
-											title: "删除失败",
-											icon: "none",
-										});
-									}
-								});
-							} catch (error) {
-								console.log(error);
-								//TODO handle the exception
-							}
-						}
-					},
-				});
-			}
-		},
-		authSuccess(e) {
-			const res = e.detail;
-			this.todo(res);
-		},
-		authFail(e) {
-			console.log("授权失败：", e);
-		},
-		authCancel(e) {
-			console.log("用户取消授权：", e);
-		},
-	},
+                                family.deleteMemberApi({
+                                    familyId: data.archiveId,
+                                    ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
+                                }).then(res => {
+                                    if (res.code === 200) {
+                                        uni.showToast({
+                                            title: "删除成功",
+                                            icon: "none",
+                                        });
+                                        this.getHealthCardList();
+                                        this.refreshUserInfo();
+                                    } else {
+                                        uni.showToast({
+                                            title: "删除失败",
+                                            icon: "none",
+                                        });
+                                    }
+                                });
+                            } catch (error) {
+                                console.log(error);
+                                //TODO handle the exception
+                            }
+                        }
+                    },
+                });
+            }
+        },
+        authSuccess(e) {
+            const res = e.detail;
+            this.todo(res);
+        },
+        authFail(e) {
+            console.log("授权失败：", e);
+        },
+        authCancel(e) {
+            console.log("用户取消授权：", e);
+        },
+    },
 };
 </script>
 
