@@ -76,7 +76,7 @@ export default {
 
 					getDefaultPatientApi({ ownerUserId: loginInfo.userId }).then(({ data, code }) => {
 						if (code === 200) {
-							this.handleLoginSuccess(loginInfo, data, profileInfo);
+							this.handleLoginSuccess(loginInfo, data?.memberDetail, profileInfo);
 						}
 					})
 
