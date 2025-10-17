@@ -96,7 +96,7 @@
 		// 刷新用户信息
 		async refreshUserInfo() {
 			try {
-				const res = await getDefaultPatientApi({ ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId }).then(res => {
+				const res = await getDefaultPatientApi({ ownerUserId: this.registerData?.defaultArchives?.userId }).then(res => {
 					let defaultPatient = res.data.data;
 					const loginData = uni.getStorageSync("loginData");
 					if (res.data.code === 200) {

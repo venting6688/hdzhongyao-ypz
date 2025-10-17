@@ -187,6 +187,7 @@ export default {
             regInfoCode: "",
             authCode: "",
             loginValue: {},
+            defaultVal: {},
             healthCardList: [],
             healthCardType: [
                 { index: "01", value: "身份证" },
@@ -225,6 +226,7 @@ export default {
     },
     onLoad(e) {
         this.loginValue = uni.getStorageSync("loginData");
+        this.defaultVal = uni.getStorageSync("loginData").defaultArchives;
         this.healthCode = e.healthCode ? e.healthCode : "";
         this.regInfoCode = e.regInfoCode ? e.regInfoCode : "";
         this.authCode = e.authCode ? e.authCode : "";
@@ -354,13 +356,13 @@ export default {
                 let relation = this.relation[ext.relationship];
 
                 const { rows, code, msg } = await family.getMemberListApi({
-                    ownerUserId: uni.getStorageSync("loginData").defaultArchives.userId,
+                    ownerUserId: this.defaultVal?.userId,
                 });
                 if (code === 200) {
                     const isFirst = rows.length === 0;
 
                     let archiveStr = {
-                        ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
+                        ownerUserId: this.defaultVal?.userId,
                         nickname: data.name,
                         realName: data.name,
                         gender: data.gender == "男" ? 1 : 2,
@@ -407,7 +409,7 @@ export default {
         //获取健康卡列表
         async getHealthCardList() {
             const { rows, code, msg } = await family.getMemberListApi({
-                ownerUserId: uni.getStorageSync("loginData").defaultArchives.userId,
+                ownerUserId: this.defaultVal?.userId,
             });
             if (code === 200) {
                 if (rows.length > 0) {
@@ -459,7 +461,7 @@ export default {
         // 刷新用户信息
         async refreshUserInfo() {
             try {
-                const res = await family.getDefaultPatientApi({ ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId }).then(res => {
+                const res = await family.getDefaultPatientApi({ ownerUserId: this.defaultVal?.userId }).then(res => {
                     let defaultPatient = res.data.data;
                     const loginData = uni.getStorageSync("loginData");
                     if (res.data.code === 200) {
@@ -491,7 +493,7 @@ export default {
         async defaultPatients(val) {
             const { code, msg } = await family.setDefaultMemberApi({
                 familyId: val.archives?.familyId,
-                ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
+                ownerUserId: this.defaultVal?.userId,
             });
             if (code === 200) {
                 uni.showToast({
@@ -532,7 +534,7 @@ export default {
                                 console.log(data);
                                 family.deleteMemberApi({
                                     familyId: data.archiveId,
-                                    ownerUserId: uni.getStorageSync("loginData")?.defaultArchives?.userId,
+                                    ownerUserId: this.defaultVal?.userId,
                                 }).then(res => {
                                     if (res.code === 200) {
                                         uni.showToast({
