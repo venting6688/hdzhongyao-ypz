@@ -187,7 +187,6 @@ export default {
             regInfoCode: "",
             authCode: "",
             loginValue: {},
-            defaultVal: {},
             healthCardList: [],
             healthCardType: [
                 { index: "01", value: "身份证" },
@@ -226,14 +225,12 @@ export default {
     },
     onLoad(e) {
         this.loginValue = uni.getStorageSync("loginData");
-        if (this.loginValue) {
-            this.defaultVal = uni.getStorageSync("loginData").defaultArchives;
-        } else {
-			throw new Error("未登录");
-        }
         this.healthCode = e.healthCode ? e.healthCode : "";
         this.regInfoCode = e.regInfoCode ? e.regInfoCode : "";
         this.authCode = e.authCode ? e.authCode : "";
+		if (!this.loginValue) {
+			throw new Error("未登录");
+		}
         this.defaultPatients_throttle = this.throttle(this.defaultPatients, 5000)
         this.getHealthCardList();
         if (this.healthCode != "") {
@@ -363,7 +360,7 @@ export default {
 				const isFirst = this.healthCardList.length === 0;
 
 				let archiveStr = {
-					ownerUserId: this.defaultVal?.userId,
+					ownerUserId: this.loginValue?.userId,
 					nickname: data.name,
 					realName: data.name,
 					gender: data.gender == "男" ? 1 : 2,
@@ -374,23 +371,23 @@ export default {
 					healthCardNo: data.healthCardId,
 					idCard: idCard,
 
-					// idNo: data.idNumber,
-					// idType: hisCardType,
-					// patientName: data.name,
-					// patientType: '自费',
-					// guarderId: '',
-					// sex: data.gender,
-					// birthday: data.birthday,
-					// phone: data.phone1,
-					// address: data.address,
-					// nation: data.nation,
-					// cardType: '1',
-					// isDefault: false,
-					// cardNo: idCard,
-					// loginPhoneNum: '13964017682',//this.loginValue.phoneNum,
-					// healthCardId: data.healthCardId,
-					// qrCodeText: data.qrCodeText,
-					// relation, 
+					idNo: data.idNumber,
+					idType: hisCardType,
+					patientName: data.name,
+					patientType: '自费',
+					guarderId: '',
+					sex: data.gender,
+					birthday: data.birthday,
+					phone: data.phone1,
+					address: data.address,
+					nation: data.nation,
+					cardType: '1',
+					isDefault: isFirst,
+					cardNo: idCard,
+					loginPhoneNum: this.loginValue.phoneNum,
+					healthCardId: data.healthCardId,
+					qrCodeText: data.qrCodeText,
+					relation,
 				}
 
 				const result = await family.addMemberApi(archiveStr);
@@ -409,7 +406,7 @@ export default {
         //获取健康卡列表
         async getHealthCardList() {
             const { rows, code, msg } = await family.getMemberListApi({
-                ownerUserId: this.defaultVal?.userId,
+                ownerUserId: this.loginValue?.userId,
             });
             if (code === 200) {
 				this.healthCardList = rows?.map((item, index) => ({
@@ -458,23 +455,23 @@ export default {
         // 刷新用户信息
         async refreshUserInfo() {
             try {
-                const res = await family.getDefaultPatientApi({ ownerUserId: this.defaultVal?.userId }).then(res => {
+                const res = await family.getDefaultPatientApi({ ownerUserId: this.loginValue?.userId }).then(res => {
                     let defaultPatient = res.data.data;
                     const loginData = uni.getStorageSync("loginData");
                     if (res.data.code === 200) {
                         const newLoginData = {
+							userId: loginData?.userId,
+							xcxOpenId: loginData.xcxOpenId,
                             defaultArchives: {
                                 // id: loginInfo.userId,
-                                userId: loginData.defaultArchives.userId,
-                                patientName: loginData.defaultArchives.patientName,
-                                phoneNum: defaultPatient.phonenumber,
-                                idNum: defaultPatient.id_card,
-                                patientCard: defaultPatient.id_card,
+                                patientName: defaultPatient?.patientName,
+                                phoneNum: defaultPatient?.phonenumber,
+                                idNum: defaultPatient?.id_card,
+                                patientCard: defaultPatient?.id_card,
                                 healthCardNum: '',
 								// qrCodeText: "",// !! 这还有问题
 								// linkHealthCard: ""// !! 这还有问题
                             },
-                            xcxOpenId: loginData.xcxOpenId,
                         };
 
                         uni.setStorageSync('loginData', newLoginData);
@@ -490,7 +487,7 @@ export default {
         async defaultPatients(val) {
             const { code, msg } = await family.setDefaultMemberApi({
                 familyId: val.archives?.familyId,
-                ownerUserId: this.defaultVal?.userId,
+                ownerUserId: this.loginValue?.userId,
             });
             if (code === 200) {
                 uni.showToast({
@@ -531,7 +528,7 @@ export default {
                                 console.log(data);
                                 family.deleteMemberApi({
                                     familyId: data.archiveId,
-                                    ownerUserId: this.defaultVal?.userId,
+                                    ownerUserId: this.loginValue?.userId,
                                 }).then(res => {
                                     if (res.code === 200) {
                                         uni.showToast({

@@ -100,17 +100,18 @@ export default {
 		// 处理登录成功后的逻辑
 		handleLoginSuccess(loginInfo, defaultPatient, profileInfo) {
 			const loginData = {
+				userId: loginInfo.userId,
+				xcxOpenId: loginInfo.openid,
 				defaultArchives: {
 					// id: loginInfo.userId,
-					userId: loginInfo.userId,
-					patientName: profileInfo.realName,
+					patientName: defaultPatient?.real_name,
 					phoneNum: defaultPatient?.phonenumber,
 					idNum: defaultPatient?.id_card,
 					patientCard: defaultPatient?.id_card,
 					// qrCodeText: "",// !! 这还有问题
 					// linkHealthCard: ""// !! 这还有问题
+					// healthCardNum: '',
 				},
-				xcxOpenId: loginInfo.openid,
 			}
 
 			uni.setStorageSync('loginData', loginData);
