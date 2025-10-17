@@ -7,9 +7,7 @@ const patient = {
 
 	   async getPhoneNumber(data) {
 	   	const res = await cjRequest({
-	   		// url: "XCXLogin",
-	   		// method: "get",
-	   		url: "miniProgramLogin",
+			 url: "miniProgramLogin",
 	   		method: "post",
 	   		data:{
 					phoneCode:data.phoneCode,
