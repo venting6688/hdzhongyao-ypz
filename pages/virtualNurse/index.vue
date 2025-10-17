@@ -714,7 +714,7 @@
 		flex-direction: column;  
 		
 		.tubiao {
-			margin: 0 10rpx;
+			margin: 0 10rpx 0 15rpx;
 		  image {
 				width: 72rpx;
 		  }
@@ -767,7 +767,7 @@
 							justify-content: flex-end;
 							align-items: center;
 							width: 630rpx;
-							margin: 20rpx 25rpx 20rpx 0;
+							margin: 20rpx 7rpx 20rpx 0;
 							
 							.triangle {
 								width: 0;
