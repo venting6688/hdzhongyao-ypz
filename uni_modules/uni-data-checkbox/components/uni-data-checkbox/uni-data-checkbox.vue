@@ -503,7 +503,7 @@
 				align-items: center;
 				position: relative;
 				margin: 5px 0;
-				margin-right: 25px;
+				margin-right: 10px;
 
 				.hidden {
 					position: absolute;
@@ -548,8 +548,8 @@
 					box-sizing: border-box;
 					/* #endif */
 					position: relative;
-					width: 16px;
-					height: 16px;
+					width: 20px;
+					height: 20px;
 					border: 1px solid $border-color;
 					border-radius: 4px;
 					background-color: #fff;
@@ -561,10 +561,10 @@
 						top: 2px;
 						/* #endif */
 						/* #ifndef APP-NVUE */
-						top: 1px;
+						top: 3px;
 						/* #endif */
-						left: 5px;
-						height: 8px;
+						left: 7px;
+						height: 10px;
 						width: 4px;
 						border-right-width: 1px;
 						border-right-color: #fff;

@@ -260,6 +260,7 @@ export default {
         },
         //电子健康卡
         linkHealthCard() {
+					console.log(JSON.stringify(this.loginValue),'======');
             if (!this.loginValue) {
                 uni.navigateTo({
                     url: "/sub_packages/login/index?title=青岛西海岸新区第二中医医院",

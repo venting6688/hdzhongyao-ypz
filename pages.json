@@ -358,6 +358,38 @@
 					"navigationBarTitleText": "",
 					"navigationStyle": "custom"
 				}
+			},
+			{
+				"path" : "shop/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path" : "shop/detail",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path" : "shop/addCart",
+				"style" : 
+				{
+					"navigationBarTitleText": "购物车",
+					"disableScroll": true
+				}
+			},
+			{
+				"path" : "shop/order",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
 			}
 		]
   }],
