@@ -1,11 +1,11 @@
 <template>
 	<scroll-view scroll-y class="homeLayout pageBg homePageBg">
-		<visitNotice 
-		ref="notice" 
-		:fontMode="fontMode" 
-		@confirmed="handleConfirm" 
+		<visitNotice
+		ref="notice"
+		:fontMode="fontMode"
+		@confirmed="handleConfirm"
 		/>
-		
+
 		<customerNav title="青岛西海岸新区第二中医医院" />
 		<view class="first">
 			<image
@@ -20,23 +20,23 @@
 		</view>
 		<view class="video">
 			<image src="../../static/image/wenzhen.png" mode="aspectFit" @click="inquiry"></image>
-			<image src="../../static/image/kaiyao.png" mode="aspectFit" @click="inquiry"></image>
+			<image src="../../static/image/kaiyao.png" mode="aspectFit" @click="onJumpClick({url: '/sub_packages/shop/index'})"></image>
 		</view>
 		<view class="ai" @click="onAiClick">
 			<image src="../../static/img/ai-banner.png" mode="aspectFit"></image>
 		</view>
-		
+
 		<view class="content">
-			<uni-segmented-control 
-			:current="current" 
-			:values="items" 
-			@clickItem="onClickItem" 
-			styleType="text" 
+			<uni-segmented-control
+			:current="current"
+			:values="items"
+			@clickItem="onClickItem"
+			styleType="text"
 			activeColor="#87653A"
 			class="custom-tabs"
 			>
 			</uni-segmented-control>
-			
+
 			<view class="tabContent">
 				<van-grid :column-num="4" clickable :border="false">
 					<van-grid-item
@@ -60,7 +60,7 @@
 	import customerNav from '@/components/customerNav.vue';
 	import visitNotice from '@/components/visitNotice.vue';
 	import patients from '@/components/patients.vue';
-	
+
 	export default {
 	  components: {
 	    customerNav,
@@ -90,10 +90,10 @@
 						{ img: '../../static/img/navigation/jiuzhen.png', name: '就诊记录', url: '/sub_packages/record/index' },
 					],
 					[
-						// { img: '../../static/img/navigation/dengji.png', name: '入院登记', url: '/sub_packages/beHospitalizedRegister/index'}, 
+						// { img: '../../static/img/navigation/dengji.png', name: '入院登记', url: '/sub_packages/beHospitalizedRegister/index'},
 						{ img: '../../static/img/navigation/yujiaojin.png', name: '住院预交金', url: '/sub_packages/deposit/index' },
 						{ img: '../../static/img/navigation/feiyong.png', name: '住院费用', url: '/sub_packages/convenientModule/index' },
-						{ img: '../../static/img/navigation/zy-report.png', name: '住院报告'}, //, url: '/sub_packages/report/hospitalization' 
+						{ img: '../../static/img/navigation/zy-report.png', name: '住院报告'}, //, url: '/sub_packages/report/hospitalization'
 					],
 					[
 						{ img: '../../static/img/navigation/info.png', name: '就诊人管理', url: '/sub_packages_healthcard/family/familyManage' },
@@ -207,7 +207,7 @@
 					align-items: center;
 					justify-content: space-evenly;
 					padding: 0;
-					
+
 					>.img {
 						width: 80rpx;
 						height: 80rpx;
@@ -226,7 +226,7 @@
 						color: $text-color;
 					}
 				}
-				
+
 				.grid-item-content {
 				  display: flex;
 				  flex-direction: column;
@@ -234,13 +234,13 @@
 				  justify-content: center;
 				  padding: 10rpx;
 				}
-				
+
 				.grid-image {
 				  width: 60rpx;
 				  height: 60rpx;
 				  margin-bottom: 10rpx;
 				}
-				
+
 				.grid-text {
 				  font-size: 24rpx;
 				  color: $text-color;
@@ -260,6 +260,6 @@
 		::v-deep .segmented-control {
 			margin-bottom: 30rpx;
 		}
-		
+
 	}
 </style>

@@ -358,8 +358,28 @@
 					"navigationBarTitleText": "",
 					"navigationStyle": "custom"
 				}
-			}
-		]
+			},
+            {
+              // 商城
+              "path" : "shop/index",
+              "style" :
+              {
+                "navigationBarTitleText": "购药中心",
+                "navigationStyle": "custom"
+              }
+            },
+            {
+              // 商品详情
+              "path" : "shop/detail",
+              "style" :
+              {
+                "navigationBarTitleText": "商品详情",
+                "disableScroll": true
+//                "navigationStyle": "custom"
+              }
+            }
+
+    ]
   }],
   "tabBar": {
   	"color": "#637088",
