@@ -1,25 +1,15 @@
 <template>
 	<view class="user">
-		<!-- <CustomNavBar
-		    :showBack="showBack"
-		    :title="title"
-		/> -->
-		<!-- 新增地址 -->
-		<view class="content" v-if="title==='新增地址' || title=='编辑地址'">
-			<view class="head">
-				<image src="../static/image/Group 907@2x.png" mode=""></image>
-				<text>收件人</text>
-			</view>
+		<view class="content">
 			<form>
 				<view class="cu-form-group">
-					<view class="title">姓名</view>
+					<view class="title">收件人</view>
 					<input v-model="informationObj.contactName" name="input" />
-					<view class="title">电话</view>
+					<view class="title">手机号</view>
 					<input type="number" maxlength="11" v-model="informationObj.contactNumbre" name="input" />
 				</view>
-				
 				<view class="cu-form-group">
-					<view class="title">省市区</view>
+					<view class="title">地址</view>
 					<picker mode="region" @change="chooseregion" :value="informationObj.provincesAndMunicipalities">
 						<view class="picker">
 							<text>{{ informationObj.provincesAndMunicipalities }}</text>
@@ -43,45 +33,15 @@
 				</view>
 			</view>
 		</view>
-		<!-- 物流配送 --> 
-		<view class="content" v-else>
-			<form>
-				<view class="cu-form-group">
-					<view class="title">姓名</view>
-					<text>{{informationObj.contactName}}</text>
-					<view class="title">电话</view>
-					<text>{{informationObj.contactNumbre}}</text>
-				</view>
-				<view class="cu-form-group">
-					<view class="title">配送地址</view>
-					<text>{{informationObj.provincesAndMunicipalities}} - {{informationObj.detailedAddress}}</text>
-				</view>
-			</form>
-			<view class="bottom">
-				<view class="confirm" @click="distribution(informationObj.id)" v-if="title=='物流配送'">
-					物流配送
-				</view>
-				
-			</view>
-			<view class="tips">
-				<image src="../static/image/Star 5@2x.png" mode=""></image>
-				<text>注意:物流配送采用到付的方式寄出</text>
-			</view>
-		</view>
-		
 	</view>
 </template>
 
 <script>
 	import mixin from '@/mixins/mixin'
-	// import CustomNavBar from '@/components/CustomNavBar.vue';
 	import addressApi from '@/api/addressApi.js'
 	import {mapState} from 'vuex'
 	export default {
 		mixins: [mixin],
-		// components:{
-		// 	CustomNavBar,
-		// },
 		data(){
 			return {
 				state:false,
@@ -91,7 +51,6 @@
 					provincesAndMunicipalities:['山东省','济南市','历下区'],
 					detailedAddress:'',
 				},
-				prescNo: '', //处方编号
 			}
 		},
 		computed: {
@@ -151,37 +110,6 @@
 				.catch(err => {
 					console.log('2：', err);
 				})
-			},
-			//物流配送
-			distribution(wlId){
-				let detail = {
-					prescriptionNumber: this.prescNo,
-					deliveryAddressId: wlId
-				}
-				addressApi.confirmDelivery(detail).then(res => {
-					if(res.data.code===200){
-						uni.navigateBack({
-						    delta: 2 
-						})
-					}else{
-						uni.showToast({
-							title: res.data.msg,
-							icon: 'error',
-							duration: 3000
-						});
-					}
-					
-				})
-				.catch(err => {
-					console.log('2：', err);
-				})
-				
-				// const pages = getCurrentPages();
-				// const prevPage = pages[pages.length - 3]; 
-				// prevPage.$vm.getValue('确认配送');
-				// uni.navigateBack({
-				//     delta: 2 
-				// })
 			},
 			//省市change function
 			chooseregion(event){
@@ -244,6 +172,7 @@
 					color: #888888;
 				}
 				.cu-form-group {
+					padding: 0 !important;
 					&:last-child{
 						border-bottom: 2rpx solid #eeeeee;
 					}
@@ -256,14 +185,14 @@
 				.confirm {
 					width: 322rpx;
 					height: 64rpx;
-					background: #4286ff;
-					border-radius: 46rpx;
+					background: #9A7546;
+					border-radius: 20rpx;
 					display: flex;
 					justify-content: center;
 					align-items: center;
 					font-size: 32rpx;
 					color: #ffffff;
-					margin:0 auto ;
+					margin:0 auto;
 				}
 				.delete {
 					color: #999999;

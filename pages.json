@@ -222,24 +222,6 @@
 				}
 			},
 			{
-				//地址簿
-				"path" : "addressBook/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "地址簿",
-					"disableScroll": true
-				}
-			},
-			{
-				//添加地址
-				"path" : "logistics/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "地址管理",
-					"disableScroll": true
-				}
-			},
-			{
 				//取药服务
 				"path" : "medicine/index",
 				"style" : 
@@ -388,6 +370,24 @@
 				"style" : 
 				{
 					"navigationBarTitleText": "我的订单",
+					"disableScroll": true
+				}
+			},
+			{
+				//地址簿
+				"path" : "address/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "收货地址",
+					"disableScroll": true
+				}
+			},
+			{
+				//添加地址
+				"path" : "address/detail",
+				"style" : 
+				{
+					"navigationBarTitleText": "地址管理",
 					"disableScroll": true
 				}
 			}
