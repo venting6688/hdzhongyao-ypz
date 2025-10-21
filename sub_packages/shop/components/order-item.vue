@@ -90,7 +90,7 @@ export default {
 		background: #fff;
 		border-radius: 12rpx;
 		margin-bottom: 20rpx;
-		padding: 20rpx;
+		padding: 35rpx;
 	}
 	.order-header {
 		display: flex;

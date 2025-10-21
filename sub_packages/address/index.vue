@@ -6,13 +6,7 @@
 				v-for="(item,index) in list" 
 				:key="index"
 			>
-				<uni-swipe-action ref="swipeActionRefs" :key="item.id">
-					<uni-swipe-action-item
-					  :right-options="swipeOptions"
-					  @click="deleteAddress(index)"
-					  class="swipe-item"
-					>
-						<view class="addressItem" @click="confirm(item, type)">
+						<view class="addressItem">
 							<view class="midddle">
 								<view class="title">
 									<text class="name">{{item.contactName}}</text>
@@ -21,10 +15,26 @@
 								<view class="address">
 									{{item.provincesAndMunicipalities ? item.provincesAndMunicipalities+' - ' : ''}}{{item.detailedAddress}}
 								</view>
+								<view class="operating">
+								  <!-- 左侧：设置默认地址 -->
+								  <view class="left">
+								    <uni-data-checkbox
+											:localdata="[ { text: '', value: item.id } ]"
+											v-model="checkboxSelectedMap[item.id]"
+											selectedColor="#9A7546"
+											@change="onCheckboxChange(item)"
+										/>
+										<text class="default-text">{{ item.isDefault ? '已默认' : '设为默认地址' }}</text>
+								  </view>
+								
+								  <!-- 右侧：修改、删除 -->
+								  <view class="right">
+								    <text class="btn edit" @click="confirm(item, type)">修改</text>
+								    <text class="btn delete" @click.stop="deleteAddress(item.id)">删除</text>
+								  </view>
+								</view>
 							</view>
 						</view>
-					</uni-swipe-action-item>
-				</uni-swipe-action>
 			</view>
 		</view>
 		<view class="btn">
@@ -46,18 +56,26 @@
 					style: { backgroundColor: '#FE563B' }
 				}],
 				list:[
-					{id: 1, contactName: '张三', contactNumbre: '15895623023', provincesAndMunicipalities: '山东省淄博市周口区', detailedAddress:"幸福里小区3-2-502"},
-					{id: 2, contactName: '李茂武', contactNumbre: '185362365202', provincesAndMunicipalities: '湖南省龙口市龙口区', detailedAddress:"康博3-2-502"},
-					{id: 3, contactName: '王小二', contactNumbre: '18956323636', provincesAndMunicipalities: '广东省广州市番禺区', detailedAddress:"番禺1号3-2-502"},
-					{id: 4, contactName: '刘晓娟', contactNumbre: '15125658956', provincesAndMunicipalities: '海南省海口市海口区', detailedAddress:"幸福里小区3-2-502"},
-					{id: 5, contactName: '赵楚生', contactNumbre: '13965230236', provincesAndMunicipalities: '山东省青岛市黄岛区', detailedAddress:"黄岛二中医3-2-502"},
+					{id: 1, contactName: '张三', isDefault: 0, contactNumbre: '15895623023', provincesAndMunicipalities: '山东省淄博市周口区', detailedAddress:"幸福里小区3-2-502"},
+					{id: 2, contactName: '李茂武', isDefault: 1, contactNumbre: '185362365202', provincesAndMunicipalities: '湖南省龙口市龙口区', detailedAddress:"康博3-2-502"},
+					{id: 3, contactName: '王小二', isDefault: 0, contactNumbre: '18956323636', provincesAndMunicipalities: '广东省广州市番禺区', detailedAddress:"番禺1号3-2-502"},
+					{id: 4, contactName: '刘晓娟', isDefault: 0, contactNumbre: '15125658956', provincesAndMunicipalities: '海南省海口市海口区', detailedAddress:"幸福里小区3-2-502"},
+					{id: 5, contactName: '赵楚生', isDefault: 0, contactNumbre: '13965230236', provincesAndMunicipalities: '山东省青岛市黄岛区', detailedAddress:"黄岛二中医3-2-502"},
 				],
 				prescNo: '',
 				type: 'edit',
+				defaultAddressId: null,
+				checkboxSelectedMap: {}
 			}
 		},
 		computed: {
 			...mapState(['footData']),
+		},
+		mounted() {
+			this.list.forEach(it => {
+			    this.$set(this.checkboxSelectedMap, it.id, it.isDefault ? [it.id] : [])
+			    if (it.isDefault) this.defaultAddressId = it.id
+			  })
 		},
 		methods: {
 			// 回退页面传递数据
@@ -114,6 +132,22 @@
 					},
 				});
 			},
+			onCheckboxChange(item) {
+				// 强制只保留当前项为选中，从而实现单选效果
+				// 把所有项设为未选中
+				this.list.forEach(it => {
+					this.$set(this.checkboxSelectedMap, it.id, [])
+					it.isDefault = false
+				})
+				// 设置当前项选中
+				this.$set(this.checkboxSelectedMap, item.id, [item.id])
+				item.isDefault = true
+				this.defaultAddressId = item.id
+		
+				// 如果需要同步到后端，可在这里调用接口
+				// addressApi.setDefaultAddress(item.id).then(...)
+				uni.showToast({ title: '已设置为默认地址', icon: 'none' })
+			},
 		},
 		// onShow() {
 		// 	const options = this.$mp.query;
@@ -126,9 +160,16 @@
 	}
 </script>
 
-<style>
-</style>
 <style lang="less" scoped>
+	/deep/ .uni-data-checklist .checklist-group .checklist-box.is-checked {
+	  background-color: transparent !important; /* 去掉背景色 */
+	  border-color: #9A7546 !important; /* 保留选中时边框色（可改） */
+	}
+	
+	/deep/ .uni-data-checklist .checklist-group .checklist-box.is-checked::after {
+	  background-color: #9A7546 !important; /* 勾选图标颜色 */
+	}
+	
 	.user {
 		width: 100vw;
 		height: 100%; 
@@ -141,18 +182,66 @@
 			
 			.list {
 				margin: 15rpx 20rpx;
-				color: #888888;
-				font-size: 24rpx;
+				color: #333;
+				font-size: 30rpx;
 				background: #fff;
 				border-radius: 20rpx;
 				.addressItem {
 					padding: 30rpx;
+					.address {
+						padding-top: 20rpx;
+					}
+					.operating {
+					  display: flex;
+					  justify-content: space-between;
+					  align-items: center;
+					  margin-top: 20rpx;
+					
+					  .left {
+					    display: flex;
+					    align-items: center;
+					
+					    /deep/ .uni-data-checklist .checklist-group .checklist-box {
+					      border-radius: 50%;
+					      margin-right: 10rpx;
+					    }
+					
+					    /deep/ .uni-data-checklist .checklist-text {
+					      font-size: 26rpx;
+					      color: #666;
+					    }
+					
+					    /deep/ .uni-data-checklist .checklist-box.is-checked {
+					      background-color: #9A7546;
+					      border-color: #9A7546;
+					    }
+					  }
+					
+					  .right {
+					    display: flex;
+					    gap: 20rpx;
+					
+					    .btn {
+					      font-size: 26rpx;
+					      border: 1px solid #9A7546;
+					      border-radius: 30rpx;
+					      padding: 6rpx 20rpx;
+					      color: #9A7546;
+					
+					      &.delete {
+					        border-color: #FE563B;
+					        color: #FE563B;
+					      }
+					    }
+					  }
+					}
+
 				}
 			}
 		}
 		.btn {
 			background: #fff;
-			padding: 20rpx 30rpx 40rpx;
+			padding: 20rpx 30rpx 50rpx;
 			.confirm {
 				background: #9A7546;
 				border-radius: 20rpx;
