@@ -165,7 +165,11 @@ export default {
         icon: "none",
       });
     },
-    onClickBuyDrug() {},
+    onClickBuyDrug() {
+      uni.navigateTo({
+        url: "/sub_packages/shop/submitOrder?id=" + this.drug.id,
+      });
+    },
   },
   mounted() {
     this.fetchDrugDetail();
