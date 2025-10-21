@@ -153,7 +153,7 @@
 				})
 			},
 			shop() {
-				uni.navigateTo({ url: '/sub_packages/shop/addCart' })
+				uni.navigateTo({ url: '/sub_packages/shop/index' })
 			},
 			onJumpClick(item) {
 				if (item.url) {

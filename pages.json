@@ -387,8 +387,8 @@
 				"path" : "shop/order",
 				"style" : 
 				{
-					"navigationBarTitleText": "",
-					"navigationStyle": "custom"
+					"navigationBarTitleText": "我的订单",
+					"disableScroll": true
 				}
 			}
 		]

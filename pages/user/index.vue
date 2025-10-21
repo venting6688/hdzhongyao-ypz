@@ -60,9 +60,9 @@
 					{
 						title: '我的商城',
 						list: [
-							{ icon: '../../static/img/icon/car.png', label: '购物车' },
-							{ icon: '../../static/img/icon/order.png', label: '我的订单' },
-							{ icon: '../../static/img/icon/address.png', label: '地址管理' }
+							{ icon: '../../static/img/icon/car.png', label: '购物车', url: '/sub_packages/shop/addCart' },
+							{ icon: '../../static/img/icon/order.png', label: '我的订单', url: '/sub_packages/shop/order' },
+							{ icon: '../../static/img/icon/address.png', label: '地址管理', url: '/sub_packages/shop/address' }
 						]
 					}
 				]
