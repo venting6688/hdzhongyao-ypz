@@ -22,7 +22,7 @@ export default {
 <style scoped>
 .custom-tag {
   display: inline-block;
-  padding: 10rpx 20rpx;
+  padding: 10rpx 23rpx;
   border-radius: 30rpx;
   font-size: 30rpx;
   color: #555555;

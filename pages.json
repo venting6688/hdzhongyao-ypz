@@ -353,8 +353,8 @@
 				"path" : "shop/detail",
 				"style" : 
 				{
-					"navigationBarTitleText": "",
-					"navigationStyle": "custom"
+					"navigationBarTitleText": "商品详情",
+					"disableScroll": true
 				}
 			},
 			{

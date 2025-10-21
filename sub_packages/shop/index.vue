@@ -22,6 +22,7 @@
     <view class="shop-content">
       <view class="shop-filter">
         <customTag
+          class="filter-tag"
           v-for="item in tagList"
           :key="item.text"
           :isActive="item.isActive"
@@ -158,7 +159,7 @@ export default {
       const res = await getDrugListApi({
         ownerUserId: "",
         search: this.searchValue,
-        filter: this.tagList.find(item => item.isActive)?.text || "",
+        filter: this.tagList.find((item) => item.isActive)?.text || "",
       });
       if (res.code === 200) {
         this.drugList = res.data;
@@ -181,14 +182,15 @@ export default {
   },
 };
 </script>
-<style lang="less">
+<style scoped lang="less">
 .shop-layout {
-  padding: 10px;
+  padding: 0;
   justify-content: flex-start;
   //background-color: #f5f5f5;
 
   .shop-header {
     //height: 300rpx;
+    padding: 0 20rpx;
     background-image: url("../../static/image/shop-bg.png");
     background-repeat: no-repeat;
   }
@@ -196,6 +198,7 @@ export default {
   .shop-content {
     .shop-filter {
       width: 100%;
+      margin: 20rpx 0;
       height: 60rpx;
       //  实现左右滑动
       overflow-x: auto;
@@ -204,6 +207,9 @@ export default {
       display: flex;
       flex-direction: row;
       flex-wrap: nowrap;
+      .filter-tag {
+        margin:0 6rpx;
+      }
     }
     // 隐藏滚动条
     .shop-filter::-webkit-scrollbar {
@@ -211,6 +217,7 @@ export default {
     }
 
     .shop-title {
+      padding: 0 20rpx;
       .shop-title-text-left {
         font-size: 32rpx;
         font-weight: bold;
@@ -219,7 +226,7 @@ export default {
 
       .shop-title-text-right {
         font-size: 28rpx;
-        font-weight: bold;
+        //font-weight: bold;
         margin-bottom: 30rpx;
         float: right;
         color: #666666;
@@ -227,6 +234,7 @@ export default {
     }
 
     .drug-item {
+      //padding: 0 20rpx;
       display: flex;
 
       //display: grid;
@@ -236,7 +244,7 @@ export default {
       padding: 10rpx;
       background-color: #fff;
       border-radius: 10rpx;
-      margin: 35rpx 0;
+      margin: 35rpx 20rpx;
 
       .image-box {
         display: flex;
