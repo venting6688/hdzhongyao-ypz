@@ -359,27 +359,39 @@
 					"navigationStyle": "custom"
 				}
 			},
-            {
-              // 商城
-              "path" : "shop/index",
-              "style" :
-              {
-                "navigationBarTitleText": "购药中心",
-                "navigationStyle": "custom"
-              }
-            },
-            {
-              // 商品详情
-              "path" : "shop/detail",
-              "style" :
-              {
-                "navigationBarTitleText": "商品详情",
-                "disableScroll": true
-//                "navigationStyle": "custom"
-              }
-            }
-
-    ]
+			{
+				"path" : "shop/index",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path" : "shop/detail",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path" : "shop/addCart",
+				"style" : 
+				{
+					"navigationBarTitleText": "购物车",
+					"disableScroll": true
+				}
+			},
+			{
+				"path" : "shop/order",
+				"style" : 
+				{
+					"navigationBarTitleText": "",
+					"navigationStyle": "custom"
+				}
+			}
+		]
   }],
   "tabBar": {
   	"color": "#637088",

@@ -20,7 +20,7 @@
 		</view>
 		<view class="video">
 			<image src="../../static/image/wenzhen.png" mode="aspectFit" @click="inquiry"></image>
-			<image src="../../static/image/kaiyao.png" mode="aspectFit" @click="onJumpClick({url: '/sub_packages/shop/index'})"></image>
+			<image src="../../static/image/kaiyao.png" mode="aspectFit" @click="shop"></image>
 		</view>
 		<view class="ai" @click="onAiClick">
 			<image src="../../static/img/ai-banner.png" mode="aspectFit"></image>
@@ -151,6 +151,9 @@
 					title: '暂未开放，敬请期待',
 					icon: 'none'
 				})
+			},
+			shop() {
+				uni.navigateTo({ url: '/sub_packages/shop/addCart' })
 			},
 			onJumpClick(item) {
 				if (item.url) {
