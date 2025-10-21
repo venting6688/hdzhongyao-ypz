@@ -48,7 +48,8 @@
           <uni-data-checkbox
             v-model="allCheckedArr"
             :localdata="[{ text: '', value: '1' }]"
-            selected-color="#d7b074"
+            selected-color="#9A7546"
+						multiple
             @change="toggleAll"
           />
           <text class="total">合计 ￥{{ totalPrice.toFixed(2) }}</text>
@@ -226,7 +227,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30rpx;
+  padding: 20rpx 30rpx 50rpx;
   box-sizing: border-box;
 }
 .cart-footer .left {
@@ -246,14 +247,14 @@ export default {
   background: #f56c6c;
   color: #fff;
   border-radius: 50rpx;
-  padding: 15rpx 30rpx;
-  margin-right: 10rpx;
+  padding: 20rpx 35rpx;
+  margin-right: 25rpx;
 }
 .checkout-btn {
   background-color: #d7b074;
   color: #fff;
   border-radius: 50rpx;
-  padding: 15rpx 40rpx;
+  padding: 20rpx 40rpx;
 }
 
 /* 空购物车 */
