@@ -40,7 +40,9 @@
         <view class="drug-name">{{ drug.name }}</view>
         <view class="drug-desc">{{ drug.desc }}</view>
         <view class="divider"></view>
-        <view class="delivery-info"><text class="info-label">送达</text>京东物流配送·不包邮</view>
+        <view class="delivery-info"
+          ><text class="info-label">送达</text>京东物流配送·不包邮</view
+        >
         <view class="delivery-info">
           <text class="info-label">服务</text>
           院内药房当天<text style="color: #faaa03">16:00</text>发货·不支持退换货
@@ -55,7 +57,6 @@
         <view class="detail-item" v-show="drug.ingredients">
           <text class="detail-label">·主要成分：</text>
           <text class="detail-content">{{ drug.ingredients }}</text>
-
         </view>
         <view class="detail-item" v-show="drug.usage">
           <text class="detail-label">·用法用量：</text>
@@ -93,12 +94,15 @@
         <button class="buy-now" @click="onClickBuyDrug">立即购买</button>
       </view>
     </view>
-    <!--    <view class="shop-detail-btn">-->
-    <!--      <view class="shop-btn" @click="onClickCustomerService">客服</view>-->
-    <!--      <view class="shop-btn" @click="onClickCart">购物车</view>-->
-    <!--      <view class="shop-btn" @click="onClickAddCart">加入购物车</view>-->
-    <!--      <view class="buy-button" @click="onClickBuyDrug">立即购买</view>-->
-    <!--    </view>-->
+    <uni-popup
+      ref="popup"
+      type="bottom"
+      background-color="#fff"
+    >
+      <view class="popup-content">
+        客服电话：0532 88191639
+      </view>
+    </uni-popup>
   </view>
 </template>
 <script>
@@ -137,8 +141,7 @@ export default {
         effect: "益气强身，健脾养胃",
         ingredients: "人参6g 白术6g 茯苓6g 炙甘草3g",
         usage: "每日一剂，代茶频服。",
-        notice:
-          "1. 请在规定时间内到医院药房取药。2. 不支持在线支付。",
+        notice: "1. 请在规定时间内到医院药房取药。2. 不支持在线支付。",
         image: "/static/image/medicine_img.png",
       };
       console.log(typeof this.drug.price);
@@ -149,10 +152,7 @@ export default {
       }
     },
     onClickCustomerService() {
-      uni.showToast({
-        title: "客服已联系",
-        icon: "none",
-      });
+      this.$refs.popup.open("bottom");
     },
     onClickCart() {
       uni.navigateTo({
@@ -177,6 +177,13 @@ export default {
 };
 </script>
 <style scoped lang="less">
+.popup-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background-color: #fff;
+}
 .shop-detail-page {
   //background-color: #f5f5f5;
 }
@@ -238,7 +245,7 @@ export default {
 
   .divider {
     height: 1rpx;
-    background-color: #F5F5F5;
+    background-color: #f5f5f5;
     margin: 20rpx 0;
   }
   .delivery-info {
@@ -277,7 +284,6 @@ export default {
       width: 150rpx;
     }
     .detail-content {
-
     }
   }
 }
@@ -354,7 +360,7 @@ export default {
       border-radius: 50rpx;
       border: #9a7546 1px solid;
       font-size: 28rpx;
-      color: #87653A;
+      color: #87653a;
     }
     .buy-now {
       width: 200rpx;
