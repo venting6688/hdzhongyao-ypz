@@ -196,14 +196,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-$theme-color: #f04848;
-$price-color: #ff4848;
-$dark-text: #333333;
-$medium-text: #666666;
-$light-text: #999999;
-$card-bg: #ffffff;
-$border-color: #eeeeee;
+<style lang="less" scoped>
+/* 变量 */
+@theme-color: #f04848;
+@price-color: #ff4848;
+@dark-text: #333333;
+@medium-text: #666666;
+@light-text: #999999;
+@card-bg: #ffffff;
+@border-color: #eeeeee;
 
 .submit-order-page {
   padding-bottom: 120rpx;
@@ -211,13 +212,13 @@ $border-color: #eeeeee;
   min-height: 100vh;
 }
 
-// 通用卡片样式
+/* 通用卡片样式 */
 .address-card,
 .goods-card,
 .extra-info-card {
   margin: 20rpx;
   padding: 20rpx;
-  background-color: $card-bg;
+  background-color: @card-bg;
   border-radius: 16rpx;
   box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
 }
@@ -230,7 +231,7 @@ $border-color: #eeeeee;
 
   .icon-location {
     margin-right: 20rpx;
-    color: $theme-color;
+    color: @theme-color;
     align-self: stretch;
   }
 
@@ -238,7 +239,7 @@ $border-color: #eeeeee;
     flex: 1;
     margin-right: 20rpx;
     font-size: 28rpx;
-    color: $dark-text;
+    color: @dark-text;
 
     .address-detail {
       font-weight: bold;
@@ -246,19 +247,19 @@ $border-color: #eeeeee;
       .region {
         margin-right: 10rpx;
         font-weight: normal;
-        color: $medium-text;
+        color: @medium-text;
       }
     }
     .user-info {
       margin-top: 5rpx;
       font-size: 26rpx;
-      color: $medium-text;
+      color: @medium-text;
       .name {
         margin-right: 20rpx;
       }
     }
     .no-address {
-      color: $theme-color;
+      color: @theme-color;
       font-weight: bold;
     }
   }
@@ -286,7 +287,7 @@ $border-color: #eeeeee;
       flex: 1;
       .goods-name {
         font-size: 30rpx;
-        color: $dark-text;
+        color: @dark-text;
         line-height: 1.3;
         white-space: nowrap;
         overflow: hidden;
@@ -296,7 +297,7 @@ $border-color: #eeeeee;
       }
       .goods-price {
         font-size: 34.62rpx;
-        color: $dark-text;
+        color: @dark-text;
         margin-top: 5rpx;
         font-weight: 500;
       }
@@ -304,7 +305,7 @@ $border-color: #eeeeee;
 
     .goods-quantity {
       font-size: 30rpx;
-      color: $medium-text;
+      color: @medium-text;
       margin-left: 20rpx;
     }
   }
@@ -312,15 +313,15 @@ $border-color: #eeeeee;
   .total-price-line {
     justify-content: flex-end;
     padding-top: 0;
-    border-bottom: 1rpx solid $border-color;
+    border-bottom: 1rpx solid @border-color;
     .shifu-text {
       font-size: 28rpx;
-      color: $dark-text;
+      color: @dark-text;
       margin-right: 10rpx;
     }
     .actual-price {
       font-size: 36rpx;
-      color: $price-color;
+      color: @price-color;
       font-weight: 500;
     }
   }
@@ -336,7 +337,7 @@ $border-color: #eeeeee;
   align-items: center;
   justify-content: space-between;
   padding: 25rpx 0;
-  //border-bottom: 1rpx solid $border-color;
+  /* border-bottom: 1rpx solid @border-color; */
   font-size: 28rpx;
 
   &:last-child {
@@ -344,18 +345,18 @@ $border-color: #eeeeee;
   }
 
   .label {
-    color: $medium-text;
+    color: @medium-text;
     min-width: 80rpx;
   }
 
   .value {
     flex: 1;
     text-align: right;
-    color: $medium-text;
+    color: @medium-text;
   }
 
   .note-text {
-    // 备注不换行并省略号
+    /* 备注不换行并省略号 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -379,8 +380,8 @@ $border-color: #eeeeee;
   height: 162rpx;
   padding: 0 20rpx calc(constant(safe-area-inset-bottom) / 2) 20rpx;
   padding: 0 20rpx calc(env(safe-area-inset-bottom) / 2) 20rpx;
-  background-color: $card-bg;
-  border-top: 1rpx solid $border-color;
+  background-color: @card-bg;
+  border-top: 1rpx solid @border-color;
   z-index: 99;
 
   .price-summary {
@@ -390,32 +391,32 @@ $border-color: #eeeeee;
 
     .total {
       font-size: 20rpx;
-      color: $light-text;
+      color: @light-text;
 
       .amount {
         font-size: 36rpx;
-        color: $price-color;
+        color: @price-color;
         margin-left: 10rpx;
       }
     }
 
     .delivery-fee {
       font-size: 20rpx;
-      color: $light-text;
+      color: @light-text;
     }
   }
 
   .pay-button {
     background-color: #9a7546;
-    color: $card-bg;
+    color: @card-bg;
     font-size: 32rpx;
     height: 72rpx;
     width: 200rpx;
     border-radius: 40rpx;
     margin: 0;
-    //padding: 10rpx;
+    /* padding: 10rpx; */
 
-    // 覆盖默认 button 样式
+    /* 覆盖默认 button 样式 */
     &::after {
       border: none;
     }
