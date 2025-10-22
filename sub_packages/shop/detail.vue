@@ -40,8 +40,8 @@
         <view class="drug-name">{{ drug.name }}</view>
         <view class="drug-desc">{{ drug.desc }}</view>
         <view class="divider"></view>
-        <view><text class="info-label">送达</text>京东物流配送·不包邮</view>
-        <view>
+        <view class="delivery-info"><text class="info-label">送达</text>京东物流配送·不包邮</view>
+        <view class="delivery-info">
           <text class="info-label">服务</text>
           院内药房当天<text style="color: #faaa03">16:00</text>发货·不支持退换货
         </view>
@@ -205,15 +205,19 @@ export default {
 
   .drug-price {
     color: #faaa03;
-    font-size: 36rpx;
-    font-weight: 500;
-    margin-right: 5rpx;
+    font-size: 38.17rpx;
+    font-weight: 600;
+    margin: 3rpx 5rpx 5rpx 0;
     .drug-monthly-sales {
       float: right;
       font-size: 24rpx;
       color: #87653a;
+      font-weight: 500;
+      padding-right: 7rpx;
     }
     .drug-stock {
+      border-left: solid 1px #87653a;
+      padding-left: 8rpx;
       float: right;
       font-size: 24rpx;
       margin-left: 5rpx;
@@ -225,17 +229,20 @@ export default {
     font-size: 28rpx;
     color: #666666;
     margin-bottom: 15rpx;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2; /* 显示两行 */
-    overflow: hidden;
-    text-overflow: ellipsis;
+    //display: -webkit-box;
+    //-webkit-box-orient: vertical;
+    //-webkit-line-clamp: 2; /* 显示两行 */
+    //overflow: hidden;
+    //text-overflow: ellipsis;
   }
 
   .divider {
     height: 1rpx;
-    background-color: #e5e5e5;
+    background-color: #F5F5F5;
     margin: 20rpx 0;
+  }
+  .delivery-info {
+    margin: 10rpx 0;
   }
 
   .info-label {
@@ -246,7 +253,7 @@ export default {
 }
 
 .drug-detail {
-  margin: 20rpx;
+  margin: 27rpx 17rpx;
   padding: 24rpx;
   border: 1px solid #eee;
   border-radius: 12rpx;
@@ -256,12 +263,12 @@ export default {
   .detail-title {
     text-align: center;
     font-weight: bold;
-    margin-bottom: 16rpx;
+    margin-bottom: 30rpx;
     font-size: 31rpx;
   }
   .detail-item {
     display: flex;
-    margin-bottom: 24rpx;
+    margin-bottom: 35rpx;
     font-size: 26rpx;
     .detail-label {
       flex: none;
@@ -327,7 +334,7 @@ export default {
     .action-item {
       width: 120rpx;
       text-align: center;
-      font-size: 26rpx;
+      font-size: 26.92rpx;
       color: #333;
       .icon-btn {
         width: 36rpx;
