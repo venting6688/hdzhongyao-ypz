@@ -1,5 +1,5 @@
 <template>
-  <scroll-view class="shop-layout pageBg homePageBg" scroll-y>
+  <scroll-view class="shop-layout pageBg shopPageBg" scroll-y>
     <customerNav title=" " />
     <view :style="{ top: barHeight + 'px' }" class="goBack" @click="goBack">
       <uni-icons color="#fff" size="15" type="back"></uni-icons>
@@ -9,15 +9,16 @@
         class="header-image"
         mode="aspectFit"
         src="../../static/image/shop-slogan.png"
-        style="width: 100%; height: 200rpx"
       />
-      <uni-search-bar
-        v-model="searchValue"
-        :focus="true"
-        :radius="100"
-        cancelButton="none"
-        @confirm="onConfirmSearch"
-      ></uni-search-bar>
+      <view class="search-bar">
+        <uni-search-bar
+          v-model="searchValue"
+          :focus="true"
+          :radius="100"
+          cancelButton="none"
+          @confirm="onConfirmSearch"
+        ></uni-search-bar>
+      </view>
     </view>
     <view class="shop-content">
       <view class="shop-filter">
@@ -38,7 +39,6 @@
         v-for="item in drugList"
         :key="item.id"
         @click="goDetail(item)"
-        @tap="goDetail(item)"
       >
         <view class="drug-item">
           <view class="image-box">
@@ -116,44 +116,44 @@ export default {
       this.drugList = [
         {
           id: 1,
-          name: "感冒药",
+          name: "清心去火方",
           price: 10.0,
           image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗感冒、咳嗽等症状，可用于治疗感冒、咳嗽等症状，可用于治疗感冒、咳嗽等症状，可用于治疗感冒、咳嗽等症状，可用于治疗感冒、咳嗽等症状",
+            "../../static/image/shop_medicine_img.png",
+          desc: "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
         },
         {
           id: 2,
-          name: "退烧药",
+          name: "健脾消积方",
           price: 20.99,
           image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗发热、咳嗽等症状",
+            "../../static/image/shop_medicine_img.png",
+          desc: "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
         },
         {
           id: 3,
-          name: "止痛药",
+          name: "通便方",
           price: 30.66,
           image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗头痛、头痛等症状",
+            "../../static/image/shop_medicine_img.png",
+          desc: "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
         },
         {
           id: 4,
-          name: "止泻药",
+          name: "祛湿方",
           price: 30.88,
           image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗腹泻、呕吐等症状",
+            "../../static/image/shop_medicine_img.png",
+          desc: "描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述",
         },
-        {
-          id: 5,
-          name: "止咳药",
-          price: 30.44,
-          image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗咳嗽、咳嗽等症状",
-        },
+        // {
+        //   id: 5,
+        //   name: "止咳药",
+        //   price: 30.44,
+        //   image:
+        //     "../../static/image/shop_medicine_img.png",
+        //   desc: "用于治疗咳嗽、咳嗽等症状",
+        // },
       ];
       return;
       const res = await getDrugListApi({
@@ -179,10 +179,20 @@ export default {
       console.log(this.searchValue);
       this.getList();
     },
+    goBack() {
+      uni.navigateBack({
+        success: () => {},
+        fail: (err) => {
+          uni.reLaunch({
+            url: "/pages/home/index",
+          });
+        },
+      });
+    },
   },
 };
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .shop-layout {
   padding: 0;
   justify-content: flex-start;
@@ -190,9 +200,17 @@ export default {
 
   .shop-header {
     //height: 300rpx;
-    padding: 0 20rpx;
+    //padding: 0 20rpx;
     background-image: url("../../static/image/shop-bg.png");
     background-repeat: no-repeat;
+    .header-image {
+      padding: 0 40rpx;
+      width: 100%;
+      height: 150rpx;
+    }
+    .search-bar {
+      padding: 20rpx 0;
+    }
   }
 
   .shop-content {
@@ -208,7 +226,7 @@ export default {
       flex-direction: row;
       flex-wrap: nowrap;
       .filter-tag {
-        margin:0 6rpx;
+        margin: 0 6rpx;
       }
     }
     // 隐藏滚动条
