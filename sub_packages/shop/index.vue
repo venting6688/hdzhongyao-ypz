@@ -13,7 +13,6 @@
       <view class="search-bar">
         <uni-search-bar
           v-model="searchValue"
-          :focus="true"
           :radius="100"
           cancelButton="none"
           @confirm="onConfirmSearch"
