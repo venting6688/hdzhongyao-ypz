@@ -210,6 +210,9 @@ export default {
     }
     .search-bar {
       padding: 20rpx 0;
+      ::v-deep .uni-searchbar__box {
+        border: 1px solid #666;
+      }
     }
   }
 
