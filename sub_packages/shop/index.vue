@@ -126,7 +126,7 @@ export default {
 					})
 				}
 			})
-		}
+		},
     goBack() {
       uni.navigateBack({
         success: () => {},
