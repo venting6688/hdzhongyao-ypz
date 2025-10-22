@@ -390,6 +390,14 @@
 					"navigationBarTitleText": "地址管理",
 					"disableScroll": true
 				}
+			},
+			{
+				"path" : "shop/submitOrder",
+				"style" :
+				{
+					"navigationBarTitleText": "",
+					"disableScroll": false
+				}
 			}
 		]
   }],

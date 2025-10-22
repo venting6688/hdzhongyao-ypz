@@ -1,5 +1,5 @@
 <template>
-  <scroll-view class="shop-layout pageBg homePageBg" scroll-y>
+  <scroll-view class="shop-layout pageBg shopPageBg" scroll-y>
     <customerNav title=" " />
     <view :style="{ top: barHeight + 'px' }" class="goBack" @click="goBack">
       <uni-icons color="#fff" size="15" type="back"></uni-icons>
@@ -9,15 +9,16 @@
         class="header-image"
         mode="aspectFit"
         src="../../static/image/shop-slogan.png"
-        style="width: 100%; height: 200rpx"
       />
-      <uni-search-bar
-        v-model="searchValue"
-        :focus="true"
-        :radius="100"
-        cancelButton="none"
-        @confirm="onConfirmSearch"
-      ></uni-search-bar>
+      <view class="search-bar">
+        <uni-search-bar
+          v-model="searchValue"
+          :focus="true"
+          :radius="100"
+          cancelButton="none"
+          @confirm="onConfirmSearch"
+        ></uni-search-bar>
+      </view>
     </view>
     <view class="shop-content">
       <view class="shop-filter">
@@ -38,7 +39,6 @@
         v-for="item in drugList"
         :key="item.id"
         @click="goDetail(item)"
-        @tap="goDetail(item)"
       >
         <view class="drug-item">
           <view class="image-box">
@@ -127,10 +127,20 @@ export default {
 				}
 			})
 		}
+    goBack() {
+      uni.navigateBack({
+        success: () => {},
+        fail: (err) => {
+          uni.reLaunch({
+            url: "/pages/home/index",
+          });
+        },
+      });
+    },
   },
 };
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .shop-layout {
   padding: 0;
   justify-content: flex-start;
@@ -138,9 +148,20 @@ export default {
 
   .shop-header {
     //height: 300rpx;
-    padding: 0 20rpx;
+    //padding: 0 20rpx;
     background-image: url("../../static/image/shop-bg.png");
     background-repeat: no-repeat;
+    .header-image {
+      padding: 0 40rpx;
+      width: 100%;
+      height: 150rpx;
+    }
+    .search-bar {
+      padding: 20rpx 0;
+      ::v-deep .uni-searchbar__box {
+        border: 1px solid #666;
+      }
+    }
   }
 
   .shop-content {
@@ -156,7 +177,7 @@ export default {
       flex-direction: row;
       flex-wrap: nowrap;
       .filter-tag {
-        margin:0 6rpx;
+        margin: 0 6rpx;
       }
     }
     // 隐藏滚动条

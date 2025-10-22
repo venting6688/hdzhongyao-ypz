@@ -21,7 +21,7 @@
           <view class="no-address">请选择收货地址</view>
         </template>
       </view>
-      <uni-icons type="arrowright" size="18" color="#999"></uni-icons>
+      <uni-icons type="arrowright" size="18" color="#333"></uni-icons>
     </view>
 
     <view class="goods-card">
@@ -37,7 +37,10 @@
             >¥{{ orderData.goods.price | formatPrice }}</view
           >
         </view>
-        <view class="goods-quantity">x{{ orderData.goods.quantity }}</view>
+        <view class="goods-quantity">
+          ×
+          {{ orderData.goods.quantity }}</view
+        >
       </view>
 
       <view class="item-line total-price-line">
@@ -47,9 +50,9 @@
           }}</text
         >
       </view>
-    </view>
+      <!--    </view>-->
 
-    <view class="extra-info-card">
+      <!--    <view class="extra-info-card">-->
       <view class="item-line">
         <text class="label">配送:</text>
         <view class="value">{{ orderData.deliveryMethod }}</view>
@@ -57,8 +60,11 @@
 
       <view class="item-line" @click="toEditNote">
         <text class="label">备注:</text>
-        <view class="value note-text">
-          {{ orderData.note || "请给我备注" }}
+        <view class="value note-text" v-show="orderData.note">
+          {{ orderData.note }}
+        </view>
+        <view class="value note-text is-empty" v-show="!orderData.note">
+          请给我备注
         </view>
         <uni-icons type="arrowright" size="18" color="#999"></uni-icons>
       </view>
@@ -104,7 +110,6 @@ export default {
   data() {
     return {
       orderData: MOCK_ORDER_DATA,
-      tempNote: "",
     };
   },
   // 过滤器用于金额格式化
@@ -132,15 +137,7 @@ export default {
       };
     }
   },
-  // 监听其他页面返回的数据 (如选择地址或备注)
-  onShow() {
-    // 检查是否有临时备注数据
-    if (this.tempNote) {
-      this.orderData.note = this.tempNote;
-      this.tempNote = ""; // 清除临时数据
-    }
-    // 实际项目中，这里还会处理地址选择页返回的地址数据
-  },
+  onShow() {},
   methods: {
     toSelectAddress() {
       uni.navigateTo({
@@ -155,7 +152,7 @@ export default {
         editable: true,
         placeholderText: "请输入您的要求或留言...",
         success: (res) => {
-          if (res.confirm && res.content) {
+          if (res.confirm) {
             this.orderData.note = res.content;
           }
         },
@@ -199,13 +196,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-$theme-color: #f04848;
-$price-color: #ff4848;
-$dark-text: #333333;
-$light-text: #999999;
-$card-bg: #ffffff;
-$border-color: #eeeeee;
+<style lang="less" scoped>
+/* 变量 */
+@theme-color: #f04848;
+@price-color: #ff4848;
+@dark-text: #333333;
+@medium-text: #666666;
+@light-text: #999999;
+@card-bg: #ffffff;
+@border-color: #eeeeee;
 
 .submit-order-page {
   padding-bottom: 120rpx;
@@ -213,13 +212,13 @@ $border-color: #eeeeee;
   min-height: 100vh;
 }
 
-// 通用卡片样式
+/* 通用卡片样式 */
 .address-card,
 .goods-card,
 .extra-info-card {
   margin: 20rpx;
   padding: 20rpx;
-  background-color: $card-bg;
+  background-color: @card-bg;
   border-radius: 16rpx;
   box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
 }
@@ -232,14 +231,15 @@ $border-color: #eeeeee;
 
   .icon-location {
     margin-right: 20rpx;
-    color: $theme-color;
+    color: @theme-color;
+    align-self: stretch;
   }
 
   .address-content {
     flex: 1;
     margin-right: 20rpx;
     font-size: 28rpx;
-    color: $dark-text;
+    color: @dark-text;
 
     .address-detail {
       font-weight: bold;
@@ -247,18 +247,19 @@ $border-color: #eeeeee;
       .region {
         margin-right: 10rpx;
         font-weight: normal;
+        color: @medium-text;
       }
     }
     .user-info {
       margin-top: 5rpx;
       font-size: 26rpx;
-      color: $light-text;
+      color: @medium-text;
       .name {
         margin-right: 20rpx;
       }
     }
     .no-address {
-      color: $theme-color;
+      color: @theme-color;
       font-weight: bold;
     }
   }
@@ -266,13 +267,12 @@ $border-color: #eeeeee;
 
 /* 商品卡片区域 */
 .goods-card {
-  padding: 30rpx 20rpx;
+  padding: 20rpx 20rpx 0;
 
   .goods-item {
     display: flex;
     align-items: center;
     padding-bottom: 20rpx;
-    border-bottom: 1rpx solid $border-color;
     margin-bottom: 20rpx;
 
     .goods-image {
@@ -287,16 +287,17 @@ $border-color: #eeeeee;
       flex: 1;
       .goods-name {
         font-size: 30rpx;
-        color: $dark-text;
+        color: @dark-text;
         line-height: 1.3;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 500;
+        margin-bottom: 20rpx;
       }
       .goods-price {
-        font-size: 26rpx;
-        color: $dark-text;
+        font-size: 34.62rpx;
+        color: @dark-text;
         margin-top: 5rpx;
         font-weight: 500;
       }
@@ -304,7 +305,7 @@ $border-color: #eeeeee;
 
     .goods-quantity {
       font-size: 30rpx;
-      color: $light-text;
+      color: @medium-text;
       margin-left: 20rpx;
     }
   }
@@ -312,14 +313,15 @@ $border-color: #eeeeee;
   .total-price-line {
     justify-content: flex-end;
     padding-top: 0;
+    border-bottom: 1rpx solid @border-color;
     .shifu-text {
       font-size: 28rpx;
-      color: $dark-text;
+      color: @dark-text;
       margin-right: 10rpx;
     }
     .actual-price {
       font-size: 36rpx;
-      color: $price-color;
+      color: @price-color;
       font-weight: 500;
     }
   }
@@ -335,7 +337,7 @@ $border-color: #eeeeee;
   align-items: center;
   justify-content: space-between;
   padding: 25rpx 0;
-  border-bottom: 1rpx solid $border-color;
+  /* border-bottom: 1rpx solid @border-color; */
   font-size: 28rpx;
 
   &:last-child {
@@ -343,23 +345,26 @@ $border-color: #eeeeee;
   }
 
   .label {
-    color: $light-text;
+    color: @medium-text;
     min-width: 80rpx;
   }
 
   .value {
     flex: 1;
     text-align: right;
-    color: $dark-text;
+    color: @medium-text;
   }
 
   .note-text {
-    color: $light-text;
-    // 备注不换行并省略号
+    /* 备注不换行并省略号 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-right: 10rpx;
+  }
+
+  .is-empty {
+    color: #d9d9d9;
   }
 }
 
@@ -375,8 +380,8 @@ $border-color: #eeeeee;
   height: 162rpx;
   padding: 0 20rpx calc(constant(safe-area-inset-bottom) / 2) 20rpx;
   padding: 0 20rpx calc(env(safe-area-inset-bottom) / 2) 20rpx;
-  background-color: $card-bg;
-  border-top: 1rpx solid $border-color;
+  background-color: @card-bg;
+  border-top: 1rpx solid @border-color;
   z-index: 99;
 
   .price-summary {
@@ -386,32 +391,32 @@ $border-color: #eeeeee;
 
     .total {
       font-size: 20rpx;
-      color: $light-text;
+      color: @light-text;
 
       .amount {
         font-size: 36rpx;
-        color: $price-color;
+        color: @price-color;
         margin-left: 10rpx;
       }
     }
 
     .delivery-fee {
       font-size: 20rpx;
-      color: $light-text;
+      color: @light-text;
     }
   }
 
   .pay-button {
     background-color: #9a7546;
-    color: $card-bg;
+    color: @card-bg;
     font-size: 32rpx;
     height: 72rpx;
     width: 200rpx;
     border-radius: 40rpx;
     margin: 0;
-    //padding: 10rpx;
+    /* padding: 10rpx; */
 
-    // 覆盖默认 button 样式
+    /* 覆盖默认 button 样式 */
     &::after {
       border: none;
     }

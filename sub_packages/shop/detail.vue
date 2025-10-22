@@ -40,8 +40,10 @@
         <view class="drug-name">{{ drug.name }}</view>
         <view class="drug-desc">{{ drug.desc }}</view>
         <view class="divider"></view>
-        <view><text class="info-label">送达</text>京东物流配送·不包邮</view>
-        <view>
+        <view class="delivery-info"
+          ><text class="info-label">送达</text>京东物流配送·不包邮</view
+        >
+        <view class="delivery-info">
           <text class="info-label">服务</text>
           院内药房当天<text style="color: #faaa03">16:00</text>发货·不支持退换货
         </view>
@@ -55,7 +57,6 @@
         <view class="detail-item" v-show="drug.ingredients">
           <text class="detail-label">·主要成分：</text>
           <text class="detail-content">{{ drug.ingredients }}</text>
-
         </view>
         <view class="detail-item" v-show="drug.usage">
           <text class="detail-label">·用法用量：</text>
@@ -93,12 +94,15 @@
         <button class="buy-now" @click="onClickBuyDrug">立即购买</button>
       </view>
     </view>
-    <!--    <view class="shop-detail-btn">-->
-    <!--      <view class="shop-btn" @click="onClickCustomerService">客服</view>-->
-    <!--      <view class="shop-btn" @click="onClickCart">购物车</view>-->
-    <!--      <view class="shop-btn" @click="onClickAddCart">加入购物车</view>-->
-    <!--      <view class="buy-button" @click="onClickBuyDrug">立即购买</view>-->
-    <!--    </view>-->
+    <uni-popup
+      ref="popup"
+      type="bottom"
+      background-color="#fff"
+    >
+      <view class="popup-content">
+        客服电话：0532 88191639
+      </view>
+    </uni-popup>
   </view>
 </template>
 <script>
@@ -137,8 +141,7 @@ export default {
         effect: "益气强身，健脾养胃",
         ingredients: "人参6g 白术6g 茯苓6g 炙甘草3g",
         usage: "每日一剂，代茶频服。",
-        notice:
-          "1. 请在规定时间内到医院药房取药。2. 不支持在线支付。",
+        notice: "1. 请在规定时间内到医院药房取药。2. 不支持在线支付。",
         image: "/static/image/medicine_img.png",
       };
       console.log(typeof this.drug.price);
@@ -149,10 +152,7 @@ export default {
       }
     },
     onClickCustomerService() {
-      uni.showToast({
-        title: "客服已联系",
-        icon: "none",
-      });
+      this.$refs.popup.open("bottom");
     },
     onClickCart() {
       uni.navigateTo({
@@ -177,6 +177,13 @@ export default {
 };
 </script>
 <style scoped lang="less">
+.popup-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background-color: #fff;
+}
 .shop-detail-page {
   //background-color: #f5f5f5;
 }
@@ -205,15 +212,19 @@ export default {
 
   .drug-price {
     color: #faaa03;
-    font-size: 36rpx;
-    font-weight: 500;
-    margin-right: 5rpx;
+    font-size: 38.17rpx;
+    font-weight: 600;
+    margin: 3rpx 5rpx 5rpx 0;
     .drug-monthly-sales {
       float: right;
       font-size: 24rpx;
       color: #87653a;
+      font-weight: 500;
+      padding-right: 7rpx;
     }
     .drug-stock {
+      border-left: solid 1px #87653a;
+      padding-left: 8rpx;
       float: right;
       font-size: 24rpx;
       margin-left: 5rpx;
@@ -225,17 +236,20 @@ export default {
     font-size: 28rpx;
     color: #666666;
     margin-bottom: 15rpx;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2; /* 显示两行 */
-    overflow: hidden;
-    text-overflow: ellipsis;
+    //display: -webkit-box;
+    //-webkit-box-orient: vertical;
+    //-webkit-line-clamp: 2; /* 显示两行 */
+    //overflow: hidden;
+    //text-overflow: ellipsis;
   }
 
   .divider {
     height: 1rpx;
-    background-color: #e5e5e5;
+    background-color: #f5f5f5;
     margin: 20rpx 0;
+  }
+  .delivery-info {
+    margin: 10rpx 0;
   }
 
   .info-label {
@@ -246,7 +260,7 @@ export default {
 }
 
 .drug-detail {
-  margin: 20rpx;
+  margin: 27rpx 17rpx;
   padding: 24rpx;
   border: 1px solid #eee;
   border-radius: 12rpx;
@@ -256,12 +270,12 @@ export default {
   .detail-title {
     text-align: center;
     font-weight: bold;
-    margin-bottom: 16rpx;
+    margin-bottom: 30rpx;
     font-size: 31rpx;
   }
   .detail-item {
     display: flex;
-    margin-bottom: 24rpx;
+    margin-bottom: 35rpx;
     font-size: 26rpx;
     .detail-label {
       flex: none;
@@ -270,7 +284,6 @@ export default {
       width: 150rpx;
     }
     .detail-content {
-
     }
   }
 }
@@ -327,7 +340,7 @@ export default {
     .action-item {
       width: 120rpx;
       text-align: center;
-      font-size: 26rpx;
+      font-size: 26.92rpx;
       color: #333;
       .icon-btn {
         width: 36rpx;
@@ -347,7 +360,7 @@ export default {
       border-radius: 50rpx;
       border: #9a7546 1px solid;
       font-size: 28rpx;
-      color: #87653A;
+      color: #87653a;
     }
     .buy-now {
       width: 200rpx;
