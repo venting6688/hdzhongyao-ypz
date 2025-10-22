@@ -36,6 +36,10 @@ view, swiper, swiper-item {
   height: 300rpx; // 其他页面专属高度
 }
 
+.shopPageBg::before {
+  height: 410rpx;
+}
+
 .loadingLayout {
 	padding: 30rpx 0;
 }
