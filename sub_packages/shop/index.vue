@@ -19,41 +19,41 @@
         ></uni-search-bar>
       </view>
     </view>
-    <view class="shop-content">
-      <view class="shop-filter">
-        <customTag
-          class="filter-tag"
-          v-for="item in tagList"
-          :key="item.text"
-          :isActive="item.isActive"
-          :text="item.text"
-          @click.native="onClickTag(item)"
-        ></customTag>
-      </view>
-      <view class="shop-title">
-        <text class="shop-title-text-left"> 协定方配药 </text>
-        <text class="shop-title-text-right"> 共100个药品 </text>
-      </view>
-      <view
-        v-for="item in drugList"
-        :key="item.id"
-        @click="goDetail(item)"
-      >
-        <view class="drug-item">
-          <view class="image-box">
-            <image :src="item.image" class="drug-image" mode="aspectFill" />
-          </view>
-          <view class="drug-info">
-            <view class="drug-name">{{ item.name }}</view>
-            <view class="drug-desc">{{ item.desc }}</view>
-            <view class="drug-price">
-              <text class="price-value"> ¥{{ item.price }} </text>
-              /副
-            </view>
-          </view>
-        </view>
-      </view>
-    </view>
+    <view class="medicine-page">
+			<scroll-view scroll-x class="category-scroll" show-scrollbar="false">
+				<view
+					v-for="(item, index) in categories"
+					:key="index"
+					class="category-item"
+					:class="{ active: currentCategory === index }"
+					@tap="changeCategory(index)"
+				>
+					{{ item }}
+				</view>
+			</scroll-view>
+			<view class="category-title">
+				<text class="title">协定方配药</text>
+				<text class="total">共{{ total }}个药品</text>
+			</view>
+			<scroll-view scroll-y class="list-scroll" @scrolltolower="loadMore">
+				<view
+					class="list-item"
+					v-for="(item, index) in displayedList"
+					:key="index"
+				>
+					<image class="item-img" :src="item.image" mode="aspectFill" />
+					<view class="item-info">
+						<view class="item-name">{{ item.name }}</view>
+						<view class="item-desc">发的索拉卡发快递撒娇浪费我if</view>
+						<view class="item-price">￥{{ item.price }}</view>
+					</view>
+				</view>
+	
+				<!-- 加载状态 -->
+				<view v-if="loading" class="load-text">加载中...</view>
+				<view v-else-if="noMore" class="load-text">没有更多了</view>
+			</scroll-view>
+		</view>
   </scroll-view>
 </template>
 <script>
@@ -70,12 +70,20 @@ export default {
   data() {
     return {
       searchValue: "",
-      drugList: [],
-      tagList: [{id: 0, text: '全部', isActive: true}],
+			categories: ['全部'],
+			currentCategory: 0,
+			list: [],
+			filteredList: [],
+			displayedList: [],
+			total: 0,
+			page: 1,
+			pageSize: 6,
+			loading: false,
+			noMore: false,
     };
   },
   onLoad() {
-    this.getList();
+    this.initList();
   },
   computed: {
     barHeight() {
@@ -83,46 +91,47 @@ export default {
     },
   },
   methods: {
-    onClickTag(tag) {
-      this.tagList.forEach((item) => {
-        item === tag ? (item.isActive = true) : (item.isActive = false);
-      });
-    },
     goDetail(item) {
       uni.navigateTo({
         url: `/sub_packages/shop/detail?id=${item.id}`,
       });
     },
     onConfirmSearch() {
-      this.getList();
+      this.initList();
     },
-		getList() {
-			shopApi.getTypes().then(res => {
-				if (res.statusCode == 200) {
-					let list = res.data.data.categoryList;
-					list.map(val => {
-						if (val.subCategoryList != null) {
-							val.subCategoryList.map(item => {
-								this.tagList.push({
-									id: item.id,
-									text: item.name,
-									isActive: false
-								})
-								if (item.goodsVosList != null) {
-									let goodsList = item.goodsVosList;
-									goodsList.map(goods => {
-										this.drugList.push({
+		initList() {
+			shopApi.getTypes().then((res) => {
+				if (res.statusCode === 200 && res.data.data) {
+					const data = res.data.data
+					const categoryList = data.categoryList || []
+
+					this.categories = ['全部'] // 重置分类
+					this.list = [] // 重置总数据
+
+					categoryList.forEach((val) => {
+						if (val.subCategoryList && val.subCategoryList.length > 0) {
+							val.subCategoryList.forEach((sub) => {
+								// 添加分类名
+								this.categories.push(sub.name)
+
+								if (sub.goodsVosList && sub.goodsVosList.length > 0) {
+									sub.goodsVosList.forEach((goods) => {
+										this.list.push({
 											id: goods.id,
 											name: goods.name,
 											desc: goods.goodsDesc,
 											price: goods.retailPrice,
 											image: goods.primaryPicUrl,
+											category: sub.name,
 										})
 									})
 								}
 							})
 						}
 					})
+
+					// 初始化过滤与加载
+					this.filterList()
 				}
 			})
 		},
@@ -136,8 +145,49 @@ export default {
         },
       });
     },
-  },
-};
+		
+		// 分类切换
+		changeCategory(index) {
+			this.currentCategory = index
+			this.page = 1
+			this.noMore = false
+			this.displayedList = []
+			this.filterList()
+		},
+
+		// 根据分类过滤
+		filterList() {
+			const current = this.categories[this.currentCategory]
+			this.filteredList =
+				current === '全部'
+					? this.list
+					: this.list.filter((item) => item.category === current)
+			this.total = this.filteredList.length
+			this.loadMore()
+		},
+		
+		 // 触底加载更多
+		loadMore() {
+			if (this.loading || this.noMore) return
+			this.loading = true
+
+			setTimeout(() => {
+				const start = (this.page - 1) * this.pageSize
+				const end = start + this.pageSize
+				const newData = this.filteredList.slice(start, end)
+
+				if (newData.length) {
+					this.displayedList = this.displayedList.concat(newData)
+					this.page++
+				} else {
+					this.noMore = true
+				}
+
+				this.loading = false
+			}, 500)
+		},
+	}
+}
 </script>
 <style scoped lang="scss">
 .shop-layout {
@@ -163,105 +213,106 @@ export default {
     }
   }
 
-  .shop-content {
-    .shop-filter {
-      width: 100%;
-      margin: 20rpx 0;
-      height: 60rpx;
-      //  实现左右滑动
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      .filter-tag {
-        margin: 0 6rpx;
-      }
-    }
-    // 隐藏滚动条
-    .shop-filter::-webkit-scrollbar {
-      display: none;
-    }
-
-    .shop-title {
-      padding: 0 20rpx;
-      .shop-title-text-left {
-        font-size: 32rpx;
-        font-weight: bold;
-        margin-bottom: 30rpx;
-      }
-
-      .shop-title-text-right {
-        font-size: 28rpx;
-        //font-weight: bold;
-        margin-bottom: 30rpx;
-        float: right;
-        color: #666666;
-      }
-    }
-
-    .drug-item {
-      //padding: 0 20rpx;
-      display: flex;
-
-      //display: grid;
-      //grid-template-columns: 150rpx 3fr 2fr;
-      //grid-template-rows: 100px 200px;
-
-      padding: 10rpx;
-      background-color: #fff;
-      border-radius: 10rpx;
-      margin: 35rpx 20rpx;
-
-      .image-box {
-        display: flex;
-        align-items: center; // 垂直居中
-        .drug-image {
-          width: 180rpx;
-          height: 200rpx;
-          margin: 12rpx;
-          border-radius: 10rpx;
-          flex: none;
-        }
-      }
-
-      .drug-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        //flex: 1;
-        margin: 10rpx;
-
-        .drug-name {
-          font-size: 32rpx;
-          font-weight: bold;
-          margin-bottom: 10rpx;
-        }
-
-        .drug-desc {
-          font-size: 28rpx;
-          color: #666666;
-          margin-bottom: 15rpx;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2; /* 显示两行 */
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .drug-price {
-          font-size: 24rpx;
-
-          .price-value {
-            color: #faaa03;
-            font-size: 36rpx;
-            font-weight: 500;
-            margin-right: 5rpx;
-          }
-        }
-      }
-    }
-  }
+	.medicine-page {
+	  background-color: #f8f8f8;
+	  height: 100vh;
+	  display: flex;
+	  flex-direction: column;
+	}
+	
+	/* 分类滑块 */
+	.category-scroll {
+	  display: flex;
+	  white-space: nowrap;
+	  background: #fff;
+	  padding: 16rpx 0;
+	  border-bottom: 1rpx solid #f1f1f1;
+	}
+	
+	.category-item {
+	  display: inline-block;
+	  margin: 0 20rpx;
+	  padding: 12rpx 28rpx;
+	  font-size: 28rpx;
+	  border-radius: 30rpx;
+	  background-color: #f6f6f6;
+	  color: #555;
+	}
+	
+	.category-item.active {
+	  background-color: #b1803d;
+	  color: #fff;
+	}
+	
+	/* 标题 */
+	.category-title {
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  padding: 20rpx 28rpx;
+	  font-size: 28rpx;
+	  color: #333;
+		.title {
+			font-size: 30rpx;
+			font-weight: bold;
+		}
+		.total {
+		  font-size: 28rpx;
+		  color: #666;
+		}
+	}
+	
+	/* 列表 */
+	.list-scroll {
+	  flex: 1;
+	  padding: 0 20rpx;
+	}
+	
+	.list-item {
+	  display: flex;
+	  background-color: #fff;
+	  border-radius: 16rpx;
+	  padding: 20rpx;
+	  margin-bottom: 20rpx;
+	  align-items: flex-start;
+	}
+	
+	.item-img {
+	  width: 160rpx;
+	  height: 160rpx;
+	  border-radius: 12rpx;
+	}
+	
+	.item-info {
+	  flex: 1;
+	  margin-left: 20rpx;
+	}
+	
+	.item-name {
+	  font-size: 32rpx;
+	  font-weight: 600;
+	  color: #333;
+	  margin-bottom: 8rpx;
+	}
+	
+	.item-desc {
+	  font-size: 26rpx;
+	  color: #777;
+	  line-height: 1.4;
+	  margin-bottom: 12rpx;
+	}
+	
+	.item-price {
+	  color: #e67e22;
+	  font-size: 30rpx;
+	  font-weight: 600;
+	}
+	
+	.load-text {
+	  text-align: center;
+	  color: #999;
+	  padding: 20rpx 0;
+	  font-size: 26rpx;
+	}
 }
 </style>
