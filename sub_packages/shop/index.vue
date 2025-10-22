@@ -44,13 +44,12 @@
           <view class="image-box">
             <image :src="item.image" class="drug-image" mode="aspectFill" />
           </view>
-
           <view class="drug-info">
             <view class="drug-name">{{ item.name }}</view>
             <view class="drug-desc">{{ item.desc }}</view>
             <view class="drug-price">
               <text class="price-value"> ¥{{ item.price }} </text>
-              /付
+              /副
             </view>
           </view>
         </view>
@@ -59,43 +58,21 @@
   </scroll-view>
 </template>
 <script>
-import { getDrugListApi } from "@/api/shopApi.js";
+import shopApi from "@/api/shopApi.js";
 import customerNav from "@/components/customerNav.vue";
 import { getStatusBarHeight } from "@/utils/system.js";
 import customTag from "@/components/customTag.vue";
 
 export default {
-  components: { customerNav, customTag },
+  components: { 
+		customerNav, 
+		customTag 
+	},
   data() {
     return {
       searchValue: "",
       drugList: [],
-      tagList: [
-        {
-          text: "全部",
-          isActive: true,
-        },
-        {
-          text: "夏季养生",
-          isActive: false,
-        },
-        {
-          text: "秋季养生",
-          isActive: false,
-        },
-        {
-          text: "消化调理",
-          isActive: false,
-        },
-        {
-          text: "价格最高",
-          isActive: false,
-        },
-        {
-          text: "价格最低",
-          isActive: false,
-        },
-      ],
+      tagList: [{id: 0, text: '全部', isActive: true}],
     };
   },
   onLoad() {
@@ -112,73 +89,44 @@ export default {
         item === tag ? (item.isActive = true) : (item.isActive = false);
       });
     },
-    async getList() {
-      this.drugList = [
-        {
-          id: 1,
-          name: "感冒药",
-          price: 10.0,
-          image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗感冒、咳嗽等症状，可用于治疗感冒、咳嗽等症状，可用于治疗感冒、咳嗽等症状，可用于治疗感冒、咳嗽等症状，可用于治疗感冒、咳嗽等症状",
-        },
-        {
-          id: 2,
-          name: "退烧药",
-          price: 20.99,
-          image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗发热、咳嗽等症状",
-        },
-        {
-          id: 3,
-          name: "止痛药",
-          price: 30.66,
-          image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗头痛、头痛等症状",
-        },
-        {
-          id: 4,
-          name: "止泻药",
-          price: 30.88,
-          image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗腹泻、呕吐等症状",
-        },
-        {
-          id: 5,
-          name: "止咳药",
-          price: 30.44,
-          image:
-            "https://q9.itc.cn/q_70/images03/20240708/24b3ca30674d4f4d9bb441e27fafe4e1.jpeg",
-          desc: "用于治疗咳嗽、咳嗽等症状",
-        },
-      ];
-      return;
-      const res = await getDrugListApi({
-        ownerUserId: "",
-        search: this.searchValue,
-        filter: this.tagList.find((item) => item.isActive)?.text || "",
-      });
-      if (res.code === 200) {
-        this.drugList = res.data;
-      } else {
-        uni.showToast({
-          title: res.message || "获取药品列表失败",
-          icon: "none",
-        });
-      }
-    },
     goDetail(item) {
       uni.navigateTo({
         url: `/sub_packages/shop/detail?id=${item.id}`,
       });
     },
     onConfirmSearch() {
-      console.log(this.searchValue);
       this.getList();
     },
+		getList() {
+			shopApi.getTypes().then(res => {
+				if (res.statusCode == 200) {
+					let list = res.data.data.categoryList;
+					list.map(val => {
+						if (val.subCategoryList != null) {
+							val.subCategoryList.map(item => {
+								this.tagList.push({
+									id: item.id,
+									text: item.name,
+									isActive: false
+								})
+								if (item.goodsVosList != null) {
+									let goodsList = item.goodsVosList;
+									goodsList.map(goods => {
+										this.drugList.push({
+											id: goods.id,
+											name: goods.name,
+											desc: goods.goodsDesc,
+											price: goods.retailPrice,
+											image: goods.primaryPicUrl,
+										})
+									})
+								}
+							})
+						}
+					})
+				}
+			})
+		}
   },
 };
 </script>
