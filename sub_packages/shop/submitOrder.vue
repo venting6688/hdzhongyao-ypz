@@ -70,6 +70,30 @@
       </view>
     </view>
 
+    <view class="notice-card">
+      <view class="notice-card-title">
+        -购药须知-
+      </view>
+      <view> 1.本平台是黄岛第二中医医院官方互联网医疗服务平台</view>
+      <view> 2.所有药品均经专业药师审核，</view>
+      <view> 3.患者需如实填写个人信息和健康状况评估，医生不提供诊疗咨询，慢性病复诊服务。若评估后不适合，请线下到院就诊咨询。</view>
+      <view> 4.此药饮不可代替正常药物使用。</view>
+      <view> 5.急重症患者请及时就医，不适合使用本服务</view>
+      <view> 用药安全须知</view>
+      <view> 1.请按包装说明或者医嘱使用，不可擅自增减剂量</view>
+      <view> 2.不同中药的储存要求及保存时间不同(常规放在阴凉干燥处保存)，拿到中药后请及时使用，发现有异常情况请勿使用，若出现数量不对、药品质量问题请拨打电话-0532-88191639</view>
+      <view> 3.孕妇、儿童、哺乳期妇女、肝肾功能异常者及过敏体质者在医师指导下服用。</view>
+      <view> 4.此药饮不可代替正常药物使用，如遇冲突请线下咨询医生</view>
+      <view> 代茶饮使用问题解答</view>
+      <view> 1.下单信息填写错误，可扫码入群，联系群内工作人员或者拨打0532-88191639进行信息更改。</view>
+      <view> 2.代茶饮一天一付，7付为一疗程，适量沸水冲泡或煮服。颜色变淡可停止服用。</view>
+      <view> 3.不建议同时服用2种代茶饮，在医师指导下更换其他种类代茶饮。</view>
+      <view> 4.开封的代茶饮请及时封口，通风干燥处存放。</view>
+      <view> 5.代茶饮期间避免过量摄入寒凉腥辣食物。</view>
+      <view> 配送服务说明</view>
+      <view> 1.可在中药窗口凭单自取，也可快递到家(需承担快递费当天下单后统一次日发货，发出的药品除质量问题概不退换。</view>
+    </view>
+
     <view class="footer-bar">
       <view class="price-summary">
         <view class="total">
@@ -207,7 +231,7 @@ export default {
 @border-color: #eeeeee;
 
 .submit-order-page {
-  padding-bottom: 120rpx;
+  padding-bottom: 150rpx;
   background-color: #f5f5f5;
   min-height: 100vh;
 }
@@ -215,7 +239,8 @@ export default {
 /* 通用卡片样式 */
 .address-card,
 .goods-card,
-.extra-info-card {
+.extra-info-card,
+.notice-card {
   margin: 20rpx;
   padding: 20rpx;
   background-color: @card-bg;
@@ -365,6 +390,16 @@ export default {
 
   .is-empty {
     color: #d9d9d9;
+  }
+}
+
+.notice-card {
+  .notice-card-title {
+    font-size: 30rpx;
+    color: @dark-text;
+    font-weight: bold;
+    margin-bottom: 20rpx;
+    text-align: center;
   }
 }
 
