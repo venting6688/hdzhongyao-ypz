@@ -118,7 +118,7 @@ export default {
 			uni.setStorageSync('loginData', loginData);
 			this.setFootData(loginData.defaultArchives);
 			this.setLoginStatus('login');
-      if (isBackLastPage) {
+      if (this.isBackLastPage) {
         uni.navigateBack()
       } else {
         uni.switchTab({ url: "/pages/virtualNurse/index" })
