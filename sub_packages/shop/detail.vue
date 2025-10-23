@@ -39,7 +39,7 @@
         </view>
         <view class="drug-name">{{ drug.name }}</view>
         <view class="drug-desc">{{ drug.desc }}</view>
-        <view class="divider"></view>
+        <!--        <view class="divider"></view>-->
         <view class="delivery-info"
           ><text class="info-label">送达</text>京东物流配送·不包邮</view
         >
@@ -94,14 +94,8 @@
         <button class="buy-now" @click="onClickBuyDrug">立即购买</button>
       </view>
     </view>
-    <uni-popup
-      ref="popup"
-      type="bottom"
-      background-color="#fff"
-    >
-      <view class="popup-content">
-        客服电话：0532 88191639
-      </view>
+    <uni-popup ref="popup" type="bottom" background-color="#fff">
+      <view class="popup-content"> 客服电话：0532 88191639 </view>
     </uni-popup>
   </view>
 </template>
@@ -155,20 +149,34 @@ export default {
       this.$refs.popup.open("bottom");
     },
     onClickCart() {
+      this.loginCheck();
       uni.navigateTo({
         url: "/sub_packages/shop/addCart",
       });
     },
     onClickAddCart() {
+      this.loginCheck();
       uni.showToast({
         title: "已加入购物车",
         icon: "none",
       });
     },
     onClickBuyDrug() {
+      // 登陆判断
+      this.loginCheck();
       uni.navigateTo({
         url: "/sub_packages/shop/submitOrder?id=" + this.drug.id,
       });
+    },
+    //   登陆判断
+    loginCheck() {
+      const loginData = uni.getStorageSync("loginData");
+      if (!loginData) {
+        // 未登录，跳转登录页
+        uni.navigateTo({
+          url: "/sub_packages/login/index?title=青岛西海岸新区第二中医医院&isBackLastPage=true",
+        });
+      }
     },
   },
   mounted() {
@@ -204,6 +212,7 @@ export default {
 .drug-info {
   padding: 0 32rpx 25rpx;
   background-color: #fff;
+  border-top: 1px solid #fff;
   .drug-name {
     font-size: 32rpx;
     font-weight: bold;
@@ -229,13 +238,15 @@ export default {
       font-size: 24rpx;
       margin-left: 5rpx;
       color: #87653a;
+      font-weight: 500;
     }
   }
 
   .drug-desc {
     font-size: 28rpx;
     color: #666666;
-    margin-bottom: 15rpx;
+    padding-bottom: 15rpx;
+    border-bottom: 1px solid #f5f5f5;
     //display: -webkit-box;
     //-webkit-box-orient: vertical;
     //-webkit-line-clamp: 2; /* 显示两行 */
@@ -249,7 +260,7 @@ export default {
     margin: 20rpx 0;
   }
   .delivery-info {
-    margin: 10rpx 0;
+    margin: 15rpx 0 10rpx;
   }
 
   .info-label {
