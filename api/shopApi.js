@@ -13,11 +13,11 @@ const shop = {
 		return res?.data || {};
 	},
 	async getDrugDetailApi(params) {
-		const url = `detail/${params.drugId}`;
+		const url = `/api/goods/detail?id=${params.drugId}&userId=23`;
 		const res = await cjRequest(
 				{
 						url: url,
-						method: "get",
+						method: "post",
 				},
 				2
 		);
