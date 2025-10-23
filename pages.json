@@ -398,6 +398,14 @@
 					"navigationBarTitleText": "",
 					"disableScroll": false
 				}
+			},
+            {
+				"path" : "shop/orderDetail",
+				"style" :
+				{
+					"navigationBarTitleText": "订单详情",
+					"disableScroll": false
+				}
 			}
 		]
   }],
