@@ -45,7 +45,7 @@
         <!--        >-->
         <view class="delivery-info">
           <text class="info-label">服务</text>
-          {{ serviceText }}
+          <text class="info-value">{{ serviceText }}</text>
         </view>
       </view>
       <view class="drug-detail">
@@ -274,11 +274,14 @@ export default {
   .delivery-info {
     margin: 15rpx 0 10rpx;
     font-size: 24rpx;
+    display: flex;
 
     .info-label {
       color: #999999;
       margin: 0 15rpx 0 0;
+      width: 150rpx;
     }
+
   }
 }
 
