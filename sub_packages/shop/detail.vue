@@ -91,7 +91,7 @@
 
       <view class="right">
         <button class="add-cart" @click="onClickAddCart">加购物车</button>
-        <button class="buy-now" @click="onClickBuyDrug">立即购买</button>
+        <button class="buy-now" @click="onClickBuyDrug">在线开方</button>
       </view>
     </view>
     <uni-popup ref="popup" type="bottom" background-color="#fff">
@@ -266,7 +266,7 @@ export default {
   .info-label {
     font-size: 24rpx;
     color: #999999;
-    margin: 0 15rpx;
+    margin: 0 15rpx 0 0;
   }
 }
 
