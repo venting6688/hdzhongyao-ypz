@@ -34,35 +34,35 @@
           ￥{{ Number(drug.price).toFixed(2) }}
           <text class="drug-stock">库存&nbsp;{{ drug.stock }}</text>
           <text class="drug-monthly-sales"
-            >月售&nbsp;{{ drug.monthlySales }}</text
+            >已售出&nbsp;{{ drug.salesVolume }}</text
           >
         </view>
         <view class="drug-name">{{ drug.name }}</view>
         <view class="drug-desc">{{ drug.desc }}</view>
-        <!--        <view class="divider"></view>-->
-        <view class="delivery-info"
-          ><text class="info-label">送达</text>京东物流配送·不包邮</view
-        >
+        <!--                <view class="divider"></view>-->
+        <!--        <view class="delivery-info"-->
+        <!--          ><text class="info-label">送达</text>京东物流配送·不包邮</view-->
+        <!--        >-->
         <view class="delivery-info">
           <text class="info-label">服务</text>
-          院内药房当天<text style="color: #faaa03">16:00</text>发货·不支持退换货
+          {{ serviceText }}
         </view>
       </view>
       <view class="drug-detail">
         <view class="detail-title">-药品详情-</view>
-        <view class="detail-item" v-show="drug.effect">
+        <view class="detail-item" v-if="drug.effect">
           <text class="detail-label">·功效作用：</text>
           <text class="detail-content">{{ drug.effect }}</text>
         </view>
-        <view class="detail-item" v-show="drug.ingredients">
+        <view class="detail-item" v-if="drug.ingredients">
           <text class="detail-label">·主要成分：</text>
           <text class="detail-content">{{ drug.ingredients }}</text>
         </view>
-        <view class="detail-item" v-show="drug.usage">
+        <view class="detail-item" v-if="drug.usage">
           <text class="detail-label">·用法用量：</text>
           <text class="detail-content">{{ drug.usage }}</text>
         </view>
-        <view class="detail-item" v-show="drug.notice">
+        <view class="detail-item" v-if="drug.notice">
           <text class="detail-label">·注意事项：</text>
           <text class="detail-content">{{ drug.notice }}</text>
         </view>
@@ -101,7 +101,8 @@
 </template>
 <script>
 import customerNav from "@/components/customerNav.vue";
-import { getDrugDetailApi } from "@/api/shopApi.js";
+import shop from "@/api/shopApi.js";
+
 export default {
   components: { customerNav },
   data() {
@@ -115,6 +116,8 @@ export default {
         price: 0,
         desc: "",
       },
+      serviceText:
+        "药品配送业务由第三方快递公司承接，由不可预知的缘故导致的药品配送延误，由患者本人与ム江递公司协商解决。药品离柜进入配送环节之后，无特殊原因，不予退换。",
     };
   },
   onLoad(options) {
@@ -123,26 +126,38 @@ export default {
   },
   methods: {
     async fetchDrugDetail(drugId) {
-      this.drug = {
-        id: 1,
-        name: "四君子茶",
-        price: 5.0,
-        desc: "益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃益气强身，健脾养胃",
-        monthlySales: 100,
-        stock: 1000,
-        delivery: "京东物流配送 · 免包邮",
-        service: "院内药房当天16:00发货 · 不支持退换货",
-        effect: "益气强身，健脾养胃",
-        ingredients: "人参6g 白术6g 茯苓6g 炙甘草3g",
-        usage: "每日一剂，代茶频服。",
-        notice: "1. 请在规定时间内到医院药房取药。2. 不支持在线支付。",
-        image: "/static/image/medicine_img.png",
-      };
-      console.log(typeof this.drug.price);
-      return;
-      const response = await getDrugDetailApi(drugId);
-      if (response && response.data) {
-        this.drug = response.data;
+
+      const res = await shop.getDrugDetailApi({ drugId });
+      if (res && res.data) {
+        const { info, specificationList } = res.data || {};
+        let detailData = {};
+        if (
+          specificationList &&
+          specificationList.length > 0 &&
+          "valueList" in specificationList[0]
+        ) {
+          detailData = specificationList?.[0]?.valueList?.[0];
+        }
+        this.drug = {
+          id: info.id || null,
+          name: info.name || "",
+          price: info.retailPrice || 0,
+          desc: info.goodsDesc || "",
+          salesVolume: detailData.salesVolume || 0,
+          stock: info.goodsNumber || 0,
+          // delivery: INFO.delivery,
+          // service: INFO.service,
+          effect: detailData.efficacy || "",
+          ingredients: detailData.mainIngredients || "",
+          usage: detailData.usageDosage || "",
+          notice: detailData.thingsToNote || "",
+          image: info.listPicUrl,
+        };
+      } else {
+        uni.showToast({
+          title: "获取商品详情失败",
+          icon: "none",
+        });
       }
     },
     onClickCustomerService() {
@@ -178,9 +193,6 @@ export default {
         });
       }
     },
-  },
-  mounted() {
-    this.fetchDrugDetail();
   },
 };
 </script>
@@ -261,12 +273,12 @@ export default {
   }
   .delivery-info {
     margin: 15rpx 0 10rpx;
-  }
-
-  .info-label {
     font-size: 24rpx;
-    color: #999999;
-    margin: 0 15rpx 0 0;
+
+    .info-label {
+      color: #999999;
+      margin: 0 15rpx 0 0;
+    }
   }
 }
 
@@ -348,14 +360,16 @@ export default {
   .left {
     display: flex;
     align-items: center;
+    justify-content: space-around;
+    padding: 0 20rpx;
+    flex: 1;
     .action-item {
-      width: 120rpx;
       text-align: center;
       font-size: 26.92rpx;
       color: #333;
       .icon-btn {
-        width: 36rpx;
-        height: 36rpx;
+        width: 50rpx;
+        height: 50rpx;
         margin-right: 10rpx;
       }
     }
