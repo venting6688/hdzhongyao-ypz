@@ -5,7 +5,7 @@
       <text class="order-status">{{ order.status }}</text>
     </view>
 
-    <view class="order-body">
+    <view class="order-body" @click="onClickOrderDetail(order)">
       <image :src="order.img" mode="aspectFill" class="order-img"></image>
       <view class="order-info">
         <text class="order-name">{{ order.name }}</text>
@@ -25,7 +25,7 @@
           class="btn"
           @click="viewLogistics(order)"
         >查看物流</view>
-				
+
 				<view
 				  v-if="order.status === '待发货'"
 				  class="btn"
@@ -80,6 +80,11 @@ export default {
     },
     buyAgain(order) {
       console.log('再次购买', order.id)
+    },
+    onClickOrderDetail(order) {
+      uni.navigateTo({
+        url: '/sub_packages/shop/orderDetail?id=' + order.id
+      })
     }
   }
 }
