@@ -36,6 +36,7 @@ export default {
 		return {
 			agreementState: false,
 			patientId: '',
+      isBackLastPage: false,
 		}
 	},
 	methods: {
@@ -117,7 +118,11 @@ export default {
 			uni.setStorageSync('loginData', loginData);
 			this.setFootData(loginData.defaultArchives);
 			this.setLoginStatus('login');
-			uni.switchTab({ url: "/pages/virtualNurse/index" })
+      if (isBackLastPage) {
+        uni.navigateBack()
+      } else {
+        uni.switchTab({ url: "/pages/virtualNurse/index" })
+      }
 		},
 		// 微信登录
 		loginFn() {
@@ -163,7 +168,8 @@ export default {
 		wx.setNavigationBarTitle({
 			title: e.title
 		})
-	}
+    this.isBackLastPage = !!e.isBackLastPage;
+  }
 }
 
 </script>
