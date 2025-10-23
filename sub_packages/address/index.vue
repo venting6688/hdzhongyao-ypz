@@ -6,35 +6,35 @@
 				v-for="(item,index) in list" 
 				:key="index"
 			>
-						<view class="addressItem">
-							<view class="midddle">
-								<view class="title">
-									<text class="name">{{item.contactName}}</text>
-									<text>{{pixelateNumber(item.contactNumbre)}}</text>
-								</view>
-								<view class="address">
-									{{item.provincesAndMunicipalities ? item.provincesAndMunicipalities+' - ' : ''}}{{item.detailedAddress}}
-								</view>
-								<view class="operating">
-								  <!-- 左侧：设置默认地址 -->
-								  <view class="left">
-								    <uni-data-checkbox
-											:localdata="[ { text: '', value: item.id } ]"
-											v-model="checkboxSelectedMap[item.id]"
-											selectedColor="#9A7546"
-											@change="onCheckboxChange(item)"
-										/>
-										<text class="default-text">{{ item.isDefault ? '已默认' : '设为默认地址' }}</text>
-								  </view>
-								
-								  <!-- 右侧：修改、删除 -->
-								  <view class="right">
-								    <text class="btn edit" @click="confirm(item, type)">修改</text>
-								    <text class="btn delete" @click.stop="deleteAddress(item.id)">删除</text>
-								  </view>
-								</view>
+				<view class="addressItem">
+					<view class="midddle">
+						<view class="title">
+							<text class="name">{{item.userName}}</text>
+							<text>{{pixelateNumber(item.telNumber)}}</text>
+						</view>
+						<view class="address">
+							{{item.fullRegion ? item.fullRegion+' - ' : ''}}{{item.detailInfo}}
+						</view>
+						<view class="operating">
+							<!-- 左侧：设置默认地址 -->
+							<view class="left">
+								<uni-data-checkbox
+									:localdata="[ { text: '', value: item.id } ]"
+									v-model="checkboxSelectedMap[item.id]"
+									selectedColor="#9A7546"
+									@change="onCheckboxChange(item)"
+								/>
+								<text class="default-text">{{ item.isDefault ? '已默认' : '设为默认地址' }}</text>
+							</view>
+						
+							<!-- 右侧：修改、删除 -->
+							<view class="right">
+								<text class="btn edit" @click="confirm(item, type)">修改</text>
+								<text class="btn delete" @click.stop="deleteAddress(item.id)">删除</text>
 							</view>
 						</view>
+					</view>
+				</view>
 			</view>
 		</view>
 		<view class="btn">
@@ -46,22 +46,17 @@
 <script>
 	import mixin from '@/mixins/mixin'
 	import {mapState} from 'vuex'
-	import addressApi from '@/api/addressApi.js'
+	import shopApi from '@/api/shopApi.js'
 	export default {
 		mixins: [mixin],
 		data(){
 			return {
+				userId: '',
 				options: [{
 					text: '删除',
 					style: { backgroundColor: '#FE563B' }
 				}],
-				list:[
-					{id: 1, contactName: '张三', isDefault: 0, contactNumbre: '15895623023', provincesAndMunicipalities: '山东省淄博市周口区', detailedAddress:"幸福里小区3-2-502"},
-					{id: 2, contactName: '李茂武', isDefault: 1, contactNumbre: '185362365202', provincesAndMunicipalities: '湖南省龙口市龙口区', detailedAddress:"康博3-2-502"},
-					{id: 3, contactName: '王小二', isDefault: 0, contactNumbre: '18956323636', provincesAndMunicipalities: '广东省广州市番禺区', detailedAddress:"番禺1号3-2-502"},
-					{id: 4, contactName: '刘晓娟', isDefault: 0, contactNumbre: '15125658956', provincesAndMunicipalities: '海南省海口市海口区', detailedAddress:"幸福里小区3-2-502"},
-					{id: 5, contactName: '赵楚生', isDefault: 0, contactNumbre: '13965230236', provincesAndMunicipalities: '山东省青岛市黄岛区', detailedAddress:"黄岛二中医3-2-502"},
-				],
+				list:[],
 				prescNo: '',
 				type: 'edit',
 				defaultAddressId: null,
@@ -71,38 +66,28 @@
 		computed: {
 			...mapState(['footData']),
 		},
-		mounted() {
-			this.list.forEach(it => {
-			    this.$set(this.checkboxSelectedMap, it.id, it.isDefault ? [it.id] : [])
-			    if (it.isDefault) this.defaultAddressId = it.id
-			  })
+		onLoad() {
+			let loginValue = uni.getStorageSync("loginData");
+			loginValue = JSON.parse(loginValue);
+			this.userId = loginValue.userId;
+			this.getAddressList();
 		},
 		methods: {
-			// 回退页面传递数据
-			getValue(list){
-				this.list.push(list)
-			},
 			confirm(item, type){
 				uni.navigateTo({
-					url:`/sub_packages/address/detail?informationObj=${item?encodeURIComponent(JSON.stringify(item)):''}&prescNo=${this.prescNo}&type=${type}`
+					url:`/sub_packages/address/detail?informationObj=${item ? encodeURIComponent(JSON.stringify(item)) : ''}&type=${type}`
 				})
 			},
-			//get list
 			getAddressList(){
-				try {
-					let loginValue = uni.getStorageSync("loginData");
-					loginValue = JSON.parse(loginValue);
-					addressApi.getAddressList(loginValue.phoneNum).then(res => {
-						if(res.data.code===200){
-							this.list = res.data.rows;
-						}else {
-							this.list = []
-						}
-					})
-				} catch (error) {
-					console.log(error)
-					//TODO handle the exception
-				}
+				shopApi.getAddressList(this.userId).then(res => {
+					if(res.statusCode == 200){
+						this.list = res.data.data;
+						this.list.forEach(it => {
+							this.$set(this.checkboxSelectedMap, it.id, it.isDefault == 1 ? [it.id] : [])
+							if (it.isDefault == 1) this.defaultAddressId = it.id
+						})
+					}
+				})
 			},
 			//delete
 			deleteAddress(id) {
@@ -112,15 +97,14 @@
 					success: (res) => {
 						if (res.confirm) {
 							try {
-								addressApi.deleteAddress(id).then(res => {
-									if(res.data.code === 200){
+								shopApi.deleteAddress(id).then(res => {
+									if(res.statusCode == 200){
 										uni.showToast({
 											title: "删除成功",
 											icon: "none",
 										});
 										this.getAddressList()
-										 // uni.reLaunch({url: "/sub_packages/addressBook/index"});
-									}else {
+									} else {
 										this.list = []
 									}
 								})
@@ -137,26 +121,20 @@
 				// 把所有项设为未选中
 				this.list.forEach(it => {
 					this.$set(this.checkboxSelectedMap, it.id, [])
-					it.isDefault = false
+					it.isDefault = 0
 				})
 				// 设置当前项选中
 				this.$set(this.checkboxSelectedMap, item.id, [item.id])
-				item.isDefault = true
+				item.isDefault = 1
 				this.defaultAddressId = item.id
-		
-				// 如果需要同步到后端，可在这里调用接口
-				// addressApi.setDefaultAddress(item.id).then(...)
+				
+				shopApi.saveAddress(item, this.userId).then()
 				uni.showToast({ title: '已设置为默认地址', icon: 'none' })
 			},
 		},
-		// onShow() {
-		// 	const options = this.$mp.query;
-		// 	this.prescNo = options.num; //获取处方号
-		// 	this.showBack = true;
-		// 	this.title = '地址簿';
-		// 	this.type = options.type; //地址使用类型
-		// 	this.getAddressList()
-		// }
+		onShow() {
+		  this.getAddressList()
+		},
 	}
 </script>
 

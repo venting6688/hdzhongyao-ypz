@@ -49,19 +49,20 @@ const shop = {
 		return res
 	},
 	//更新、添加收货地址
-	async getAddressList(data) {
+	async saveAddress(data) {
 		const res = await cjRequest({
-			url: "api/address/save?userId="+userId,
+			url: "api/address/save",
 			method: "post",
+			data,
 		},2)
 		return res
 	},
 	
 	//删除收货地址
-	async getAddressList(data) {
+	async deleteAddress(id) {
 		const res = await cjRequest({
-			url: "api/address/delete?userId="+userId,
-			method: "post",
+			url: "api/address/delete?id="+id,
+			method: "delete",
 		},2)
 		return res
 	}

@@ -4,33 +4,26 @@
 			<form>
 				<view class="cu-form-group">
 					<view class="title">收件人</view>
-					<input v-model="informationObj.contactName" name="input" />
+					<input v-model="informationObj.userName" name="input" />
 					<view class="title">手机号</view>
-					<input type="number" maxlength="11" v-model="informationObj.contactNumbre" name="input" />
+					<input type="number" maxlength="11" v-model="informationObj.telNumber" name="input" />
 				</view>
 				<view class="cu-form-group">
 					<view class="title">地址</view>
-					<picker mode="region" @change="chooseregion" :value="informationObj.provincesAndMunicipalities">
+					<picker mode="region" @change="chooseregion" :value="provincesAndMunicipalities">
 						<view class="picker">
-							<text>{{ informationObj.provincesAndMunicipalities }}</text>
+							<text>{{ regionText }}</text>
 						</view>
 					</picker>
 				</view>
 				<view class="cu-form-group">
 					<view class="title">详细地址</view>
-					<input v-model="informationObj.detailedAddress" name="input" />
+					<input v-model="informationObj.detailInfo" name="input" />
 				</view>
 			</form>
 			<view class="bottom">
-				<view class="confirm" @click="save" v-if="title==='新增地址'">
-					确认保存
-				</view>
-				<view class="confirm" @click="editAddress(informationObj)" v-else>
-					确认保存
-				</view>
-				<view class="delete" @click="deleteBtn">
-					清空
-				</view>
+				<view class="confirm" @click="type == 'add' ? save() : editAddress(informationObj)">确认保存</view>
+				<view class="delete" @click="deleteBtn">清空</view>
 			</view>
 		</view>
 	</view>
@@ -38,37 +31,40 @@
 
 <script>
 	import mixin from '@/mixins/mixin'
-	import addressApi from '@/api/addressApi.js'
+	import shopApi from '@/api/shopApi.js'
 	import {mapState} from 'vuex'
 	export default {
 		mixins: [mixin],
 		data(){
 			return {
+				type: '',
 				state:false,
-				informationObj:{
-					contactName:'',
-					contactNumbre:'',
-					provincesAndMunicipalities:['山东省','济南市','历下区'],
-					detailedAddress:'',
-				},
+				informationObj: {},
+				userId: '',
+				provincesAndMunicipalities: ['山东省','济南市','历下区'],
+				regionText: '山东省济南市历下区'
 			}
 		},
 		computed: {
 			...mapState(['footData']),
 		},
+		onLoad(e) {
+			this.type = e.type;
+			let loginValue = uni.getStorageSync("loginData");
+			loginValue = JSON.parse(loginValue);
+			this.userId = loginValue.userId;
+			if (this.type != 'add') {
+				this.informationObj = JSON.parse(decodeURIComponent(e.informationObj));
+				this.provincesAndMunicipalities = this.informationObj.fullRegion.split(',');
+				this.regionText = this.informationObj.fullRegion;
+			}
+		},
 		methods: {
 			//新增地址
-			save(){
-				let loginValue = uni.getStorageSync("loginData");
-				loginValue = JSON.parse(loginValue);
-				
-				let isArray = Array.isArray(this.informationObj.provincesAndMunicipalities);
-				let regionStr = isArray ? this.informationObj.provincesAndMunicipalities.join('') : this.informationObj.provincesAndMunicipalities;
-				this.informationObj.detailedAddress = this.informationObj.detailedAddress
-				this.informationObj.accountPhoneNumber = loginValue.phoneNum;
-				
-				addressApi.addAddresInfo(this.informationObj).then(res => {
-					if(res.data.code===200){
+			save() {
+				this.informationObj.userId = this.userId;
+				shopApi.saveAddress(this.informationObj).then(res => {
+					if(res.statusCode == 200) {
 						uni.showToast({
 							title: '添加成功',
 							duration: 3000
@@ -76,9 +72,9 @@
 						setTimeout(()=>{
 							uni.navigateBack();
 						},3000)
-					}else{
+					} else {
 						uni.showToast({
-							title: res.data.msg,
+							title: '保存失败',
 							icon: 'error',
 							duration: 3000
 						});
@@ -89,9 +85,10 @@
 				})
 			},
 			//编辑地址
-			editAddress(item){
-				addressApi.editAddresInfo(item).then(res => {
-					if(res.data.code===200){
+			editAddress(item) {
+				this.informationObj.fullRegion = this.informationObj.provinceName+this.informationObj.cityName+this.informationObj.countyName
+				shopApi.saveAddress(item).then(res => {
+					if(res.statusCode == 200) {
 						uni.showToast({
 							title: '修改成功',
 							duration: 3000
@@ -99,9 +96,9 @@
 						setTimeout(()=>{
 							uni.navigateBack();
 						},3000)
-					}else{
+					} else {
 						uni.showToast({
-							title: res.data.msg,
+							title: '修改失败',
 							icon: 'error',
 							duration: 3000
 						});
@@ -113,30 +110,26 @@
 			},
 			//省市change function
 			chooseregion(event){
-				this.informationObj.provincesAndMunicipalities = event.detail.value.toString()
+				let address = event.detail.value.toString();
+				this.regionText = address
+				address = address.split(',');
+				this.informationObj.provinceName = address[0];
+				this.informationObj.cityName = address[1];
+				this.informationObj.countyName = address[2];
+				this.provincesAndMunicipalities = address
 			},
 			deleteBtn(){
 				this.informationObj = {
-					contactName:'',
-					contactNumbre:'',
-					provincesAndMunicipalities:['山东省','济南市','历下区'],
-					detailedAddress:'',
+					userName:'',
+					telNumber:'',
+					provinceName: '',
+					cityName: '',
+					countyName: '',
+					detailInfo:'',
 				}
+				this.provincesAndMunicipalities = ['山东省','济南市','历下区'];
+				this.regionText = '山东省济南市历下区'
 			},
-		},
-		onShow() {
-			const options = this.$mp.query;
-			if (options && options.informationObj && options.type == 'logistics') {
-				this.informationObj = JSON.parse(decodeURIComponent(options.informationObj));
-				this.prescNo = options.prescNo
-				this.title = '物流配送';
-			} else if(options && options.informationObj && options.type == 'edit') {
-				this.informationObj = JSON.parse(decodeURIComponent(options.informationObj));
-				this.title = '编辑地址';
-			} else {
-				this.title = '新增地址';
-			}
-			this.showBack = true;
 		}
 	}
 </script>

@@ -130,15 +130,12 @@ export default {
         if (res.statusCode === 200 && res.data.data) {
           const data = res.data.data;
           const categoryList = data.categoryList || [];
-
           this.categories = ["全部"];
           this.list = [];
-
           categoryList.forEach((val) => {
             if (val.subCategoryList && val.subCategoryList.length > 0) {
               val.subCategoryList.forEach((sub) => {
                 this.categories.push(sub.name);
-
                 if (sub.goodsVosList && sub.goodsVosList.length > 0) {
                   sub.goodsVosList.forEach((goods) => {
                     this.list.push({
