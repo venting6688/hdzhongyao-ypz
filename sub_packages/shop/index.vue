@@ -51,6 +51,7 @@
           class="list-item"
           v-for="(item, index) in displayedList"
           :key="index"
+					@click="goDetail(item.id)"
         >
           <image class="item-img" :src="item.image" mode="aspectFill" />
           <view class="item-info">
@@ -118,9 +119,9 @@ export default {
       });
     },
 
-    goDetail(item) {
+    goDetail(id) {
       uni.navigateTo({
-        url: `/sub_packages/shop/detail?id=${item.id}`,
+        url: `/sub_packages/shop/detail?id=${id}`,
       });
     },
 
