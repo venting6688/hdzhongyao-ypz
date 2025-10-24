@@ -83,15 +83,29 @@ const shop = {
     return res;
   },
   // 获取订单列表
-  async getOrderListApi({ userId, page, size }) {
+  // async getOrderListApi({ userId, page, size }) {
+  //   const res = await cjRequest(
+  //     {
+  //       url: "/api/order/list",
+  //       method: "get",
+  //       data: {
+  //         userId,
+  //         page,
+  //         size,
+  //       },
+  //     },
+  //     2
+  //   );
+  //   return res?.data || {};
+  // },
+  // 获取订单列表
+  async getOrderListApi({ userId }) {
     const res = await cjRequest(
       {
-        url: "/api/order/list",
+        url: "/api/order/orderList",
         method: "get",
         data: {
           userId,
-          page,
-          size,
         },
       },
       2
