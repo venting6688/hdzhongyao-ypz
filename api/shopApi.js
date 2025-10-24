@@ -2,70 +2,178 @@ import { cjRequest } from "@/utils/service.js";
 
 //查询
 const shop = {
-	async getDrugListApi(params) {
-		const url = `list?ownerUserId=${params.ownerUserId}`;
-		const res = await cjRequest(
-			{
-				url: url,
-				method: "get",
-			},2
-		);
-		return res?.data || {};
-	},
-	async getDrugDetailApi(params) {
-		const url = `/api/goods/detail?id=${params.drugId}&userId=23`;
-		const res = await cjRequest(
-				{
-						url: url,
-						method: "post",
-				},
-				2
-		);
-		return res?.data || {};
-	},
-	
-	//获取分类
-	async getTypes() {
-		const res = await cjRequest({
-			url: "api/catalog/index",
-			method: "post",
-		},2)
-		return res
-	},
-	//获取商品详情
-	async getDetail(id) {
-		const res = await cjRequest({
-			url: "api/goods/detail?id="+id,
-			method: "get",
-		},2)
-		return res
-	},
-	//收货地址
-	async getAddressList(userId) {
-		const res = await cjRequest({
-			url: "api/address/list?userId="+userId,
-			method: "get"
-		},2)
-		return res
-	},
-	//更新、添加收货地址
-	async saveAddress(data) {
-		const res = await cjRequest({
-			url: "api/address/save",
-			method: "post",
-			data,
-		},2)
-		return res
-	},
-	
-	//删除收货地址
-	async deleteAddress(id) {
-		const res = await cjRequest({
-			url: "api/address/delete?id="+id,
-			method: "delete",
-		},2)
-		return res
-	}
-	
-}
+  async getDrugListApi(params) {
+    const url = `list?ownerUserId=${params.ownerUserId}`;
+    const res = await cjRequest(
+      {
+        url: url,
+        method: "get",
+      },
+      2
+    );
+    return res?.data || {};
+  },
+  async getDrugDetailApi(params) {
+    const url = `/api/goods/detail?id=${params.drugId}&userId=23`;
+    const res = await cjRequest(
+      {
+        url: url,
+        method: "post",
+      },
+      2
+    );
+    return res?.data || {};
+  },
+
+  //获取分类
+  async getTypes() {
+    const res = await cjRequest(
+      {
+        url: "api/catalog/index",
+        method: "post",
+      },
+      2
+    );
+    return res;
+  },
+  //获取商品详情
+  async getDetail(id) {
+    const res = await cjRequest(
+      {
+        url: "api/goods/detail?id=" + id,
+        method: "get",
+      },
+      2
+    );
+    return res;
+  },
+  //收货地址
+  async getAddressList(userId) {
+    const res = await cjRequest(
+      {
+        url: "api/address/list?userId=" + userId,
+        method: "get",
+      },
+      2
+    );
+    return res;
+  },
+  //更新、添加收货地址
+  async saveAddress(data) {
+    const res = await cjRequest(
+      {
+        url: "api/address/save",
+        method: "post",
+        data,
+      },
+      2
+    );
+    return res;
+  },
+
+  //删除收货地址
+  async deleteAddress(id) {
+    const res = await cjRequest(
+      {
+        url: "api/address/delete?id=" + id,
+        method: "delete",
+      },
+      2
+    );
+    return res;
+  },
+  // 获取订单列表
+  async getOrderListApi({ userId, page, size }) {
+    const res = await cjRequest(
+      {
+        url: "/api/order/list",
+        method: "get",
+        data: {
+          userId,
+          page,
+          size,
+        },
+      },
+      2
+    );
+    return res?.data || {};
+  },
+  // 获取订单详情
+  async getOrderDetailApi({ orderId, userId }) {
+    const res = await cjRequest(
+      {
+        url: "/api/order/detail",
+        method: "get",
+        data: {
+          orderId,
+          userId,
+        },
+      },
+      2
+    );
+    return res?.data || {};
+  },
+  //   修改订单状态（支付成功后）
+  async updateSuccessApi({ orderId, userId }) {
+    const res = await cjRequest(
+      {
+        url: "/api/order/updateSuccess",
+        method: "post",
+        data: {
+          orderId,
+          userId,
+        },
+      },
+      2
+    );
+    return res?.data || {};
+  },
+  //   订单提交
+  async submitOrderApi({ userId, addressId, cartIds, remark }) {
+    const res = await cjRequest(
+      {
+        url: "/api/order/submit",
+        method: "post",
+        data: {
+          userId,
+          addressId,
+          cartIds,
+          remark,
+        },
+      },
+      2
+    );
+    return res?.data || {};
+  },
+  //   订单取消
+  async cancelOrderApi({ orderId, userId }) {
+    const res = await cjRequest(
+      {
+        url: "/api/order/cancelOrder",
+        method: "post",
+        data: {
+          orderId,
+          userId,
+        },
+      },
+      2
+    );
+    return res?.data || {};
+  },
+  //   确认收货
+  async confirmOrderApi({ orderId, userId }) {
+    const res = await cjRequest(
+      {
+        url: "/api/order/confirmOrder",
+        method: "post",
+        data: {
+          orderId,
+          userId,
+        },
+      },
+      2
+    );
+    return res?.data || {};
+  },
+};
 export default shop;
