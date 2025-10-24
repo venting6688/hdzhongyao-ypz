@@ -1,13 +1,13 @@
 <template>
   <uni-popup ref="popup" type="center">
-    <view class="popup-box" :class="fontMode">
-      <view class="popup-title">就诊须知</view>
+    <view class="popup-box" :class="[fontMode, noticeType]">
+      <view class="popup-title">{{noticeType == 'index' ? '就诊须知' : '购药须知'}}</view>
       <scroll-view 
 				scroll-y="true"
 			  class="popup-content"
 			  @scrolltolower="handleScrollToLower"
 			>
-        <text class="popup-text">
+        <text class="popup-text" v-if="noticeType == 'index'">
            一、挂号预约
 						预约渠道：医院微信公众号、“健康青岛”平台、门诊现场自助机。
 						核心要求：全程实行实名制挂号，需准确提供就诊人真实身份信息及有效证件（身份证、医保卡等）。
@@ -33,9 +33,30 @@
 							24小时咨询电话：88192806
 							我们将及时处理您的诉求并持续改进工作。
         </text>
+				<text class="popup-text" v-if="noticeType == 'order'">
+					一、购药须知
+						1.本平台是黄岛第二中医医院官方互联网医疗服务平台
+						2.所有药品均经专业药师审核，
+						3.患者需如实填写个人信息和健康状况评估，医生不提供诊疗咨询，慢性病复诊服务。若评估后不适合，请线下到院就诊咨询。
+						4.此药饮不可代替正常药物使用。
+						5.急重症患者请及时就医，不适合使用本服务
+				  二、用药安全须知
+						1.请按包装说明或者医嘱使用，不可擅自增减剂量
+						2.不同中药的储存要求及保存时间不同(常规放在阴凉干燥处保存)，拿到中药后请及时使用，发现有异常情况请勿使用，若出现数量不对、药品质量问题请拨打电话-0532-88191639
+						3.孕妇、儿童、哺乳期妇女、肝肾功能异常者及过敏体质者在医师指导下服用。
+						4.此药饮不可代替正常药物使用，如遇冲突请线下咨询医生
+				  三、代茶饮使用问题解答
+						1.下单信息填写错误，可扫码入群，联系群内工作人员或者拨打0532-88191639进行信息更改。
+						2.代茶饮一天一付，7付为一疗程，适量沸水冲泡或煮服。颜色变淡可停止服用。
+						3.不建议同时服用2种代茶饮，在医师指导下更换其他种类代茶饮。
+						4.开封的代茶饮请及时封口，通风干燥处存放。
+						5.代茶饮期间避免过量摄入寒凉腥辣食物。
+				  四、配送服务说明
+						1.可在中药窗口凭单自取，也可快递到家(需承担快递费当天下单后统一次日发货，发出的药品除质量问题概不退换。
+				</text>
       </scroll-view>
       <view class="popup-footer">
-        <button class="popup-btn" :disabled="!canConfirm" @click="confirm">我已知晓</button>
+        <button class="popup-btn" :disabled="!canConfirm" @click="confirm">{{noticeType == 'index' ? '我已知晓' : '我同意'}}</button>
       </view>
     </view>
   </uni-popup>
@@ -47,31 +68,52 @@ export default {
     fontMode: {
       type: String,
       default: 'normal',
+    },
+    noticeType: {
+      type: String,
+      default: 'index', // index -> 首页，order -> 订单页
     }
   },
-	data() {
-		return {
-			canConfirm: false,
-			scrollTop: 0,
-			scrollHeight: 0,
-			contentHeight: 0,
-		}
-	},
+  data() {
+    return {
+      canConfirm: false,
+    }
+  },
   methods: {
     open() {
-			this.canConfirm = false
-			this.$refs.popup.open()
-		},
-	  confirm() {
-			this.$refs.popup.close();
-			uni.setStorageSync('popupConfirmed', true);
-			this.$emit('confirmed');
-		},
-		handleScrollToLower() {
-			this.canConfirm = true;
-		},
+      this.canConfirm = false;
+
+      // 首页逻辑：只提示一次（除非重新进入小程序）
+      if (this.noticeType === 'index') {
+        const hasConfirmed = uni.getStorageSync('popupConfirmed');
+        if (!hasConfirmed) {
+          this.$refs.popup.open();
+        }
+      }
+
+      // 订单页逻辑：每次进入都弹出
+      else if (this.noticeType === 'order') {
+        this.$refs.popup.open();
+      }
+    },
+
+    confirm() {
+      this.$refs.popup.close();
+
+      // 首页需要记住“我已知晓”
+      if (this.noticeType === 'index') {
+        uni.setStorageSync('popupConfirmed', true);
+      }
+
+      this.$emit('confirmed');
+    },
+
+    handleScrollToLower() {
+      this.canConfirm = true;
+    },
   }
 }
+
 </script>
 
 <style scoped>
@@ -84,6 +126,10 @@ export default {
   flex-direction: column;
   overflow: hidden;
 	margin-top: 100rpx;
+}
+
+.order {
+  margin-top: -120rpx !important;
 }
 
 .popup-title {

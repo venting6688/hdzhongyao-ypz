@@ -3,6 +3,7 @@
 		<visitNotice
 		ref="notice"
 		:fontMode="fontMode"
+		:noticeType="noticeType"
 		@confirmed="handleConfirm"
 		/>
 
@@ -74,6 +75,7 @@
 			return {
 				showMain: false,
 				fontMode: 'normal',
+				noticeType: 'index',
 				current: 0,
 				defaultVal: {},
 				list: [

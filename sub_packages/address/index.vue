@@ -68,8 +68,8 @@
 		},
 		onLoad() {
 			let loginValue = uni.getStorageSync("loginData");
-			loginValue = JSON.parse(loginValue);
-			this.userId = loginValue.userId;
+			loginValue = loginValue ? JSON.parse(loginValue) : null;
+			this.userId = loginValue != null ? loginValue.userId : '';
 			this.getAddressList();
 		},
 		methods: {
