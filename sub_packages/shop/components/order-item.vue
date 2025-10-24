@@ -5,13 +5,15 @@
       <text class="order-status">{{ order.status }}</text>
     </view>
 
-    <view class="order-body" @click="onClickOrderDetail(order)">
-      <image :src="order.img" mode="aspectFill" class="order-img"></image>
-      <view class="order-info">
-        <text class="order-name">{{ order.name }}</text>
-        <view class="price-qty">
-          <text class="order-price">￥{{ order.price }}</text>
-          <text class="order-qty">×{{ order.quantity }}</text>
+    <view  v-for="goods in order.goods" :key="goods.id">
+      <view class="order-body" @click="onClickOrderDetail(order)">
+        <image :src="goods.img" mode="aspectFill" class="order-img"></image>
+        <view class="order-info">
+          <text class="order-name">{{ goods.name }}</text>
+          <view class="price-qty">
+            <text class="order-price">￥{{ goods.price }}</text>
+            <text class="order-qty">×{{ goods.quantity }}</text>
+          </view>
         </view>
       </view>
     </view>
@@ -61,6 +63,8 @@
 </template>
 
 <script>
+import shopApi from "@/api/shopApi.js";
+
 export default {
   props: {
     order: Object
@@ -69,11 +73,31 @@ export default {
     viewLogistics(order) {
       console.log('查看物流', order.id)
     },
-    confirmReceive(order) {
+    async confirmReceive(order) {
       console.log('确认收货', order.id)
+      const res = await shopApi.confirmReceiptApi({
+        orderId: order.id,
+      });
+      if (res.code === 200) {
+        uni.showToast({
+          title: "确认收货成功",
+          icon: "success",
+        });
+        this.getOrderList();
+      }
     },
-    cancelOrder(order) {
+    async cancelOrder(order) {
       console.log('取消订单', order.id)
+      const res = await shopApi.cancelOrderApi({
+        orderId: order.id,
+      });
+      if (res.code === 200) {
+        uni.showToast({
+          title: "取消成功",
+          icon: "success",
+        });
+        this.getOrderList();
+      }
     },
     payNow(order) {
       console.log('立即付款', order.id)
@@ -109,6 +133,7 @@ export default {
 	}
 	.order-body {
 		display: flex;
+    margin-top: 15rpx;
 	}
 	.order-img {
 		width: 120rpx;
