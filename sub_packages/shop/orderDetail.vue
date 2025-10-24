@@ -145,17 +145,21 @@ export default {
         },
       ],
       active: 2,
+      loginData: null,
     };
   },
   onLoad(options) {
     const orderId = options.id;
+    this.loginData = uni.getStorageSync("loginData");
     console.log("订单详情", orderId);
-    getOrderDetail(orderId);
+    this.getOrderDetail(orderId);
   },
   methods: {
     getOrderDetail(orderId) {
-      return;
-      shop.getOrderDetailApi(orderId).then((res) => {
+      // shop.getOrderDetailApi({ orderId, userId: this.loginData.userId, }).then((res) => {
+      //   this.orderData = res.data;
+      // });
+      shop.getOrderDetailApi({ orderId: 20, userId: 19, }).then((res) => {
         this.orderData = res.data;
       });
     },
