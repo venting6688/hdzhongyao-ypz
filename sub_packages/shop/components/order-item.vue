@@ -18,7 +18,7 @@
       </view>
     </view>
 
-    <view class="order-footer">
+    <view class="order-footer" v-if="isShowFooter">
       <text class="total">总金额 ￥{{ order.total }}</text>
 
       <view class="actions">
@@ -67,7 +67,8 @@ import shopApi from "@/api/shopApi.js";
 
 export default {
   props: {
-    order: Object
+    order: Object,
+    isShowFooter: true,
   },
   methods: {
     viewLogistics(order) {
