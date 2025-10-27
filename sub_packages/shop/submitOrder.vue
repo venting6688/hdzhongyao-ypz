@@ -1,11 +1,11 @@
 <template>
   <view class="submit-order-page">
-		<visitNotice
-		ref="notice"
-		:fontMode="fontMode"
-		:noticeType="noticeType"
-		@confirmed="handleConfirm"
-		/>
+    <visitNotice
+      ref="notice"
+      :fontMode="fontMode"
+      :noticeType="noticeType"
+      @confirmed="handleConfirm"
+    />
     <view class="address-card" @click="toSelectAddress">
       <uni-icons
         type="location-filled"
@@ -31,28 +31,29 @@
     </view>
 
     <view class="goods-card">
-      <view class="goods-item">
-        <image
-          :src="orderData.goods.image"
-          mode="aspectFill"
-          class="goods-image"
-        ></image>
-        <view class="goods-info">
-          <view class="goods-name">{{ orderData.goods.name }}</view>
-          <view class="goods-price"
-            >¥{{ orderData.goods.price | formatPrice }}</view
-          >
-        </view>
-        <view class="goods-quantity">
-          ×
-          {{ orderData.goods.quantity }}</view
-        >
-      </view>
+      <order-item :order="orderData" :isShowFooter="false"></order-item>
+      <!--      <view class="goods-item">-->
+      <!--        <image-->
+      <!--          :src="orderData.goods.image"-->
+      <!--          mode="aspectFill"-->
+      <!--          class="goods-image"-->
+      <!--        ></image>-->
+      <!--        <view class="goods-info">-->
+      <!--          <view class="goods-name">{{ orderData.goods.name }}</view>-->
+      <!--          <view class="goods-price"-->
+      <!--            >¥{{ orderData.goods.price | formatPrice }}</view-->
+      <!--          >-->
+      <!--        </view>-->
+      <!--        <view class="goods-quantity">-->
+      <!--          ×-->
+      <!--          {{ orderData.goods.quantity }}</view-->
+      <!--        >-->
+      <!--      </view>-->
 
       <view class="item-line total-price-line">
         <text class="value actual-price">
           <text class="label shifu-text">实付</text>¥{{
-            orderData.goods.actualPrice | formatPrice
+            orderData.actualPrice | formatPrice
           }}</text
         >
       </view>
@@ -79,57 +80,41 @@
       <view class="price-summary">
         <view class="total">
           合计
-          <text class="amount">¥{{ finalTotal | formatPrice }}</text>
+          <text class="amount">¥{{ orderData.goodsPrice | formatPrice }}</text>
         </view>
         <view class="delivery-fee">
           配送费 ¥{{ orderData.deliveryFee | formatPrice }}
         </view>
       </view>
-      <button 
-			class="pay-button" 
-			@click="submitOrder" 
-			:disabled="!canPay"
-			:class="{ 'disabled-btn': !canPay }"
-			>
-				在线审方
-			</button>
+      <button
+        class="pay-button"
+        @click="submitOrder"
+        :disabled="!canPay"
+        :class="{ 'disabled-btn': !canPay }"
+      >
+        在线审方
+      </button>
     </view>
   </view>
 </template>
 
 <script>
-	import visitNotice from '@/components/visitNotice.vue';
-	
-	const MOCK_ORDER_DATA = {
-		address: {
-			name: "徐女士",
-			phone: "139 8510 5621",
-			region: "山东省 济南市 天桥区",
-			street: "名泉广场写字楼 E3-560",
-		},
-		goods: {
-			name: "四君子茶",
-			image: "/static/goods-placeholder.jpg",
-			price: 4.93,
-			quantity: 7,
-			actualPrice: 30.0,
-		},
-		deliveryMethod: "快递运输",
-		deliveryFee: 0.0,
-		note: "",
-	};
+import visitNotice from "@/components/visitNotice.vue";
+import shopApi from "@/api/shopApi.js";
+import orderItem from "@/sub_packages/shop/components/order-item.vue";
 
 export default {
   components: {
-  	visitNotice,
+    visitNotice,
+    orderItem,
   },
   data() {
     return {
-			showMain: false,
+      showMain: false,
       canPay: false,
-			fontMode: 'normal',
-			noticeType: 'order',
-      orderData: MOCK_ORDER_DATA,
+      fontMode: "normal",
+      noticeType: "order",
+      orderData: {},
     };
   },
   // 过滤器用于金额格式化
@@ -145,30 +130,62 @@ export default {
     },
   },
   onLoad(options) {
-		this.showMain = false;
+    this.showMain = false;
     this.canPay = false;
-		this.$nextTick(() => {
-			this.$refs.notice.open();
-		});
-		
+    this.$nextTick(() => {
+      this.$refs.notice.open();
+    });
+
     const drugId = options.id;
+    console.log(drugId);
     if (drugId) {
-      this.orderData.goods = {
-        id: drugId,
-        name: "四君子茶",
-        image: "/static/image/medicine_img.png",
-        price: 4.93,
-        quantity: 7,
-        actualPrice: 30.0,
-      };
+      this.checkOrder(drugId);
+      this.getDetail();
     }
   },
   onShow() {},
   methods: {
-		handleConfirm() {
-			this.showMain = true;
+    /** 提交订单前检查 */
+    async checkOrder(drugId) {
+      const res = await shopApi.checkOrderApi({
+        goodsId: drugId,
+        productId: 81,
+        number: 10,
+        userId: 19,
+      });
+      console.log(res);
+      if (res) {
+      } else {
+      }
+    },
+    /** 获取订单详情 */
+    async getDetail() {
+      shopApi.getOrderDetailApi({ orderId: 20, userId: 19 }).then((res) => {
+        const { orderInfo, orderGoods } = res.data;
+        const newOrders = {
+          id: orderInfo.id,
+          date: orderInfo.addTime,
+          goodsPrice: orderInfo.goodsPrice,
+          actualPrice: orderInfo.actualPrice,
+          status: orderInfo.orderStatusText,
+          goods: orderGoods.map(
+            ({ id, goodsName, retailPrice, number, listPicUrl }) => ({
+              id,
+              name: goodsName,
+              price: retailPrice,
+              quantity: number,
+              img: listPicUrl,
+            })
+          ),
+        };
+        this.orderData = newOrders;
+        console.log(newOrders);
+      });
+    },
+    handleConfirm() {
+      this.showMain = true;
       this.canPay = true;
-		},
+    },
     toSelectAddress() {
       uni.navigateTo({
         url: "/sub_packages/address/index",
@@ -189,7 +206,7 @@ export default {
     },
 
     /** 提交订单并支付 */
-    submitOrder() {
+    async submitOrder() {
       if (!this.orderData.address.street) {
         uni.showToast({
           title: "请选择收货地址",
@@ -201,13 +218,23 @@ export default {
       uni.showLoading({ title: "提交中..." });
 
       const payload = {
-        goodsId: this.orderData.goods.id, // 假设有ID
-        quantity: this.orderData.goods.quantity,
-        addressId: this.orderData.address.id, // 假设有ID
-        note: this.orderData.note,
-        totalAmount: this.finalTotal,
-        // ... 其他必要字段
+        addressId: this.orderData.address.id,
+        userId: this.orderData.userId,
+        postscript: this.orderData.postscript,
       };
+
+      const res = await shopApi.submitOrderApi(payload);
+      if (res) {
+        uni.showToast({
+          title: "订单提交成功",
+          icon: "success",
+        });
+      } else {
+        uni.showToast({
+          title: "订单提交失败",
+          icon: "none",
+        });
+      }
 
       // 模拟提交成功，直接跳转
       setTimeout(() => {
@@ -220,6 +247,26 @@ export default {
     startPayment(orderId) {
       // 这里调用 uni.requestPayment 发起微信/支付宝支付
       uni.showToast({ title: "订单提交成功，跳转支付", icon: "success" });
+      uni.requestPayment({
+        provider: "wxpay", // 服务提提供商
+        timeStamp: res.data.miniPayRequest.timeStamp, // 时间戳
+        nonceStr: res.data.miniPayRequest.nonceStr, // 随机字符串
+        package: res.data.miniPayRequest.package,
+        signType: res.data.miniPayRequest.signType, // 签名算法
+        paySign: res.data.miniPayRequest.paySign, // 签名
+        success: (result) => {
+          uni.showToast({
+            title: "支付成功",
+            icon: "success",
+          });
+        },
+        fail: (result) => {
+          uni.showToast({
+            title: "支付失败",
+            icon: "none",
+          });
+        },
+      });
     },
   },
 };
@@ -461,10 +508,10 @@ export default {
       border: none;
     }
   }
-	
-	.disabled-btn {
-	  background-color: #ccc !important;
-	  color: #f5f5f5;
-	}
+
+  .disabled-btn {
+    background-color: #ccc !important;
+    color: #f5f5f5;
+  }
 }
 </style>
