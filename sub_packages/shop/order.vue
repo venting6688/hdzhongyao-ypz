@@ -120,10 +120,10 @@ export default {
       });
       if (res.data && "orders" in res.data && res.data.orders.length > 0) {
         const newOrders = res.data.orders.map(
-          ({ orderInfo: { id, addTime, orderPrice, orderStatusText }, orderGoods }) => ({
+          ({ orderInfo: { id, addTime, goodsPrice, orderStatusText }, orderGoods }) => ({
             id,
             date: addTime,
-            total: orderPrice,
+            total: goodsPrice,
             status: orderStatusText,
             goods: orderGoods.map(({ id, goodsName, retailPrice, number, listPicUrl }) => ({
               id,
