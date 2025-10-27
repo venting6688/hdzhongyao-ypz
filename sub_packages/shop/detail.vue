@@ -127,7 +127,7 @@ export default {
   methods: {
     async fetchDrugDetail(drugId) {
 
-      const res = await shop.getDrugDetailApi({ drugId });
+      const res = await shop.getDrugDetailApi({ drugId, userId: 23 });
       if (res && res.data) {
         const { info, specificationList } = res.data || {};
         let detailData = {};
