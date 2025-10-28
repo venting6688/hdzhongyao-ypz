@@ -13,8 +13,8 @@ const shop = {
     );
     return res?.data || {};
   },
-  async getDrugDetailApi(params) {
-    const url = `/api/goods/detail?id=${params.drugId}&userId=23`;
+  async getDrugDetailApi({ drugId, userId }) {
+    const url = `/api/goods/detail?id=${drugId}&userId=${userId}`;
     const res = await cjRequest(
       {
         url: url,
@@ -143,7 +143,7 @@ const shop = {
     return res?.data || {};
   },
   //   订单提交
-  async submitOrderApi({ userId, addressId, cartIds, remark }) {
+  async submitOrderApi({ userId, addressId, cartIds, postscript, type }) {
     const res = await cjRequest(
       {
         url: "/api/order/submit",
@@ -152,7 +152,8 @@ const shop = {
           userId,
           addressId,
           cartIds,
-          remark,
+          postscript,
+          type
         },
       },
       2
@@ -234,6 +235,23 @@ const shop = {
       2
     );
     return res;
+	}
+	// 提交订单前检查
+  async checkOrderApi({ goodsId, productId, number, userId }) {
+    const res = await cjRequest(
+      {
+        url: "api/buy/add",
+        method: "post",
+        data: {
+          goodsId,
+          productId,
+          number,
+          userId,
+        },
+      },
+      2
+    );
+    return res?.data || {};
   },
 };
 export default shop;
