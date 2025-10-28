@@ -249,10 +249,28 @@ const shop = {
     const res = await cjRequest(
       {
         url: "/api/pay/prepay",
-        method: "get",
+        method: "post",
         data: {
           orderId,
           openId,
+          userId,
+          tradeTpye: "JSAPI",
+        },
+      },
+      2
+    );
+    return res?.data || {};
+  },
+  // 提交订单前检查
+  async buyAddApi({ goodsId, productId, number, userId }) {
+    const res = await cjRequest(
+      {
+        url: "api/buy/add",
+        method: "post",
+        data: {
+          goodsId,
+          productId,
+          number,
           userId,
         },
       },
