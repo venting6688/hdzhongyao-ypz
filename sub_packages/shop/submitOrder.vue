@@ -98,6 +98,8 @@ export default {
       fontMode: "normal",
       noticeType: "order",
       orderData: {},
+      loginData: {},
+      productId: null,
     };
   },
   // 过滤器用于金额格式化
@@ -112,21 +114,46 @@ export default {
       return 5.0 + this.orderData.deliveryFee;
     },
   },
-  onLoad(options) {
+  async onLoad(options) {
     this.showMain = false;
     this.canPay = false;
     this.$nextTick(() => {
       this.$refs.notice.open();
     });
-
+    // 获取登录信息
+    this.loginData = uni.getStorageSync("loginData") || {};
     const drugId = options.id;
     console.log(drugId);
     if (drugId) {
+      await this.getProductById(drugId);
+      this.buyAdd(drugId);
       this.getDetail();
     }
   },
   onShow() {},
   methods: {
+    async getProductById(drugId) {
+      const res = await shopApi.getProductById([drugId]);
+      console.log(res);
+      if (res.length === 0) return;
+      if (res.data[0]) {
+        this.productId = res.data[0]?.id;
+      }
+    },
+
+    /** 提交订单前检查 */
+    async buyAdd(drugId) {
+      const res = await shopApi.buyAddApi({
+        goodsId: drugId,
+        productId: this.productId,
+        number: 10,
+        userId: 19,
+      });
+      console.log(res);
+      if (res) {
+      } else {
+      }
+    },
     /** 获取订单详情 */
     async getDetail() {
       shopApi.getOrderDetailApi({ orderId: 20, userId: 19 }).then((res) => {
@@ -208,7 +235,7 @@ export default {
 
       const payRes = await shopApi.getPayPrepayApi({
         orderId: res.data.orderInfo.id,
-        openId: "o-ypz-19",
+        openId: this.loginData.xcxOpenId,
         userId: 19,
       });
       console.log(payRes);
