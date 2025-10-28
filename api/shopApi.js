@@ -235,17 +235,16 @@ const shop = {
       2
     );
     return res;
-	}
-	// 提交订单前检查
-  async checkOrderApi({ goodsId, productId, number, userId }) {
+	},
+//   获取支付的请求参数/api/pay/prepay
+  async getPayPrepayApi({ orderId, openId, userId }) {
     const res = await cjRequest(
       {
-        url: "api/buy/add",
-        method: "post",
+        url: "/api/pay/prepay",
+        method: "get",
         data: {
-          goodsId,
-          productId,
-          number,
+          orderId,
+          openId,
           userId,
         },
       },
