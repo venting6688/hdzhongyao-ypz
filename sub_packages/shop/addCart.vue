@@ -6,7 +6,6 @@
         v-for="(item, index) in cartList"
         :key="item.id"
         class="cart-item"
-				@click="onDetail(item.goodsId)"
       >
         <uni-swipe-action ref="swipeActionRefs" :key="item.id">
           <uni-swipe-action-item
@@ -27,16 +26,16 @@
 
               <image class="item-img" :src="item.image" mode="aspectFill" />
 
-              <view class="item-info">
+              <view class="item-info" @click="onDetail(item.goodsId)">
                 <text class="title">{{ item.name }}</text>
                 <text class="spec">规格：{{ item.spec }}</text>
                 <text class="price">￥{{ item.price }}</text>
               </view>
 
               <view class="quantity-box">
-                <text class="btn" @click="changeQuantity(index, -1)">-</text>
+                <text class="btn" @click="changeQuantity(item, 'dele')">-</text>
                 <text class="num">{{ item.quantity }}</text>
-                <text class="btn" @click="changeQuantity(index, 1)">+</text>
+                <text class="btn" @click="changeQuantity(item, 'add')">+</text>
               </view>
             </view>
           </uni-swipe-action-item>
@@ -57,7 +56,7 @@
         </view>
 
         <view class="right">
-          <view class="delete-btn" @click="deleteSelected">删除</view>
+          <view class="delete-btn" @click="onSwipeDelete(null)">删除</view>
           <view class="checkout-btn" @click="checkout">去结算</view>
         </view>
       </view>
@@ -114,9 +113,38 @@ export default {
       const checked = e.detail.value.length > 0;
       this.cartList[index].checkedArr = checked ? ['1'] : [];
     },
-    changeQuantity(index, delta) {
-      const qty = Math.max(1, this.cartList[index].quantity + delta);
-      this.cartList[index].quantity = qty;
+    changeQuantity(item, type) {
+			let goodsId = item.goodsId;
+			let productId = item.productId;
+			let data = {
+				number: 1,
+				goodsId,
+				userId: this.userId,
+				productId
+			}
+			if (type == 'add') {
+				shopApi.addCart(data).then((res) => {
+					if (res.data.errno != 400) {
+						this.getCartList();
+					} else {
+						uni.showToast({
+						  title: res.data.errmsg,
+						  icon: "none",
+						});
+					}
+				})
+			} else {
+				shopApi.minus(data).then((res) => {
+					if (res.data.errmsg == '执行成功') {
+						this.getCartList();
+					} else {
+						uni.showToast({
+						  title: res.data.errmsg,
+						  icon: "none",
+						});
+					}
+				})
+			}
     },
     async onSwipeDelete(item) {
       const res = await new Promise((resolve) => {
@@ -128,11 +156,16 @@ export default {
       });
     
       if (res.confirm) {
-        // 等待异步方法执行完
-        await this.getPorductIds([item.goodsId]);
+				let productIds = [];
+				if (item == null) {
+					productIds = this.cartList.filter(i => i.checkedArr.length === 0).map(v => v.productId);
+				} else {
+					productIds.push(item.productId);
+				}
+				productIds = productIds.join(',')
 				let deleArr = {
 					userId: this.userId,
-					productIds: this.productIds,
+					productIds,
 				}
 				shopApi.deleteCart(deleArr).then((res) => {
 					if (res.data.errmsg == '执行成功') {
@@ -145,10 +178,6 @@ export default {
     toggleAll(e) {
       const checked = e.detail.value.length > 0;
       this.cartList.forEach(i => i.checkedArr = checked ? ['1'] : []);
-    },
-    deleteSelected() {
-      this.cartList = this.cartList.filter(i => i.checkedArr.length === 0);
-      uni.showToast({ title: '删除成功', icon: 'none' });
     },
     checkout() {
       const selected = this.cartList.filter(i => i.checkedArr.length > 0);
@@ -167,6 +196,7 @@ export default {
 							id: v.id, 
 							name: v.goodsName, 
 							goodsId: v.goodsId,
+							productId: v.productId,
 							spec: v.goodsSpecifitionNameValue, 
 							price: v.retailPrice, 
 							quantity: v.number, 
@@ -178,17 +208,6 @@ export default {
 				}
 			});
 		},
-		
-		async getPorductIds(ids) {
-			let res = await shopApi.getProductById(goodsIds);
-			if (res.statusCode == 200 && res.data.length) {
-				let productId = [];
-				res.data.map(v => {
-					productId.push(v.id)
-				})
-				this.productIds = productId.join(",")
-			}
-		}
   },
 };
 </script>

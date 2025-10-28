@@ -153,7 +153,7 @@ const shop = {
           addressId,
           cartIds,
           postscript,
-          type,
+          type
         },
       },
       2
@@ -190,81 +190,70 @@ const shop = {
     );
     return res?.data || {};
   },
-  //获取规格参数
-  async getProductById(goodsIds) {
-    goodsIds = goodsIds.join(",");
-    const res = await cjRequest(
-      {
-        url: "api/product/getProductsByIds?goodsId=" + goodsIds,
-        method: "get",
-      },
-      2
-    );
-    return res;
-  },
-  //加入购物车
+	//获取规格参数
+	async getProductById(goodsIds) {
+		goodsIds = goodsIds.join(',');
+	  const res = await cjRequest(
+	    {
+	      url: "api/product/getProductsByIds?goodsId="+goodsIds,
+	      method: "get",
+	    }, 2
+	  );
+	  return res;
+	},
   async addCart(data) {
     const res = await cjRequest(
       {
         url: "api/cart/add",
         method: "post",
-        data,
+				data
       },
       2
     );
     return res;
   },
-  //购物车列表
+	async minus(data) {
+	  const res = await cjRequest(
+	    {
+	      url: "api/cart/minus",
+	      method: "post",
+				data
+	    },
+	    2
+	  );
+	  return res;
+	},
   async cartList(userId) {
     const res = await cjRequest(
       {
-        url: "api/cart/index?userId=" + userId,
+        url: "api/cart/index?userId="+userId,
         method: "get",
       },
       2
     );
     return res;
   },
-  //删除购物车
   async deleteCart(data) {
     const res = await cjRequest(
       {
         url: "api/cart/delete",
         method: "post",
-        data,
+				data
       },
       2
     );
     return res;
-  },
-  // 提交订单前检查
-  async buyAddApi({ goodsId, productId, number, userId }) {
-    const res = await cjRequest(
-      {
-        url: "api/buy/add",
-        method: "post",
-        data: {
-          goodsId,
-          productId,
-          number,
-          userId,
-        },
-      },
-      2
-    );
-    return res?.data || {};
-  },
-  //   获取支付的请求参数/api/pay/prepay
+	},
+//   获取支付的请求参数/api/pay/prepay
   async getPayPrepayApi({ orderId, openId, userId }) {
     const res = await cjRequest(
       {
         url: "/api/pay/prepay",
-        method: "post",
+        method: "get",
         data: {
           orderId,
           openId,
           userId,
-          tradeTpye: "APP",
         },
       },
       2
