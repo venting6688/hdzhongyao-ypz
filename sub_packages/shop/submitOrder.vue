@@ -31,45 +31,7 @@
     </view>
 
     <view class="goods-card">
-      <view class="goods-item">
-        <image
-          :src="orderData.goods.image"
-          mode="aspectFill"
-          class="goods-image"
-        ></image>
-        <view class="goods-info">
-          <view class="goods-name">{{ orderData.goods.name }}</view>
-          <view class="goods-price">¥{{ orderData.goods.price | formatPrice }}</view>
-        </view>
-        <view class="goods-quantity">
-          ×
-          {{ orderData.goods.quantity }}
-				</view>
-      </view>
-
-      <view class="item-line total-price-line">
-        <text class="value actual-price">
-          <text class="label shifu-text">实付</text>
-					¥{{orderData.goods.actualPrice | formatPrice}}
-				</text>
       <order-item :order="orderData" :isShowFooter="false"></order-item>
-      <!--      <view class="goods-item">-->
-      <!--        <image-->
-      <!--          :src="orderData.goods.image"-->
-      <!--          mode="aspectFill"-->
-      <!--          class="goods-image"-->
-      <!--        ></image>-->
-      <!--        <view class="goods-info">-->
-      <!--          <view class="goods-name">{{ orderData.goods.name }}</view>-->
-      <!--          <view class="goods-price"-->
-      <!--            >¥{{ orderData.goods.price | formatPrice }}</view-->
-      <!--          >-->
-      <!--        </view>-->
-      <!--        <view class="goods-quantity">-->
-      <!--          ×-->
-      <!--          {{ orderData.goods.quantity }}</view-->
-      <!--        >-->
-      <!--      </view>-->
 
       <view class="item-line total-price-line">
         <text class="value actual-price">
@@ -160,25 +122,11 @@ export default {
     const drugId = options.id;
     console.log(drugId);
     if (drugId) {
-      this.checkOrder(drugId);
       this.getDetail();
     }
   },
   onShow() {},
   methods: {
-    /** 提交订单前检查 */
-    async checkOrder(drugId) {
-      const res = await shopApi.checkOrderApi({
-        goodsId: drugId,
-        productId: 81,
-        number: 10,
-        userId: 19,
-      });
-      console.log(res);
-      if (res) {
-      } else {
-      }
-    },
     /** 获取订单详情 */
     async getDetail() {
       shopApi.getOrderDetailApi({ orderId: 20, userId: 19 }).then((res) => {
@@ -228,19 +176,20 @@ export default {
 
     /** 提交订单并支付 */
     async submitOrder() {
-      if (!this.orderData.address.street) {
-        uni.showToast({
-          title: "请选择收货地址",
-          icon: "none",
-        });
-        return;
-      }
+      // if (!this.orderData.address) {
+      //   uni.showToast({
+      //     title: "请选择收货地址",
+      //     icon: "none",
+      //   });
+      //   return;
+      // }
 
       uni.showLoading({ title: "提交中..." });
 
       const payload = {
-        addressId: this.orderData.address.id,
-        userId: this.orderData.userId,
+        // addressId: this.orderData.address.id,
+        addressId: 1,
+        userId: 19,
         postscript: this.orderData.postscript,
       };
 
@@ -256,6 +205,13 @@ export default {
           icon: "none",
         });
       }
+
+      const payRes = await shopApi.getPayPrepayApi({
+        orderId: res.data.orderInfo.id,
+        openId: "o-ypz-19",
+        userId: 19,
+      });
+      console.log(payRes);
 
       // 模拟提交成功，直接跳转
       setTimeout(() => {
