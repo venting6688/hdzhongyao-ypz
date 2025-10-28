@@ -189,5 +189,51 @@ const shop = {
     );
     return res?.data || {};
   },
+	//获取规格参数
+	async getProductById(goodsIds) {
+		goodsIds = goodsIds.join(',');
+	  const res = await cjRequest(
+	    {
+	      url: "api/product/getProductsByIds?goodsId="+goodsIds,
+	      method: "get",
+	    }, 2
+	  );
+	  return res;
+	},
+	//加入购物车
+  async addCart(data) {
+    const res = await cjRequest(
+      {
+        url: "api/cart/add",
+        method: "post",
+				data
+      },
+      2
+    );
+    return res;
+  },
+	//购物车列表
+  async cartList(userId) {
+    const res = await cjRequest(
+      {
+        url: "api/cart/index?userId="+userId,
+        method: "get",
+      },
+      2
+    );
+    return res;
+  },
+	//删除购物车
+  async deleteCart(data) {
+    const res = await cjRequest(
+      {
+        url: "api/cart/delete",
+        method: "post",
+				data
+      },
+      2
+    );
+    return res;
+  },
 };
 export default shop;

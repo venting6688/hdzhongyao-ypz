@@ -6,11 +6,12 @@
         v-for="(item, index) in cartList"
         :key="item.id"
         class="cart-item"
+				@click="onDetail(item.goodsId)"
       >
         <uni-swipe-action ref="swipeActionRefs" :key="item.id">
           <uni-swipe-action-item
             :right-options="swipeOptions"
-            @click="onSwipeDelete(index)"
+            @click="onSwipeDelete(item)"
             class="swipe-item"
           >
             <view class="cart-item-main">
@@ -67,16 +68,14 @@
 </template>
 
 <script>
+import shopApi from "@/api/shopApi.js";
+
 export default {
   data() {
     return {
-      cartList: [
-        { id: 1, name: '四君子茶', spec: '250ml×2包', price: 5.0, quantity: 1, checkedArr: [], image: '/static/image/test.png' },
-        { id: 2, name: '养生茶', spec: '500ml×1瓶', price: 8.0, quantity: 2, checkedArr: [], image: '/static/image/test.png' },
-        { id: 3, name: '养胃茶', spec: '500ml×1瓶', price: 10.0, quantity: 3, checkedArr: [], image: '/static/image/test.png' },
-        { id: 4, name: '祛湿茶', spec: '500ml×1瓶', price: 6.0, quantity: 1, checkedArr: [], image: '/static/image/test.png' },
-        { id: 5, name: '明目片', spec: '500ml×1瓶', price: 3.0, quantity: 1, checkedArr: [], image: '/static/image/test.png' },
-      ],
+			userId: '',
+      cartList: [],
+			productIds: [],
       allCheckedArr: [],
       swipeOptions: [
         { text: '删除', style: { backgroundColor: '#f56c6c', color: '#fff' } }
@@ -99,7 +98,18 @@ export default {
       },
     },
   },
+	onLoad() {
+		let loginValue = uni.getStorageSync("loginData");
+		this.userId = loginValue != null ? loginValue.userId : '';
+		
+		this.getCartList();
+	},
   methods: {
+		onDetail(goodsId) {
+			uni.navigateTo({
+			  url: `/sub_packages/shop/detail?id=${goodsId}`,
+			});
+		},
     onItemCheckChange(index, e) {
       const checked = e.detail.value.length > 0;
       this.cartList[index].checkedArr = checked ? ['1'] : [];
@@ -108,17 +118,29 @@ export default {
       const qty = Math.max(1, this.cartList[index].quantity + delta);
       this.cartList[index].quantity = qty;
     },
-    onSwipeDelete(index) {
-      uni.showModal({
-        title: '提示',
-        content: '确定要删除该商品吗？',
-        success: (res) => {
-          if (res.confirm) {
-            // 直接删除，不手动调用 close()
-            this.cartList.splice(index, 1);
-          }
-        },
+    async onSwipeDelete(item) {
+      const res = await new Promise((resolve) => {
+        uni.showModal({
+          title: '提示',
+          content: '确定要删除该商品吗？',
+          success: resolve,
+        });
       });
+    
+      if (res.confirm) {
+        // 等待异步方法执行完
+        await this.getPorductIds([item.goodsId]);
+				let deleArr = {
+					userId: this.userId,
+					productIds: this.productIds,
+				}
+				shopApi.deleteCart(deleArr).then((res) => {
+					if (res.data.errmsg == '执行成功') {
+						uni.showToast({ title: '删除成功', icon: 'none' });
+						this.getCartList();
+					}
+				});
+      }
     },
     toggleAll(e) {
       const checked = e.detail.value.length > 0;
@@ -135,6 +157,38 @@ export default {
       }
       uni.navigateTo({ url: '/pages/orderConfirm/orderConfirm' });
     },
+		getCartList() {
+			shopApi.cartList(this.userId).then((res) => {
+				this.cartList = [];
+				if (res.data.errmsg == '执行成功') {
+					let list = res.data.data.cartList;
+					list.map(v => {
+						this.cartList.push({
+							id: v.id, 
+							name: v.goodsName, 
+							goodsId: v.goodsId,
+							spec: v.goodsSpecifitionNameValue, 
+							price: v.retailPrice, 
+							quantity: v.number, 
+							checkedArr: [], 
+							image: v.listPicUrl
+						})
+					})
+					
+				}
+			});
+		},
+		
+		async getPorductIds(ids) {
+			let res = await shopApi.getProductById(goodsIds);
+			if (res.statusCode == 200 && res.data.length) {
+				let productId = [];
+				res.data.map(v => {
+					productId.push(v.id)
+				})
+				this.productIds = productId.join(",")
+			}
+		}
   },
 };
 </script>

@@ -214,7 +214,6 @@
 						patientName: this.siginData.patientName,
 						verslon: 1,
 					}
-					console.log(JSON.stringify(data),'s=s==s=s=s=s=s');
 					if (type == 'jiancha') {
 						elseApi.queryPacsInfo(data).then(res => {
 							let result = res.data;

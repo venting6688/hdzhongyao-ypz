@@ -39,22 +39,19 @@
         ></image>
         <view class="goods-info">
           <view class="goods-name">{{ orderData.goods.name }}</view>
-          <view class="goods-price"
-            >¥{{ orderData.goods.price | formatPrice }}</view
-          >
+          <view class="goods-price">¥{{ orderData.goods.price | formatPrice }}</view>
         </view>
         <view class="goods-quantity">
           ×
-          {{ orderData.goods.quantity }}</view
-        >
+          {{ orderData.goods.quantity }}
+				</view>
       </view>
 
       <view class="item-line total-price-line">
         <text class="value actual-price">
-          <text class="label shifu-text">实付</text>¥{{
-            orderData.goods.actualPrice | formatPrice
-          }}</text
-        >
+          <text class="label shifu-text">实付</text>
+					¥{{orderData.goods.actualPrice | formatPrice}}
+				</text>
       </view>
       <!--    </view>-->
 
