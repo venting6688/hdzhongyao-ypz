@@ -201,7 +201,6 @@ const shop = {
 	  );
 	  return res;
 	},
-	//加入购物车
   async addCart(data) {
     const res = await cjRequest(
       {
@@ -213,7 +212,17 @@ const shop = {
     );
     return res;
   },
-	//购物车列表
+	async minus(data) {
+	  const res = await cjRequest(
+	    {
+	      url: "api/cart/minus",
+	      method: "post",
+				data
+	    },
+	    2
+	  );
+	  return res;
+	},
   async cartList(userId) {
     const res = await cjRequest(
       {
@@ -224,7 +233,6 @@ const shop = {
     );
     return res;
   },
-	//删除购物车
   async deleteCart(data) {
     const res = await cjRequest(
       {
