@@ -140,15 +140,11 @@ const shop = {
     return res?.data || {};
   },
   //   修改订单状态（支付成功后）
-  async updateSuccessApi({ orderId, userId }) {
+  async updateSuccessApi({ orderId, userId, orderSn }) {
     const res = await cjRequest(
       {
-        url: `/api/order/updateSuccess?orderId=${orderId}&userId=${userId}`,
+        url: `/api/order/updateSuccess?orderId=${orderId}&userId=${userId}&orderSn=${orderSn}`,
         method: "post",
-        // data: {
-        //   orderId,
-        //   userId,
-        // },
       },
       2
     );
@@ -165,7 +161,7 @@ const shop = {
           addressId,
           cartIds,
           postscript,
-          type
+          type,
         },
       },
       2
@@ -202,43 +198,44 @@ const shop = {
     );
     return res?.data || {};
   },
-	//获取规格参数
-	async getProductById(goodsIds) {
-		goodsIds = goodsIds.join(',');
-	  const res = await cjRequest(
-	    {
-	      url: "api/product/getProductsByIds?goodsId="+goodsIds,
-	      method: "get",
-	    }, 2
-	  );
-	  return res;
-	},
-  async addCart(data) {
+  //获取规格参数
+  async getProductById(goodsIds) {
+    goodsIds = goodsIds.join(",");
     const res = await cjRequest(
       {
-        url: "api/cart/add",
-        method: "post",
-				data
+        url: "api/product/getProductsByIds?goodsId=" + goodsIds,
+        method: "get",
       },
       2
     );
     return res;
   },
-	async minus(data) {
-	  const res = await cjRequest(
-	    {
-	      url: "api/cart/minus",
-	      method: "post",
-				data
-	    },
-	    2
-	  );
-	  return res;
-	},
+  async addCart(data) {
+    const res = await cjRequest(
+      {
+        url: "api/cart/add",
+        method: "post",
+        data,
+      },
+      2
+    );
+    return res;
+  },
+  async minus(data) {
+    const res = await cjRequest(
+      {
+        url: "api/cart/minus",
+        method: "post",
+        data,
+      },
+      2
+    );
+    return res;
+  },
   async cartList(userId) {
     const res = await cjRequest(
       {
-        url: "api/cart/index?userId="+userId,
+        url: "api/cart/index?userId=" + userId,
         method: "get",
       },
       2
@@ -250,12 +247,12 @@ const shop = {
       {
         url: "api/cart/delete",
         method: "post",
-				data
+        data,
       },
       2
     );
     return res;
-	},
+  },
   // 提交订单前检查
   async buyAddApi({ goodsId, productId, number, userId }) {
     const res = await cjRequest(
