@@ -79,14 +79,18 @@
           />
           <view>客服</view>
         </view>
-				<view class="action-item cart-tab" @click="onClickCart">
-					<view class="icon-box">
-						<image class="cart-icon" src="@/static/image/shopping.png" mode="aspectFit" />
-						<view v-if="cartCount > 0" class="badge">{{ cartCount }}</view>
-					</view>
-					<text class="cart-text">购物车</text>
-					<view class="underline"></view>
-				</view>
+        <view class="action-item cart-tab" @click="onClickCart">
+          <view class="icon-box">
+            <image
+              class="cart-icon"
+              src="@/static/image/shopping.png"
+              mode="aspectFit"
+            />
+            <view v-if="cartCount > 0" class="badge">{{ cartCount }}</view>
+          </view>
+          <text class="cart-text">购物车</text>
+          <view class="underline"></view>
+        </view>
       </view>
 
       <view class="right">
@@ -107,10 +111,10 @@ export default {
   components: { customerNav },
   data() {
     return {
-			userId: '',
-			isLogin: false,
-			productIds: '',
-			cartCount: 0,
+      userId: "",
+      isLogin: false,
+      productIds: "",
+      cartCount: 0,
       background: ["color1", "color2", "color3"],
       interval: 2000,
       duration: 500,
@@ -125,39 +129,38 @@ export default {
     };
   },
   onLoad(options) {
-		let loginValue = uni.getStorageSync("loginData");
-		this.userId = loginValue != null ? loginValue.userId : '';
-		this.isLogin = this.userId ? true : false;
+    let loginValue = uni.getStorageSync("loginData");
+    this.userId = loginValue != null ? loginValue.userId : "";
+    this.isLogin = this.userId ? true : false;
     const drugId = options.id;
     this.fetchDrugDetail(drugId);
-		this.getPorductId([drugId]);
-		this.getCartList();
+    this.getPorductId([drugId]);
+    this.getCartList();
   },
-	onShow() {
-		let loginValue = uni.getStorageSync("loginData");
-		this.userId = loginValue != null ? loginValue.userId : '';
-		this.isLogin = this.userId ? true : false;
-	},
+  onShow() {
+    let loginValue = uni.getStorageSync("loginData");
+    this.userId = loginValue != null ? loginValue.userId : "";
+    this.isLogin = this.userId ? true : false;
+  },
   methods: {
-		async getPorductId(goodsid) {
-			let res = await shop.getProductById(goodsid);
-			if (res.statusCode == 200 && res.data.length) {
-				let productId = [];
-				res.data.map(v => {
-					productId.push(v.id)
-				})
-				this.productIds = productId.join(",")
-			}
-		},
-		getCartList() {
-			shop.cartList(this.userId).then((res) => {
-				if (res.data.errmsg == '执行成功') {
-					this.cartCount = res.data.data.cartTotal.goodsCount
-				}
-			})
-		},
+    async getPorductId(goodsid) {
+      let res = await shop.getProductById(goodsid);
+      if (res.statusCode == 200 && res.data.length) {
+        let productId = [];
+        res.data.map((v) => {
+          productId.push(v.id);
+        });
+        this.productIds = productId.join(",");
+      }
+    },
+    getCartList() {
+      shop.cartList(this.userId).then((res) => {
+        if (res.data.errmsg == "执行成功") {
+          this.cartCount = res.data.data.cartTotal.goodsCount;
+        }
+      });
+    },
     async fetchDrugDetail(drugId) {
-
       const res = await shop.getDrugDetailApi({ drugId, userId: 23 });
       if (res && res.data) {
         const { info, specificationList } = res.data || {};
@@ -202,34 +205,37 @@ export default {
     },
     onClickAddCart() {
       this.loginCheck();
-			if (this.isLogin) {
-				let data = {
-					number: 1,
-					goodsId: this.drug.id,
-					userId: this.userId,
-					productId: this.productIds
-				}
-				shop.addCart(data).then((res) => {
-					if (res.data.errno != 400) {
-						uni.showToast({
-						  title: "已加入购物车",
-						  icon: "none",
-						});
-						this.getCartList();
-					} else {
-						uni.showToast({
-						  title: res.data.errmsg,
-						  icon: "none",
-						});
-					}
-				})
-			}
+      if (this.isLogin) {
+        let data = {
+          number: 1,
+          goodsId: this.drug.id,
+          userId: this.userId,
+          productId: this.productIds,
+        };
+        shop.addCart(data).then((res) => {
+          if (res.data.errno != 400) {
+            uni.showToast({
+              title: "已加入购物车",
+              icon: "none",
+            });
+            this.getCartList();
+          } else {
+            uni.showToast({
+              title: res.data.errmsg,
+              icon: "none",
+            });
+          }
+        });
+      }
     },
     onClickBuyDrug() {
-      // 登陆判断
       this.loginCheck();
+      const goodsData = [{
+        ...this.drug,
+        quantity: 1,
+      }];
       uni.navigateTo({
-        url: "/sub_packages/shop/submitOrder?id=" + this.drug.id,
+        url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(JSON.stringify(goodsData))}`,
       });
     },
     //   登陆判断
@@ -241,8 +247,8 @@ export default {
           url: "/sub_packages/login/index?title=青岛西海岸新区第二中医医院&isBackLastPage=true",
         });
       } else {
-				this.isLogin = true;
-			}
+        this.isLogin = true;
+      }
     },
   },
 };
@@ -332,7 +338,6 @@ export default {
       margin: 0 15rpx 0 0;
       width: 150rpx;
     }
-
   }
 }
 
@@ -417,40 +422,40 @@ export default {
     justify-content: space-around;
     padding: 0 20rpx;
     flex: 1;
-		
-		.cart-tab {
-		  display: flex;
-		  flex-direction: column;
-		  align-items: center;
-		  position: relative;
-			.icon-box {
-			  position: relative;
-			  width: 50rpx;
-			  height: 50rpx;
-			}
-			.cart-icon {
-			  width: 50rpx;
-			  height: 50rpx;
-			}
-			.badge {
-			  position: absolute;
-			  top: 0rpx;
-			  right: -10rpx;
-			  background-color: #ffb400;
-			  color: #fff;
-			  font-size: 20rpx;
-			  border-radius: 50%;
-			  min-width: 28rpx;
-			  height: 28rpx;
-			  line-height: 28rpx;
-			  text-align: center;
-			}
-			.cart-text {
-			  margin-top: 6rpx;
-			  font-size: 24rpx;
-			  color: #333;
-			}
-		}
+
+    .cart-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      .icon-box {
+        position: relative;
+        width: 50rpx;
+        height: 50rpx;
+      }
+      .cart-icon {
+        width: 50rpx;
+        height: 50rpx;
+      }
+      .badge {
+        position: absolute;
+        top: 0rpx;
+        right: -10rpx;
+        background-color: #ffb400;
+        color: #fff;
+        font-size: 20rpx;
+        border-radius: 50%;
+        min-width: 28rpx;
+        height: 28rpx;
+        line-height: 28rpx;
+        text-align: center;
+      }
+      .cart-text {
+        margin-top: 6rpx;
+        font-size: 24rpx;
+        color: #333;
+      }
+    }
     .action-item {
       text-align: center;
       font-size: 26.92rpx;

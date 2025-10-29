@@ -25,6 +25,12 @@
 <script>
 import orderItem from "./components/order-item.vue";
 import shopApi from "@/api/shopApi.js";
+const enumOrderStatus = {
+  待付款: "未付款",
+  待发货: "待发货",
+  待收货: "待收货",
+  已完成: "已完成",
+};
 
 export default {
   components: { orderItem },
@@ -42,7 +48,7 @@ export default {
     filteredOrders() {
       const tab = this.tabs[this.current];
       if (tab === "全部") return this.orders;
-      return this.orders.filter((order) => order.status === tab);
+      return this.orders.filter((order) => order.status === enumOrderStatus[tab]);
     },
   },
   onLoad() {
