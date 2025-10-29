@@ -72,12 +72,14 @@
     <view class="action-bar">
       <view class="left">
         <view class="action-item" @click="onClickCustomerService">
-          <image
-            src="@/static/image/service.png"
-            mode="aspectFit"
-            class="icon-btn"
-          />
-          <view>客服</view>
+          <view class="icon-box">
+            <image
+              src="@/static/image/service.png"
+              mode="aspectFit"
+              class="icon-btn"
+            />
+          </view>
+          <view class="cart-text">客服</view>
         </view>
         <view class="action-item cart-tab" @click="onClickCart">
           <view class="icon-box">
@@ -422,17 +424,16 @@ export default {
     justify-content: space-around;
     padding: 0 20rpx;
     flex: 1;
-
+    .icon-box {
+      position: relative;
+      width: 50rpx;
+      height: 50rpx;
+    }
     .cart-tab {
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
-      .icon-box {
-        position: relative;
-        width: 50rpx;
-        height: 50rpx;
-      }
       .cart-icon {
         width: 50rpx;
         height: 50rpx;
@@ -458,7 +459,7 @@ export default {
     }
     .action-item {
       text-align: center;
-      font-size: 26.92rpx;
+      font-size: 24rpx;
       color: #333;
       .icon-btn {
         width: 50rpx;

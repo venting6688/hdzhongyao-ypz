@@ -29,7 +29,7 @@
         >查看物流</view>
 
 				<view
-				  v-if="order.status === '待发货'"
+				  v-if="order.status === '等待发货'"
 				  class="btn"
 				  @click="viewLogistics(order)"
 				>申请退款</view>
@@ -37,11 +37,11 @@
         <view
           v-if="order.status === '待收货'"
           class="btn primary"
-          @click="confirmReceive(order)"
+          @click="confirmOrder(order)"
         >确认收货</view>
 
         <view
-          v-if="order.status === '待付款'"
+          v-if="order.status === '未付款'"
           class="btn"
           @click="cancelOrder(order)"
         >取消订单</view>
@@ -73,14 +73,22 @@ export default {
       default: true,
     },
   },
+  data() {
+    return {
+      loginData: null,
+    }
+  },
+  mounted() {
+    this.loginData = uni.getStorageSync("loginData");
+  },
   methods: {
     viewLogistics(order) {
       console.log('查看物流', order.id)
     },
-    async confirmReceive(order) {
-      console.log('确认收货', order.id)
-      const res = await shopApi.confirmReceiptApi({
-        orderId: order.id,
+    async confirmOrder(order) {
+      const res = await shopApi.confirmOrderApi({
+        orderId: order.orderSn,
+        userId: this.loginData.userId,
       });
       if (res.code === 200) {
         uni.showToast({
@@ -91,9 +99,9 @@ export default {
       }
     },
     async cancelOrder(order) {
-      console.log('取消订单', order.id)
       const res = await shopApi.cancelOrderApi({
         orderId: order.id,
+        userId: this.loginData.userId,
       });
       if (res.code === 200) {
         uni.showToast({
