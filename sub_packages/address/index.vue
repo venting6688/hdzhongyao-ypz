@@ -1,6 +1,6 @@
 <template>
 	<view class="user">
-		<view class="content">
+		<view class="content" v-if="userId && list.length">
 			<address-item
 				v-for="(item, index) in list"
 				:key="index"
@@ -50,20 +50,28 @@ export default {
 	},
 	methods: {
 		confirm(item, type) {
-			uni.navigateTo({
-				url: `/sub_packages/address/detail?informationObj=${item ? encodeURIComponent(JSON.stringify(item)) : ''}&type=${type}`
-			})
+			if (!this.userId) {
+				uni.navigateTo({
+				    url: "/sub_packages/login/index?title=青岛西海岸新区第二中医医院",
+				});
+			} else {
+				uni.navigateTo({
+					url: `/sub_packages/address/detail?informationObj=${item ? encodeURIComponent(JSON.stringify(item)) : ''}&type=${type}`
+				})
+			}
 		},
 		getAddressList() {
-			shopApi.getAddressList(this.userId).then(res => {
-				if (res.statusCode == 200) {
-					this.list = res.data.data;
-					this.list.forEach(it => {
-						this.$set(this.checkboxSelectedMap, it.id, it.isDefault == 1 ? [it.id] : []);
-						if (it.isDefault == 1) this.defaultAddressId = it.id;
-					});
-				}
-			})
+			if (this.userId != undefined) {
+				shopApi.getAddressList(this.userId).then(res => {
+					if (res.statusCode == 200) {
+						this.list = res.data.data;
+						this.list.forEach(it => {
+							this.$set(this.checkboxSelectedMap, it.id, it.isDefault == 1 ? [it.id] : []);
+							if (it.isDefault == 1) this.defaultAddressId = it.id;
+						});
+					}
+				})
+			}
 		},
 		deleteAddress(id) {
 			uni.showModal({
