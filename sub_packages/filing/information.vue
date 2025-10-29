@@ -264,7 +264,7 @@
 		async refreshUserInfo() {
 			try {
 				const res = await getDefaultPatientApi({ ownerUserId: this.loginValue?.userId }).then(res => {
-					let defaultPatient = res.data?.memberDetail;
+					let defaultPatient = res.data;
 					const loginData = uni.getStorageSync("loginData");
 					if (res.code === 200) {
 

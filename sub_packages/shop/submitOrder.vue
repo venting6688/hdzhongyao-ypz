@@ -149,7 +149,7 @@ export default {
     this.loginData = uni.getStorageSync("loginData") || {};
 		this.userId = this.loginData ? this.loginData.userId : '';
 		this.getDefaultAddress();
-		
+
 		if (options.goodsData) {
 			const goods = JSON.parse(decodeURIComponent(options.goodsData));
 			const newGoods = goods.map((item, index) => ({
@@ -168,11 +168,10 @@ export default {
 		this.orderData.actualPrice =
 			this.orderData.totalPrice + (this.orderData.deliveryFee || 0);
 
-		if (this.orderData.goods.id) {
-			await this.getProductById(this.orderData.goods.id);
-			this.buyAdd(this.orderData.goods.id);
-		}
-		
+    if (this.orderData.goods.length > 0) {
+      await this.getProductById(this.orderData.goods[0].id);
+      this.buyAdd(this.orderData.goods[0].id);
+    }
   },
   methods: {
 		async getAddressList() {
@@ -295,11 +294,11 @@ export default {
       };
       const resRegister = await registrationApi.registerOrder(datas);
       uni.hideLoading();
-      this.startPayment(resRegister, orderInfo?.orderSn);
+      this.startPayment(resRegister, orderInfo);
     },
 
     /** 启动支付流程 */
-    startPayment({ data }, orderSn) {
+    startPayment({ data }, { id, orderSn }) {
       if (!data?.miniPayRequest || !orderSn) throw new Error("缺少支付参数");
       // 这里调用 uni.requestPayment 发起微信/支付宝支付
       uni.showToast({ title: "订单提交成功，跳转支付", icon: "success" });
@@ -316,7 +315,8 @@ export default {
             icon: "success",
           });
           shopApi.updateSuccessApi({
-            orderId: orderSn,
+            orderId: id,
+            orderSn: orderSn,
             userId: this.loginData.userId,
           });
         },
@@ -356,7 +356,7 @@ export default {
 	  /* 不要 overflow:hidden，这会阻止子级滚动 */
 	  overflow: visible;
 	}
-	
+
 	/* 顶部标题栏 */
 	.popup-header {
 	  display: flex;
@@ -367,13 +367,13 @@ export default {
 	  font-size: 32rpx;
 	  font-weight: bold;
 	}
-	
+
 	.popup-header uni-icons {
 	  position: absolute;
 	  right: 30rpx;
 	  top: 30rpx;
 	}
-	
+
 	/* 标签栏 */
 	.tab-bar {
 	  display: flex;
@@ -396,7 +396,7 @@ export default {
 	.add-text {
 	  color: #ff6600;
 	}
-	
+
 	/* 地址列表 */
 	.address-list {
 	  flex: 1;

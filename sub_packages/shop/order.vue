@@ -27,7 +27,7 @@ import orderItem from "./components/order-item.vue";
 import shopApi from "@/api/shopApi.js";
 const enumOrderStatus = {
   待付款: "未付款",
-  待发货: "待发货",
+  待发货: "等待发货",
   待收货: "待收货",
   已完成: "已完成",
 };

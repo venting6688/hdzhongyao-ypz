@@ -457,7 +457,7 @@ export default {
         async refreshUserInfo() {
             try {
                 const res = await family.getDefaultPatientApi({ ownerUserId: this.loginValue?.userId }).then(res => {
-                    let defaultPatient = res.data?.memberDetail;
+                    let defaultPatient = res.data;
                     const loginData = uni.getStorageSync("loginData");
                     if (res.code === 200) {
                         const newLoginData = {
