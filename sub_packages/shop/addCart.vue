@@ -28,7 +28,7 @@
 
               <view class="item-info" @click="onDetail(item.goodsId)">
                 <text class="title">{{ item.name }}</text>
-                <text class="spec">规格：{{ item.spec }}</text>
+                <text class="spec">规格：{{ item.spec ? item.spec : '' }}</text>
                 <text class="price">￥{{ item.price }}</text>
               </view>
 
@@ -62,7 +62,13 @@
       </view>
     </view>
 
-    <view v-else class="empty">购物车为空</view>
+		<view v-else >
+			<view class="empty">购物车空空如也～</view>
+			<view class="to-index-btn" @tap="toIndexPage">
+				去逛逛
+			</view>
+		</view>
+    
   </view>
 </template>
 
@@ -113,6 +119,9 @@ export default {
       const checked = e.detail.value.length > 0;
       this.cartList[index].checkedArr = checked ? ['1'] : [];
     },
+		toIndexPage() {
+			uni.navigateTo({ url: `/sub_packages/shop/index` });
+		},
     changeQuantity(item, type) {
 			let goodsId = item.goodsId;
 			let productId = item.productId;
@@ -158,7 +167,8 @@ export default {
       if (res.confirm) {
 				let productIds = [];
 				if (item == null) {
-					productIds = this.cartList.filter(i => i.checkedArr.length === 0).map(v => v.productId);
+					productIds = this.cartList.filter(i => i.checkedArr.length > 0).map(v => v.productId);
+					console.log(JSON.stringify(productIds),'=s=s=s=');
 				} else {
 					productIds.push(item.productId);
 				}
@@ -184,7 +194,7 @@ export default {
       if (!selected.length) {
         return uni.showToast({ title: '请先选择商品', icon: 'none' });
       }
-      uni.navigateTo({ url: '/pages/orderConfirm/orderConfirm' });
+      uni.navigateTo({ url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(JSON.stringify(selected))}&buyType='cart'`});
     },
 		getCartList() {
 			shopApi.cartList(this.userId).then((res) => {
@@ -334,7 +344,20 @@ export default {
 .empty {
   text-align: center;
   color: #999;
-  margin-top: 200rpx;
+  margin-top: 50%;
   font-size: 28rpx;
+}
+.to-index-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #9A7546;
+		padding: 20rpx;
+		border-radius: 20rpx;
+		width: 50%;
+		margin: auto;
+		color: #fff;
+		font-size: 34rpx;
+		margin-top: 30rpx;
 }
 </style>

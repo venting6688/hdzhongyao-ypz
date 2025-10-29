@@ -130,7 +130,7 @@ export default {
 			defaultAddress: {},
 			addressList: [],
 			selectedAddress: {},
-			showAll: false
+			buyType: 'buy',
     };
   },
   // 过滤器用于金额格式化
@@ -148,6 +148,7 @@ export default {
     });
     this.loginData = uni.getStorageSync("loginData") || {};
 		this.userId = this.loginData ? this.loginData.userId : '';
+		this.buyType = options.buyType ? options.buyType : this.buyType;
 		this.getDefaultAddress();
 
 		if (options.goodsData) {
@@ -170,7 +171,7 @@ export default {
 
     if (this.orderData.goods.length > 0) {
       await this.getProductById(this.orderData.goods[0].id);
-      this.buyAdd(this.orderData.goods[0].id);
+      if (this.buyType == 'add') this.buyAdd(this.orderData.goods[0].id);
     }
   },
   methods: {
@@ -182,7 +183,6 @@ export default {
 				});
 			}
 		},
-
 		async openAddressPopup() {
 			await this.getAddressList();
 			this.$refs.addressPopup.open();
@@ -240,7 +240,7 @@ export default {
         title: "添加备注",
         content: this.orderData.note || "",
         editable: true,
-        placeholderText: "请输入您的要求或留言...",
+        placeholderText: "请输入您的备注内容",
         success: (res) => {
           if (res.confirm) {
             this.orderData.note = res.content;
@@ -251,21 +251,12 @@ export default {
 
     /** 提交订单并支付 */
     async submitOrder() {
-      // if (!this.orderData.address) {
-      //   uni.showToast({
-      //     title: "请选择收货地址",
-      //     icon: "none",
-      //   });
-      //   return;
-      // }
-
       uni.showLoading({ title: "提交中..." });
-
       const payload = {
-        // addressId: this.orderData.address.id,
-        addressId: 1,
+        addressId: this.defaultAddress.id,
         userId: this.loginData.userId,
         postscript: this.orderData.postscript,
+				type: this.buyType
       };
 
       const res = await shopApi.submitOrderApi(payload);
