@@ -158,6 +158,7 @@ export default {
       shop
         .getOrderDetailApi({ orderId, userId: this.loginData.userId })
         .then((res) => {
+          if (!res.data) return;
           const { orderInfo, orderGoods } = res.data;
           const newOrders = {
             id: orderInfo.id,
