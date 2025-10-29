@@ -4,7 +4,7 @@
 			@click="searchClick">
 			<view class="uni-searchbar__box-icon-search">
 				<slot name="searchIcon">
-					<uni-icons color="#c0c4cc" size="18" type="search" />
+					<uni-icons color="#c0c4cc" size="30" type="search" />
 				</slot>
 			</view>
 			<input v-if="show || searchVal" :focus="showSync" :disabled="readonly" :placeholder="placeholderText" :maxlength="maxlength"

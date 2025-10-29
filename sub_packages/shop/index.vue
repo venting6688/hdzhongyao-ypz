@@ -18,6 +18,7 @@
           v-model="searchValue"
           :radius="100"
           cancelButton="none"
+					placeholder="请输入搜索内容"
           @confirm="onConfirmSearch"
           @clear="onClearSearch"
         ></uni-search-bar>
@@ -229,7 +230,9 @@ export default {
 
   .shop-header {
     background-image: url("@/static/image/shop-bg.png");
+		background-position: right 0px center;
     background-repeat: no-repeat;
+		
 		z-index: 99;
 
     .header-image {
@@ -239,34 +242,39 @@ export default {
     }
 
     .search-bar {
-      padding: 20rpx 0;
+      padding: 20rpx 0 0;
       ::v-deep .uni-searchbar__box {
-        border: 1px solid #666;
+        box-shadow: 0rpx 4rpx 16rpx 0rpx rgba(135,101,58,0.08); 
+				height: 78rpx;
       }
+			// ::v-deep .uni-search-bar__icon {
+			//   font-size: 78rpx;
+			// }
     }
   }
 
   .medicine-page {
     display: flex;
-    flex-direction: column;
     flex: 1;
-    background-color: #f8f8f8;
+    flex-direction: column;
+		margin-top: 15rpx;
   }
   
   .list-scroll {
     flex: 1;
-    min-height: 100px; /* 防止内容过少无法触发scrolltolower */
+    min-height: 100px;
+		padding: 0 20rpx;
   }
 
   .category-scroll {
     display: flex;
     white-space: nowrap;
-    padding: 16rpx 0;
+    // padding: 16rpx 0;
   }
 
   .category-item {
     display: inline-block;
-    margin: 0 20rpx;
+    margin-left: 20rpx;
     padding: 12rpx 28rpx;
     font-size: 28rpx;
     border-radius: 30rpx;
