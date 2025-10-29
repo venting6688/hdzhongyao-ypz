@@ -131,12 +131,12 @@ const shop = {
   async updateSuccessApi({ orderId, userId }) {
     const res = await cjRequest(
       {
-        url: "/api/order/updateSuccess",
+        url: `/api/order/updateSuccess?orderId=${orderId}&userId=${userId}`,
         method: "post",
-        data: {
-          orderId,
-          userId,
-        },
+        // data: {
+        //   orderId,
+        //   userId,
+        // },
       },
       2
     );
@@ -244,23 +244,6 @@ const shop = {
     );
     return res;
 	},
-//   获取支付的请求参数/api/pay/prepay
-  async getPayPrepayApi({ orderId, openId, userId }) {
-    const res = await cjRequest(
-      {
-        url: "/api/pay/prepay",
-        method: "post",
-        data: {
-          orderId,
-          openId,
-          userId,
-          tradeTpye: "JSAPI",
-        },
-      },
-      2
-    );
-    return res?.data || {};
-  },
   // 提交订单前检查
   async buyAddApi({ goodsId, productId, number, userId }) {
     const res = await cjRequest(
