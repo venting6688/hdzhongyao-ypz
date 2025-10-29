@@ -146,40 +146,33 @@ export default {
     this.$nextTick(() => {
       this.$refs.notice.open();
     });
-    // 获取登录信息
     this.loginData = uni.getStorageSync("loginData") || {};
 		this.userId = this.loginData ? this.loginData.userId : '';
-    const drugId = options.id;
-    if (drugId) {
-      await this.getProductById(drugId);
-      this.buyAdd(drugId);
-      this.getDetail();
-			this.getDefaultAddress();
+		this.getDefaultAddress();
+		
+		if (options.goodsData) {
+			const goods = JSON.parse(decodeURIComponent(options.goodsData));
+			const newGoods = goods.map((item, index) => ({
+				id: item.id,
+				img: item.image,
+				name: item.name,
+				price: item.price,
+				quantity: item.quantity,
+			}));
+			this.orderData.goods = [...newGoods];
+		}
+		this.orderData.totalPrice = this.orderData.goods.reduce(
+			(acc, item) => acc + item.price * item.quantity,
+			0
+		);
+		this.orderData.actualPrice =
+			this.orderData.totalPrice + (this.orderData.deliveryFee || 0);
 
-      if (options.goodsData) {
-        const goods = JSON.parse(decodeURIComponent(options.goodsData));
-        console.log(goods);
-        const newGoods = goods.map((item, index) => ({
-          id: item.id,
-          img: item.image,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-        }));
-        this.orderData.goods = [...newGoods];
-      }
-      this.orderData.totalPrice = this.orderData.goods.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
-      );
-      this.orderData.actualPrice =
-        this.orderData.totalPrice + (this.orderData.deliveryFee || 0);
-
-      if (this.orderData.goods.id) {
-        await this.getProductById(this.orderData.goods.id);
-        this.buyAdd(this.orderData.goods.id);
-      }
-    }
+		if (this.orderData.goods.id) {
+			await this.getProductById(this.orderData.goods.id);
+			this.buyAdd(this.orderData.goods.id);
+		}
+		
   },
   methods: {
 		async getAddressList() {
