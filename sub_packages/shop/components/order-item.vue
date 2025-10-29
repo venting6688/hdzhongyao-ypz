@@ -68,7 +68,10 @@ import shopApi from "@/api/shopApi.js";
 export default {
   props: {
     order: Object,
-    isShowFooter: true,
+    isShowFooter: {
+      type: Boolean,
+      default: true,
+    },
   },
   methods: {
     viewLogistics(order) {
