@@ -45,7 +45,7 @@
       <!--    <view class="extra-info-card">-->
       <view class="item-line">
         <text class="label">配送:</text>
-        <view class="value">{{ orderData.deliveryMethod }}</view>
+        <view class="value">快递运输</view>
       </view>
 
       <view class="item-line" @click="toEditNote">
@@ -63,7 +63,7 @@
       <view class="price-summary">
         <view class="total">
           合计
-          <text class="amount">¥{{ orderData.goodsPrice | formatPrice }}</text>
+          <text class="amount">¥{{ orderData.totalPrice | formatPrice }}</text>
         </view>
         <view class="delivery-fee">
           配送费 ¥{{ orderData.deliveryFee | formatPrice }}
@@ -110,11 +110,6 @@ export default {
       return value.toFixed(2);
     },
   },
-  computed: {
-    finalTotal() {
-      return 5.0 + this.orderData.deliveryFee;
-    },
-  },
   async onLoad(options) {
     this.showMain = false;
     this.canPay = false;
@@ -123,12 +118,30 @@ export default {
     });
     // 获取登录信息
     this.loginData = uni.getStorageSync("loginData") || {};
-    const drugId = options.id;
-    console.log(drugId);
-    if (drugId) {
-      await this.getProductById(drugId);
-      this.buyAdd(drugId);
-      this.getDetail();
+
+    if (options.goodsData) {
+      const goods = JSON.parse(decodeURIComponent(options.goodsData));
+      console.log(goods);
+      const newGoods = goods.map((item, index) => ({
+        id: item.id,
+        img: item.image,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+      this.orderData.goods = [...newGoods];
+    }
+    console.log(this.orderData);
+    this.orderData.totalPrice = this.orderData.goods.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    this.orderData.actualPrice =
+      this.orderData.totalPrice + (this.orderData.deliveryFee || 0);
+
+    if (this.orderData.goods.id) {
+      await this.getProductById(this.orderData.goods.id);
+      this.buyAdd(this.orderData.goods.id);
     }
   },
   onShow() {},
@@ -154,30 +167,6 @@ export default {
       if (res) {
       } else {
       }
-    },
-    /** 获取订单详情 */
-    async getDetail() {
-      shopApi.getOrderDetailApi({ orderId: 20, userId: this.loginData.userId }).then((res) => {
-        const { orderInfo, orderGoods } = res.data;
-        const newOrders = {
-          id: orderInfo.id,
-          date: orderInfo.addTime,
-          goodsPrice: orderInfo.goodsPrice,
-          actualPrice: orderInfo.actualPrice,
-          status: orderInfo.orderStatusText,
-          goods: orderGoods.map(
-            ({ id, goodsName, retailPrice, number, listPicUrl }) => ({
-              id,
-              name: goodsName,
-              price: retailPrice,
-              quantity: number,
-              img: listPicUrl,
-            })
-          ),
-        };
-        this.orderData = newOrders;
-        console.log(newOrders);
-      });
     },
     handleConfirm() {
       this.showMain = true;
@@ -243,6 +232,7 @@ export default {
         totalAmount: String(orderInfo?.actualPrice),
         merOrderId: orderInfo?.orderSn,
         uploadData: {},
+        payType: "shopPay",
       };
       const resRegister = await registrationApi.registerOrder(datas);
       uni.hideLoading();
@@ -272,12 +262,6 @@ export default {
           });
         },
         fail: (result) => {
-          console.log(result);
-          shopApi.updateSuccessApi({
-            // orderId: orderSn,
-            orderId: 20,
-            userId: this.loginData.userId,
-          });
           uni.showToast({
             title: "支付失败",
             icon: "none",
