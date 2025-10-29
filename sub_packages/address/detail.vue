@@ -51,7 +51,7 @@
 		onLoad(e) {
 			this.type = e.type;
 			let loginValue = uni.getStorageSync("loginData");
-			loginValue = JSON.parse(loginValue);
+			// loginValue = JSON.parse(loginValue);
 			this.userId = loginValue.userId;
 			if (this.type != 'add') {
 				this.informationObj = JSON.parse(decodeURIComponent(e.informationObj));

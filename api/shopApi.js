@@ -82,6 +82,18 @@ const shop = {
     );
     return res;
   },
+	//默认收货地址
+	async defaultAddress(userId) {
+	  const res = await cjRequest(
+	    {
+	      url: "api/address/getDefaultAddress?id=" + userId,
+	      method: "get",
+	    },
+	    2
+	  );
+	  return res;
+	},
+	
   // 获取订单列表
   // async getOrderListApi({ userId, page, size }) {
   //   const res = await cjRequest(

@@ -6,33 +6,30 @@
       :noticeType="noticeType"
       @confirmed="handleConfirm"
     />
-    <view class="address-card" @click="toSelectAddress">
+    <view class="address-card" @click="openAddressPopup">
       <uni-icons
         type="location-filled"
         size="24"
         class="icon-location"
       ></uni-icons>
       <view class="address-content">
-        <template v-if="orderData.address.street">
-          <view class="address-detail">
-            <text class="region">{{ orderData.address.region }}</text>
-            <view>{{ orderData.address.street }}</view>
-          </view>
-          <view class="user-info">
-            <text class="name">{{ orderData.address.name }}</text>
-            <text class="phone">{{ orderData.address.phone }}</text>
-          </view>
-        </template>
-        <template v-else>
-          <view class="no-address">请选择收货地址</view>
-        </template>
+				<view v-if="JSON.stringify(defaultAddress) != '{}'">
+					<view class="address-detail">
+						<text class="region">{{ defaultAddress.fullRegion }}</text>
+						<view>{{ defaultAddress.detailInfo }}</view>
+					</view>
+					<view class="user-info">
+						<text class="name">{{ defaultAddress.userName }}</text>
+						<text class="phone">{{ defaultAddress.telNumber }}</text>
+					</view>
+				</view>
+				<view class="no-address" v-else>请选择收货地址</view>
       </view>
       <uni-icons type="arrowright" size="18" color="#333"></uni-icons>
     </view>
 
     <view class="goods-card">
       <order-item :order="orderData" :isShowFooter="false"></order-item>
-
       <view class="item-line total-price-line">
         <text class="value actual-price">
           <text class="label shifu-text">实付</text>¥{{
@@ -40,9 +37,6 @@
           }}</text
         >
       </view>
-      <!--    </view>-->
-
-      <!--    <view class="extra-info-card">-->
       <view class="item-line">
         <text class="label">配送:</text>
         <view class="value">{{ orderData.deliveryMethod }}</view>
@@ -53,9 +47,7 @@
         <view class="value note-text" v-show="orderData.note">
           {{ orderData.note }}
         </view>
-        <view class="value note-text is-empty" v-show="!orderData.note">
-          请给我备注
-        </view>
+        <view class="value note-text is-empty" v-show="!orderData.note">请给我备注</view>
         <uni-icons type="arrowright" size="18" color="#999"></uni-icons>
       </view>
     </view>
@@ -78,22 +70,56 @@
         在线审方
       </button>
     </view>
+		<uni-popup ref="addressPopup" type="bottom" background-color="#fff">
+			<view class="address-popup">
+				 <view class="popup-header">
+					 <text class="popup-title">地址和配送服务</text>
+					 <uni-icons type="close" size="24" color="#666" @click="closeAddressPopup"></uni-icons>
+				 </view>
+				 <view class="tab-bar">
+					 <view class="tab-item active">常用地址</view>
+					<view class="tab-right">
+						 <text class="manage-text" @click="goManageAddress">管理</text>
+					 </view>
+				 </view>
+				 <scroll-view scroll-y class="address-list">
+					 <view
+						 v-for="(item, index) in addressList"
+						 :key="index"
+						 class="address-item"
+						 :class="{ active: item.id === selectedAddress.id }"
+						 @click="selectAddress(item)"
+					 >
+						 <view class="address-info">
+							 <text>{{ item.userName }}</text>
+							 <text class="phone">{{ item.telNumber }}</text>
+							 <view class="region">{{ item.fullRegion }} {{ item.detailInfo }}</view>
+						 </view>
+						 <view class="user-info">
+						 </view>
+					 </view>
+				 </scroll-view>
+			</view>
+		</uni-popup>
   </view>
 </template>
 
 <script>
-import visitNotice from "@/components/visitNotice.vue";
 import shopApi from "@/api/shopApi.js";
-import orderItem from "@/sub_packages/shop/components/order-item.vue";
 import registrationApi from "@/api/registrationApi";
+import visitNotice from "@/components/visitNotice.vue";
+import addressItem from "../components/addressItem.vue";
+import orderItem from "@/sub_packages/shop/components/order-item.vue";
 
 export default {
   components: {
     visitNotice,
     orderItem,
+		addressItem
   },
   data() {
     return {
+			userId: '',
       showMain: false,
       canPay: false,
       fontMode: "normal",
@@ -101,6 +127,10 @@ export default {
       orderData: {},
       loginData: {},
       productId: null,
+			defaultAddress: {},
+			addressList: [],
+			selectedAddress: {},
+			showAll: false
     };
   },
   // 过滤器用于金额格式化
@@ -123,19 +153,49 @@ export default {
     });
     // 获取登录信息
     this.loginData = uni.getStorageSync("loginData") || {};
+		this.userId = this.loginData ? this.loginData.userId : '';
     const drugId = options.id;
-    console.log(drugId);
     if (drugId) {
       await this.getProductById(drugId);
       this.buyAdd(drugId);
       this.getDetail();
+			this.getDefaultAddress();
     }
   },
-  onShow() {},
   methods: {
+		async getAddressList() {
+			let res = await shopApi.getAddressList(this.userId);
+			if (res.statusCode == 200) {
+				this.addressList = res.data.data.sort((a, b) => {
+					return b.isDefault - a.isDefault;
+				});
+			}
+		},
+
+		async openAddressPopup() {
+			await this.getAddressList();
+			this.$refs.addressPopup.open();
+		},
+		closeAddressPopup() {
+			this.$refs.addressPopup.close();
+		},
+		selectAddress(item) {
+			this.selectedAddress = item;
+			this.defaultAddress = item;
+			this.closeAddressPopup();
+		},
+		goManageAddress() {
+			uni.navigateTo({ url: "/sub_packages/address/index" });
+		},
+		async getDefaultAddress() {
+			let res = await shopApi.defaultAddress(this.userId);
+			if (res.data.errmsg == '执行成功' && res.data.data.length) {
+				this.defaultAddress = res.data.data[0];
+				this.selectedAddress = this.defaultAddress;
+			}
+		},
     async getProductById(drugId) {
       const res = await shopApi.getProductById([drugId]);
-      console.log(res);
       if (res.length === 0) return;
       if (res.data[0]) {
         this.productId = res.data[0]?.id;
@@ -183,11 +243,11 @@ export default {
       this.showMain = true;
       this.canPay = true;
     },
-    toSelectAddress() {
-      uni.navigateTo({
-        url: "/sub_packages/address/index",
-      });
-    },
+    // toSelectAddress() {
+    //   uni.navigateTo({
+    //     url: "/sub_packages/address/index",
+    //   });
+    // },
     toEditNote() {
       uni.showModal({
         title: "添加备注",
@@ -303,6 +363,104 @@ export default {
   padding-bottom: 150rpx;
   background-color: #f5f5f5;
   min-height: 100vh;
+	.address-popup {
+	  display: flex;
+	  flex-direction: column;
+	  height: 60vh;
+	  background: #fff;
+	  border-top-left-radius: 30rpx;
+	  border-top-right-radius: 30rpx;
+	  /* 不要 overflow:hidden，这会阻止子级滚动 */
+	  overflow: visible;
+	}
+	
+	/* 顶部标题栏 */
+	.popup-header {
+	  display: flex;
+	  justify-content: center; /* 居中标题 */
+	  align-items: center;
+	  position: relative;
+	  padding: 30rpx;
+	  font-size: 32rpx;
+	  font-weight: bold;
+	}
+	
+	.popup-header uni-icons {
+	  position: absolute;
+	  right: 30rpx;
+	  top: 30rpx;
+	}
+	
+	/* 标签栏 */
+	.tab-bar {
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  padding: 20rpx 30rpx;
+	}
+	.tab-item {
+	  font-size: 34rpx;
+	  font-weight: bold;
+	  color: #333;
+	}
+	.tab-right {
+	  display: flex;
+	  gap: 30rpx;
+	}
+	.manage-text {
+	  color: #333;
+	}
+	.add-text {
+	  color: #ff6600;
+	}
+	
+	/* 地址列表 */
+	.address-list {
+	  flex: 1;
+	  overflow-y: auto; /* 兼容非小程序端 */
+	  max-height: 100%; /* 保证 scroll-view 可滚动 */
+	}
+	.address-item {
+	  background: #fff;
+	  padding: 25rpx;
+	  border-radius: 16rpx;
+	  margin-bottom: 15rpx;
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  transition: all 0.2s;
+		border-bottom: 1px solid #f5f5f5
+	}
+	.address-item.active {
+	  background: #fff8f2; /* 选中时背景色 */
+	  // border: 1rpx solid #ff6600;
+	}
+	.address-info {
+	  flex: 1;
+	  font-size: 28rpx;
+	  color: #333;
+		.phone {
+			margin-left: 30rpx;
+		}
+	}
+	.region {
+	  color: #999;
+	  font-size: 24rpx;
+	}
+	.user-info {
+	  display: flex;
+	  gap: 10rpx;
+	  font-size: 24rpx;
+	  color: #666;
+	}
+	.default-tag {
+	  color: #ff6600;
+	}
+	.more-address {
+	  text-align: center;
+	  color: #666;
+	  padding: 20rpx 0;
+	}
 }
 
 /* 通用卡片样式 */
@@ -353,7 +511,6 @@ export default {
       }
     }
     .no-address {
-      color: @theme-color;
       font-weight: bold;
     }
   }
