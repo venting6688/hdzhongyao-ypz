@@ -148,7 +148,7 @@ export default {
         goodsId: drugId,
         productId: this.productId,
         number: 10,
-        userId: 19,
+        userId: this.loginData.userId,
       });
       console.log(res);
       if (res) {
@@ -157,7 +157,7 @@ export default {
     },
     /** 获取订单详情 */
     async getDetail() {
-      shopApi.getOrderDetailApi({ orderId: 20, userId: 19 }).then((res) => {
+      shopApi.getOrderDetailApi({ orderId: 20, userId: this.loginData.userId }).then((res) => {
         const { orderInfo, orderGoods } = res.data;
         const newOrders = {
           id: orderInfo.id,
@@ -217,7 +217,7 @@ export default {
       const payload = {
         // addressId: this.orderData.address.id,
         addressId: 1,
-        userId: 19,
+        userId: this.loginData.userId,
         postscript: this.orderData.postscript,
       };
 
@@ -268,7 +268,7 @@ export default {
           });
           shopApi.updateSuccessApi({
             orderId: orderSn,
-            userId: 19,
+            userId: this.loginData.userId,
           });
         },
         fail: (result) => {
@@ -276,7 +276,7 @@ export default {
           shopApi.updateSuccessApi({
             // orderId: orderSn,
             orderId: 20,
-            userId: 19,
+            userId: this.loginData.userId,
           });
           uni.showToast({
             title: "支付失败",

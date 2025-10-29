@@ -32,64 +32,7 @@ export default {
     return {
       current: 0,
       tabs: ["全部", "待付款", "待发货", "待收货", "已完成"],
-      orders: [
-        {
-          id: 1,
-          date: "2025-05-06 11:34:26",
-          name: "四君子茶",
-          goods: [
-            {
-              id: 1,
-              name: "四君子茶",
-              price: 4.93,
-              quantity: 7,
-              img: "/static/image/test.png",
-            },
-            {
-              id: 2,
-              name: "四君子茶",
-              price: 22,
-              quantity: 222,
-              img: "/static/image/test.png",
-            },
-          ],
-          // price: 4.93,
-          // quantity: 7,
-          total: 30,
-          status: "待收货",
-          // img: "/static/image/test.png",
-        },
-        // {
-        //   id: 2,
-        //   date: "2025-05-06 11:34:26",
-        //   name: "四君子茶",
-        //   price: 4.93,
-        //   quantity: 7,
-        //   total: 30,
-        //   status: "待付款",
-        //   img: "/static/image/test.png",
-        // },
-        // {
-        //   id: 1,
-        //   date: "2025-05-06 11:34:26",
-        //   name: "四君子茶",
-        //   price: 4.93,
-        //   quantity: 7,
-        //   total: 30,
-        //   status: "待发货",
-        //   img: "/static/image/test.png",
-        // },
-        // {
-        //   id: 3,
-        //   date: "2025-05-06 11:34:26",
-        //   name: "四君子茶",
-        //   price: 4.93,
-        //   quantity: 7,
-        //   total: 30,
-        //   status: "已完成",
-        //   img: "/static/image/test.png",
-        // },
-      ],
+      orders: [],
       loginData: null,
       page: 1,
       size: 10,
@@ -113,25 +56,29 @@ export default {
     // 获取订单列表
     async getOrderList() {
       const res = await shopApi.getOrderListApi({
-        // userId: this.loginData.userId,
-        userId: 19,
+        userId: this.loginData.userId,
         page: this.page,
         size: this.size,
       });
       if (res.data && "orders" in res.data && res.data.orders.length > 0) {
         const newOrders = res.data.orders.map(
-          ({ orderInfo: { id, addTime, goodsPrice, orderStatusText }, orderGoods }) => ({
+          ({
+            orderInfo: { id, addTime, goodsPrice, orderStatusText },
+            orderGoods,
+          }) => ({
             id,
             date: addTime,
             total: goodsPrice,
             status: orderStatusText,
-            goods: orderGoods.map(({ id, goodsName, retailPrice, number, listPicUrl }) => ({
-              id,
-              name: goodsName,
-              price: retailPrice,
-              quantity: number,
-              img: listPicUrl,
-            }))
+            goods: orderGoods.map(
+              ({ id, goodsName, retailPrice, number, listPicUrl }) => ({
+                id,
+                name: goodsName,
+                price: retailPrice,
+                quantity: number,
+                img: listPicUrl,
+              })
+            ),
           })
         );
         this.orders = [...newOrders];

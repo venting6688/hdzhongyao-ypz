@@ -65,27 +65,25 @@
     <!--订单详情-->
     <view class="goods-card">
       <order-item :order="orderData" :isShowFooter="false"></order-item>
-<!--      <view class="goods-item">-->
-<!--        <image-->
-<!--          :src="orderData.goods.image"-->
-<!--          mode="aspectFill"-->
-<!--          class="goods-image"-->
-<!--        ></image>-->
-<!--        <view class="goods-info">-->
-<!--          <view class="goods-name">{{ orderData.goods.name }}</view>-->
-<!--          <view class="goods-price">¥{{ orderData.goods.price }}</view>-->
-<!--        </view>-->
-<!--        <view class="goods-quantity">-->
-<!--          ×-->
-<!--          {{ orderData.goods.quantity }}</view-->
-<!--        >-->
-<!--      </view>-->
+      <!--      <view class="goods-item">-->
+      <!--        <image-->
+      <!--          :src="orderData.goods.image"-->
+      <!--          mode="aspectFill"-->
+      <!--          class="goods-image"-->
+      <!--        ></image>-->
+      <!--        <view class="goods-info">-->
+      <!--          <view class="goods-name">{{ orderData.goods.name }}</view>-->
+      <!--          <view class="goods-price">¥{{ orderData.goods.price }}</view>-->
+      <!--        </view>-->
+      <!--        <view class="goods-quantity">-->
+      <!--          ×-->
+      <!--          {{ orderData.goods.quantity }}</view-->
+      <!--        >-->
+      <!--      </view>-->
 
       <view class="item-line total-price-line">
         <text class="value actual-price">
-          <text class="label shifu-text">实付</text>¥{{
-            orderData.total
-          }}</text
+          <text class="label shifu-text">实付</text>¥{{ orderData.total }}</text
         >
       </view>
       <!--    </view>-->
@@ -157,30 +155,29 @@ export default {
   },
   methods: {
     getOrderDetail(orderId) {
-      // shop.getOrderDetailApi({ orderId, userId: this.loginData.userId, }).then((res) => {
-      //   this.orderData = res.data;
-      // });
-      shop.getOrderDetailApi({ orderId: 20, userId: 19 }).then((res) => {
-        const { orderInfo, orderGoods } = res.data;
-        const newOrders = {
-          id: orderInfo.id,
-          date: orderInfo.addTime,
-          // total: orderInfo.goodsPrice,
-          total: orderInfo.actualPrice,
-          status: orderInfo.orderStatusText,
-          goods: orderGoods.map(
-            ({ id, goodsName, retailPrice, number, listPicUrl }) => ({
-              id,
-              name: goodsName,
-              price: retailPrice,
-              quantity: number,
-              img: listPicUrl,
-            })
-          ),
-        };
-        this.orderData = newOrders;
-        console.log(newOrders);
-      });
+      shop
+        .getOrderDetailApi({ orderId, userId: this.loginData.userId })
+        .then((res) => {
+          const { orderInfo, orderGoods } = res.data;
+          const newOrders = {
+            id: orderInfo.id,
+            date: orderInfo.addTime,
+            // total: orderInfo.goodsPrice,
+            total: orderInfo.actualPrice,
+            status: orderInfo.orderStatusText,
+            goods: orderGoods.map(
+              ({ id, goodsName, retailPrice, number, listPicUrl }) => ({
+                id,
+                name: goodsName,
+                price: retailPrice,
+                quantity: number,
+                img: listPicUrl,
+              })
+            ),
+          };
+          this.orderData = newOrders;
+          console.log(newOrders);
+        });
     },
     onClickCopy() {
       uni.setClipboardData({
