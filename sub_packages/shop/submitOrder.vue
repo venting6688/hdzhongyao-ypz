@@ -85,6 +85,7 @@
 import visitNotice from "@/components/visitNotice.vue";
 import shopApi from "@/api/shopApi.js";
 import orderItem from "@/sub_packages/shop/components/order-item.vue";
+import registrationApi from "@/api/registrationApi";
 
 export default {
   components: {
@@ -231,40 +232,52 @@ export default {
           title: "订单提交失败",
           icon: "none",
         });
+        throw new Error("订单提交失败");
       }
-
-      const payRes = await shopApi.getPayPrepayApi({
-        orderId: res.data.orderInfo.id,
-        openId: this.loginData.xcxOpenId,
-        userId: 19,
-      });
-      console.log(payRes);
-
-      // 模拟提交成功，直接跳转
-      setTimeout(() => {
-        uni.hideLoading();
-        this.startPayment("ORDER_20251021123456");
-      }, 1000);
+      const { orderInfo } = res.data;
+      let datas = {
+        lockId: "",
+        patientId: this.loginData.defaultArchives?.idNum,
+        patientName: this.loginData.defaultArchives?.patientName,
+        subOpenId: this.loginData?.xcxOpenId,
+        totalAmount: String(orderInfo?.actualPrice),
+        merOrderId: orderInfo?.orderSn,
+        uploadData: {},
+      };
+      const resRegister = await registrationApi.registerOrder(datas);
+      uni.hideLoading();
+      this.startPayment(resRegister, orderInfo?.orderSn);
     },
 
     /** 启动支付流程 */
-    startPayment(orderId) {
+    startPayment({ data }, orderSn) {
+      if (!data?.miniPayRequest || !orderSn) throw new Error("缺少支付参数");
       // 这里调用 uni.requestPayment 发起微信/支付宝支付
       uni.showToast({ title: "订单提交成功，跳转支付", icon: "success" });
       uni.requestPayment({
         provider: "wxpay", // 服务提提供商
-        timeStamp: res.data.miniPayRequest.timeStamp, // 时间戳
-        nonceStr: res.data.miniPayRequest.nonceStr, // 随机字符串
-        package: res.data.miniPayRequest.package,
-        signType: res.data.miniPayRequest.signType, // 签名算法
-        paySign: res.data.miniPayRequest.paySign, // 签名
+        timeStamp: data.miniPayRequest.timeStamp, // 时间戳
+        nonceStr: data.miniPayRequest.nonceStr, // 随机字符串
+        package: data.miniPayRequest.package,
+        signType: data.miniPayRequest.signType, // 签名算法
+        paySign: data.miniPayRequest.paySign, // 签名
         success: (result) => {
           uni.showToast({
             title: "支付成功",
             icon: "success",
           });
+          shopApi.updateSuccessApi({
+            orderId: orderSn,
+            userId: 19,
+          });
         },
         fail: (result) => {
+          console.log(result);
+          shopApi.updateSuccessApi({
+            // orderId: orderSn,
+            orderId: 20,
+            userId: 19,
+          });
           uni.showToast({
             title: "支付失败",
             icon: "none",
