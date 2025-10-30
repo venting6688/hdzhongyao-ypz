@@ -1,13 +1,13 @@
 <template>
   <view class="order-detail">
     <view class="order-detail-header">
-      <view class="order-title">已发货</view>
-      <view class="order-tip"
-        >订单将在 6天21小时 后自动收货，请及时关注物流信息</view
-      >
+      <view class="order-title">{{ orderData.status }}</view>
+      <!--      <view class="order-tip"-->
+      <!--        >订单将在 6天21小时 后自动收货，请及时关注物流信息</view-->
+      <!--      >-->
     </view>
 
-    <view class="order-logistics">
+    <view class="order-logistics" v-if="false">
       <view class="stepper">
         <view class="stepper-item">
           <view class="dot"></view>
@@ -43,10 +43,8 @@
                   <view class="address-detail">
                     <!--              <text class="region">{{ orderData.address.region }}</text>-->
                     <view>
-                      {{
-                        orderData.address.region + orderData.address.street
-                      }}</view
-                    >
+                      {{ orderData.address.region + orderData.address.street }}
+                    </view>
                   </view>
                   <view class="user-info">
                     <text class="name">{{ orderData.address.name }}</text>
@@ -96,8 +94,8 @@
 
       <view class="item-line">
         <text class="label">订单编号:</text>
-        <view class="value note-text" v-show="orderData.orderId">
-          {{ orderData.orderId }}
+        <view class="value note-text" v-show="orderData.orderSn">
+          {{ orderData.orderSn }}
         </view>
         <view class="value note-text copy-btn" @click="onClickCopy">
           复制
@@ -166,6 +164,7 @@ export default {
             // total: orderInfo.goodsPrice,
             total: orderInfo.actualPrice,
             status: orderInfo.orderStatusText,
+            orderSn: orderInfo.orderSn,
             goods: orderGoods.map(
               ({ id, goodsName, retailPrice, number, listPicUrl }) => ({
                 id,
@@ -182,7 +181,7 @@ export default {
     },
     onClickCopy() {
       uni.setClipboardData({
-        data: this.orderData.orderId,
+        data: this.orderData.orderSn,
         success: () => {
           uni.showToast({
             title: "复制成功",
@@ -443,7 +442,7 @@ export default {
   .copy-btn {
     color: #87653a;
     border-left: 1rpx solid #dadada;
-    width: 60rpx;
+    width: 66rpx;
     flex: none;
   }
 
