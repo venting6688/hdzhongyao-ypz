@@ -70,37 +70,65 @@
         在线审方
       </button>
     </view>
-		<uni-popup ref="addressPopup" type="bottom" background-color="#fff">
-			<view class="address-popup">
-				 <view class="popup-header">
-					 <text class="popup-title">地址和配送服务</text>
-					 <uni-icons type="close" size="24" color="#666" @click="closeAddressPopup"></uni-icons>
-				 </view>
-				 <view class="tab-bar">
-					 <view class="tab-item active">常用地址</view>
-					<view class="tab-right">
-						 <text class="manage-text" @click="goManageAddress">管理</text>
-					 </view>
-				 </view>
-				 <scroll-view scroll-y class="address-list">
-					 <view
-						 v-for="(item, index) in addressList"
-						 :key="index"
-						 class="address-item"
-						 :class="{ active: item.id === selectedAddress.id }"
-						 @click="selectAddress(item)"
-					 >
-						 <view class="address-info">
-							 <text>{{ item.userName }}</text>
-							 <text class="phone">{{ item.telNumber }}</text>
-							 <view class="region">{{ item.fullRegion }} {{ item.detailInfo }}</view>
-						 </view>
-						 <view class="user-info">
-						 </view>
-					 </view>
-				 </scroll-view>
-			</view>
-		</uni-popup>
+    <uni-popup ref="addressPopup" type="bottom" background-color="#fff">
+      <view class="address-popup">
+        <view class="popup-header">
+          <text class="popup-title">地址和配送服务</text>
+          <uni-icons
+            type="close"
+            size="24"
+            color="#666"
+            @click="closeAddressPopup"
+          ></uni-icons>
+        </view>
+        <view class="tab-bar">
+          <view class="tab-item active">常用地址</view>
+          <view class="tab-right">
+            <text class="manage-text" @click="goManageAddress">管理</text>
+          </view>
+        </view>
+        <scroll-view scroll-y class="address-list">
+          <view
+            v-for="(item, index) in addressList"
+            :key="index"
+            class="address-item"
+            :class="{ active: item.id === selectedAddress.id }"
+            @click="selectAddress(item)"
+          >
+            <view class="address-info">
+              <text>{{ item.userName }}</text>
+              <text class="phone">{{ item.telNumber }}</text>
+              <view class="region"
+                >{{ item.fullRegion }} {{ item.detailInfo }}</view
+              >
+            </view>
+            <view class="user-info"> </view>
+          </view>
+        </scroll-view>
+      </view>
+    </uni-popup>
+    <uni-popup ref="notePopup" type="bottom" background-color="#fff">
+      <view class="popup-header">
+        <text class="popup-title">订单备注</text>
+        <uni-icons
+          type="close"
+          size="24"
+          color="#666"
+          @click="closeNotePopup"
+        ></uni-icons>
+      </view>
+      <view class="popup-content">
+        <textarea
+          v-model="orderData.note"
+          placeholder="请输入您的备注内容"
+          maxLength="100"
+          class="note-textarea"
+        ></textarea>
+      </view>
+      <view class="popup-footer">
+        <button class="confirm-btn" @click="confirmNote">确认</button>
+      </view>
+    </uni-popup>
   </view>
 </template>
 
@@ -115,11 +143,11 @@ export default {
   components: {
     visitNotice,
     orderItem,
-		addressItem
+    addressItem,
   },
   data() {
     return {
-			userId: '',
+      userId: "",
       showMain: false,
       canPay: false,
       fontMode: "normal",
@@ -151,23 +179,23 @@ export default {
 		this.buyType = options.buyType ? options.buyType : this.buyType;
 		this.getDefaultAddress();
 
-		if (options.goodsData) {
-			const goods = JSON.parse(decodeURIComponent(options.goodsData));
-			const newGoods = goods.map((item, index) => ({
-				id: item.id,
-				img: item.image,
-				name: item.name,
-				price: item.price,
-				quantity: item.quantity,
-			}));
-			this.orderData.goods = [...newGoods];
-		}
-		this.orderData.totalPrice = this.orderData.goods.reduce(
-			(acc, item) => acc + item.price * item.quantity,
-			0
-		);
-		this.orderData.actualPrice =
-			this.orderData.totalPrice + (this.orderData.deliveryFee || 0);
+    if (options.goodsData) {
+      const goods = JSON.parse(decodeURIComponent(options.goodsData));
+      const newGoods = goods.map((item, index) => ({
+        id: item.id,
+        img: item.image,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+      this.orderData.goods = [...newGoods];
+    }
+    this.orderData.totalPrice = this.orderData.goods.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    this.orderData.actualPrice =
+      this.orderData.totalPrice + (this.orderData.deliveryFee || 0);
 
     if (this.orderData.goods.length > 0) {
       await this.getProductById(this.orderData.goods[0].id);
@@ -235,18 +263,15 @@ export default {
     //     url: "/sub_packages/address/index",
     //   });
     // },
+    // 点击添加备注，多行输入框，最多输入100个字符
     toEditNote() {
-      uni.showModal({
-        title: "添加备注",
-        content: this.orderData.note || "",
-        editable: true,
-        placeholderText: "请输入您的备注内容",
-        success: (res) => {
-          if (res.confirm) {
-            this.orderData.note = res.content;
-          }
-        },
-      });
+      this.$refs.notePopup.open();
+    },
+    closeNotePopup() {
+      this.$refs.notePopup.close();
+    },
+    confirmNote() {
+      this.closeNotePopup();
     },
 
     /** 提交订单并支付 */
@@ -259,37 +284,30 @@ export default {
 				goodsId,
         addressId: this.defaultAddress.id,
         userId: this.loginData.userId,
-        postscript: this.orderData.postscript,
+        postscript: this.orderData.note,
 				type: this.buyType
       };
 
       const res = await shopApi.submitOrderApi(payload);
-      if (res) {
-        uni.showToast({
-          title: "订单提交成功",
-          icon: "success",
-        });
+      if (res.data && res.errno == 0) {
+        uni.hideLoading();
+        const { orderInfo } = res.data;
+        const datas = {
+          lockId: "",
+          patientId: this.loginData.defaultArchives?.idNum,
+          patientName: this.loginData.defaultArchives?.patientName,
+          subOpenId: this.loginData?.xcxOpenId,
+          totalAmount: String(orderInfo?.actualPrice),
+          merOrderId: orderInfo?.orderSn,
+          uploadData: {},
+          payType: "shopPay",
+        };
+        const resRegister = await registrationApi.registerOrder(datas);
+        this.startPayment(resRegister, orderInfo);
       } else {
-        uni.showToast({
-          title: "订单提交失败",
-          icon: "none",
-        });
-        throw new Error("订单提交失败");
+        uni.hideLoading();
+        uni.showToast({ title: "提交订单失败", icon: "none" });
       }
-      const { orderInfo } = res.data;
-      let datas = {
-        lockId: "",
-        patientId: this.loginData.defaultArchives?.idNum,
-        patientName: this.loginData.defaultArchives?.patientName,
-        subOpenId: this.loginData?.xcxOpenId,
-        totalAmount: String(orderInfo?.actualPrice),
-        merOrderId: orderInfo?.orderSn,
-        uploadData: {},
-        payType: "shopPay",
-      };
-      const resRegister = await registrationApi.registerOrder(datas);
-      uni.hideLoading();
-      this.startPayment(resRegister, orderInfo);
     },
 
     /** 启动支付流程 */
@@ -341,104 +359,130 @@ export default {
   padding-bottom: 150rpx;
   background-color: #f5f5f5;
   min-height: 100vh;
-	.address-popup {
-	  display: flex;
-	  flex-direction: column;
-	  height: 60vh;
-	  background: #fff;
-	  border-top-left-radius: 30rpx;
-	  border-top-right-radius: 30rpx;
-	  /* 不要 overflow:hidden，这会阻止子级滚动 */
-	  overflow: visible;
-	}
+  .address-popup {
+    display: flex;
+    flex-direction: column;
+    height: 60vh;
+    background: #fff;
+    border-top-left-radius: 30rpx;
+    border-top-right-radius: 30rpx;
+    /* 不要 overflow:hidden，这会阻止子级滚动 */
+    overflow: visible;
+  }
 
-	/* 顶部标题栏 */
-	.popup-header {
-	  display: flex;
-	  justify-content: center; /* 居中标题 */
-	  align-items: center;
-	  position: relative;
-	  padding: 30rpx;
-	  font-size: 32rpx;
-	  font-weight: bold;
-	}
+  /* 顶部标题栏 */
+  .popup-header {
+    display: flex;
+    justify-content: center; /* 居中标题 */
+    align-items: center;
+    position: relative;
+    padding: 30rpx;
+    font-size: 32rpx;
+    font-weight: bold;
+  }
 
-	.popup-header uni-icons {
-	  position: absolute;
-	  right: 30rpx;
-	  top: 30rpx;
-	}
+  .popup-header uni-icons {
+    position: absolute;
+    right: 30rpx;
+    top: 30rpx;
+  }
 
-	/* 标签栏 */
-	.tab-bar {
-	  display: flex;
-	  justify-content: space-between;
-	  align-items: center;
-	  padding: 20rpx 30rpx;
-	}
-	.tab-item {
-	  font-size: 34rpx;
-	  font-weight: bold;
-	  color: #333;
-	}
-	.tab-right {
-	  display: flex;
-	  gap: 30rpx;
-	}
-	.manage-text {
-	  color: #333;
-	}
-	.add-text {
-	  color: #ff6600;
-	}
+  .note-textarea {
+    width: 95%;
+    height: 200rpx;
+    padding: 20rpx;
+    margin: 20rpx auto;
+    font-size: 28rpx;
+    border: 1rpx solid #ccc;
+    border-radius: 12rpx;
+    resize: none;
+    background-color: #e9e2da;
+  }
 
-	/* 地址列表 */
-	.address-list {
-	  flex: 1;
-	  overflow-y: auto; /* 兼容非小程序端 */
-	  max-height: 100%; /* 保证 scroll-view 可滚动 */
-	}
-	.address-item {
-	  background: #fff;
-	  padding: 25rpx;
-	  border-radius: 16rpx;
-	  margin-bottom: 15rpx;
-	  display: flex;
-	  justify-content: space-between;
-	  align-items: center;
-	  transition: all 0.2s;
-		border-bottom: 1px solid #f5f5f5
-	}
-	.address-item.active {
-	  background: #fff8f2; /* 选中时背景色 */
-	  // border: 1rpx solid #ff6600;
-	}
-	.address-info {
-	  flex: 1;
-	  font-size: 28rpx;
-	  color: #333;
-		.phone {
-			margin-left: 30rpx;
-		}
-	}
-	.region {
-	  color: #999;
-	  font-size: 24rpx;
-	}
-	.user-info {
-	  display: flex;
-	  gap: 10rpx;
-	  font-size: 24rpx;
-	  color: #666;
-	}
-	.default-tag {
-	  color: #ff6600;
-	}
-	.more-address {
-	  text-align: center;
-	  color: #666;
-	  padding: 20rpx 0;
-	}
+  .popup-content {
+    height: 700rpx;
+  }
+
+  .confirm-btn {
+    background-color: #9a7546;
+    color: @card-bg;
+    border: none;
+    border-radius: 50rpx;
+    font-size: 32rpx;
+    width: 95%;
+    //padding: 20rpx 0;
+  }
+
+  /* 标签栏 */
+  .tab-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20rpx 30rpx;
+  }
+  .tab-item {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  .tab-right {
+    display: flex;
+    gap: 30rpx;
+  }
+  .manage-text {
+    color: #333;
+  }
+  .add-text {
+    color: #ff6600;
+  }
+
+  /* 地址列表 */
+  .address-list {
+    flex: 1;
+    overflow-y: auto; /* 兼容非小程序端 */
+    max-height: 100%; /* 保证 scroll-view 可滚动 */
+  }
+  .address-item {
+    background: #fff;
+    padding: 25rpx;
+    border-radius: 16rpx;
+    margin-bottom: 15rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .address-item.active {
+    background: #fff8f2; /* 选中时背景色 */
+    // border: 1rpx solid #ff6600;
+  }
+  .address-info {
+    flex: 1;
+    font-size: 28rpx;
+    color: #333;
+    .phone {
+      margin-left: 30rpx;
+    }
+  }
+  .region {
+    color: #999;
+    font-size: 24rpx;
+  }
+  .user-info {
+    display: flex;
+    gap: 10rpx;
+    font-size: 24rpx;
+    color: #666;
+  }
+  .default-tag {
+    color: #ff6600;
+  }
+  .more-address {
+    text-align: center;
+    color: #666;
+    padding: 20rpx 0;
+  }
 }
 
 /* 通用卡片样式 */

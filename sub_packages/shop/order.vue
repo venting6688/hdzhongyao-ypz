@@ -17,7 +17,10 @@
         <order-item :order="item" />
       </view>
 
-      <view v-if="filteredOrders.length === 0" class="empty"> 暂无订单 </view>
+      <view v-if="filteredOrders.length === 0" class="empty">
+        暂无订单
+        <view class="to-index-btn" @tap="toIndexPage"> 去逛逛 </view>
+      </view>
     </scroll-view>
   </view>
 </template>
@@ -66,7 +69,12 @@ export default {
         page: this.page,
         size: this.size,
       });
-      if (res.data && "orders" in res.data && res.data.orders.length > 0) {
+      if (
+        res.errno == 0 &&
+        res.data &&
+        "orders" in res.data &&
+        res.data.orders.length > 0
+      ) {
         const newOrders = res.data.orders.map(
           ({
             orderInfo: { id, addTime, goodsPrice, orderStatusText },
@@ -88,8 +96,10 @@ export default {
           })
         );
         this.orders = [...newOrders];
-        // this.page++;
       }
+    },
+    toIndexPage() {
+      uni.navigateTo({ url: `/sub_packages/shop/index` });
     },
   },
 };
@@ -111,5 +121,18 @@ export default {
   text-align: center;
   color: #999;
   margin-top: 100rpx;
+}
+.to-index-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #9a7546;
+  padding: 20rpx;
+  border-radius: 20rpx;
+  width: 50%;
+  margin: auto;
+  color: #fff;
+  font-size: 34rpx;
+  margin-top: 30rpx;
 }
 </style>
