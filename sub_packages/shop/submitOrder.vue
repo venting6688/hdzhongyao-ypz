@@ -389,7 +389,7 @@ export default {
 
   .note-textarea {
     width: 95%;
-    height: 200rpx;
+    height: 350rpx;
     padding: 20rpx;
     margin: 20rpx auto;
     font-size: 28rpx;
@@ -400,7 +400,7 @@ export default {
   }
 
   .popup-content {
-    height: 700rpx;
+    height: 1100rpx;
   }
 
   .confirm-btn {
@@ -410,7 +410,7 @@ export default {
     border-radius: 50rpx;
     font-size: 32rpx;
     width: 95%;
-    //padding: 20rpx 0;
+    margin-bottom: 20rpx;
   }
 
   /* 标签栏 */
