@@ -186,6 +186,7 @@ export default {
         img: item.image,
         name: item.name,
         price: item.price,
+				goodsId: item.goodsId,
         quantity: item.quantity,
       }));
       this.orderData.goods = [...newGoods];
@@ -276,9 +277,8 @@ export default {
 
     /** 提交订单并支付 */
     async submitOrder() {
-			let goodsId = this.orderData.goods.map(v => v.id)
+			let goodsId = this.orderData.goods.map(v => v.goodsId)
 			goodsId = goodsId.join(',')
-			console.log(goodsId);
       uni.showLoading({ title: "提交中..." });
       const payload = {
 				goodsId,
@@ -287,7 +287,6 @@ export default {
         postscript: this.orderData.note,
 				type: this.buyType
       };
-
       const res = await shopApi.submitOrderApi(payload);
       if (res.data && res.errno == 0) {
         uni.hideLoading();
