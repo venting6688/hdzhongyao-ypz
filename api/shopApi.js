@@ -151,18 +151,12 @@ const shop = {
     return res?.data || {};
   },
   //   订单提交
-  async submitOrderApi({ userId, addressId, cartIds, postscript, type }) {
+  async submitOrderApi(data) {
     const res = await cjRequest(
       {
         url: "/api/order/submit",
         method: "post",
-        data: {
-          userId,
-          addressId,
-          cartIds,
-          postscript,
-          type,
-        },
+        data,
       },
       2
     );

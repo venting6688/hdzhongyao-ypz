@@ -251,8 +251,12 @@ export default {
 
     /** 提交订单并支付 */
     async submitOrder() {
+			let goodsId = this.orderData.goods.map(v => v.id)
+			goodsId = goodsId.join(',')
+			console.log(goodsId);
       uni.showLoading({ title: "提交中..." });
       const payload = {
+				goodsId,
         addressId: this.defaultAddress.id,
         userId: this.loginData.userId,
         postscript: this.orderData.postscript,

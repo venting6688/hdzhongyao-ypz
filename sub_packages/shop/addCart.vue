@@ -168,7 +168,6 @@ export default {
 				let productIds = [];
 				if (item == null) {
 					productIds = this.cartList.filter(i => i.checkedArr.length > 0).map(v => v.productId);
-					console.log(JSON.stringify(productIds),'=s=s=s=');
 				} else {
 					productIds.push(item.productId);
 				}
@@ -194,7 +193,7 @@ export default {
       if (!selected.length) {
         return uni.showToast({ title: '请先选择商品', icon: 'none' });
       }
-      uni.navigateTo({ url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(JSON.stringify(selected))}&buyType='cart'`});
+      uni.navigateTo({ url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(JSON.stringify(selected))}&buyType=cart`});
     },
 		getCartList() {
 			shopApi.cartList(this.userId).then((res) => {
