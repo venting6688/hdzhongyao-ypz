@@ -201,9 +201,11 @@ export default {
     },
     onClickCart() {
       this.loginCheck();
-      uni.navigateTo({
-        url: "/sub_packages/shop/addCart",
-      });
+      if (this.isLogin) {
+        uni.navigateTo({
+          url: "/sub_packages/shop/addCart",
+        });
+      }
     },
     onClickAddCart() {
       this.loginCheck();
@@ -232,13 +234,15 @@ export default {
     },
     onClickBuyDrug() {
       this.loginCheck();
-      const goodsData = [{
-        ...this.drug,
-        quantity: 1,
-      }];
-      uni.navigateTo({
-        url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(JSON.stringify(goodsData))}`,
-      });
+      if (this.isLogin) {
+        const goodsData = [{
+          ...this.drug,
+          quantity: 1,
+        }];
+        uni.navigateTo({
+          url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(JSON.stringify(goodsData))}`,
+        });
+      }
     },
     //   登陆判断
     loginCheck() {
@@ -262,6 +266,7 @@ export default {
   justify-content: center;
   padding: 15px;
   background-color: #fff;
+  margin-bottom: 20rpx;
 }
 .shop-detail-page {
   //background-color: #f5f5f5;

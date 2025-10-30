@@ -87,15 +87,15 @@ export default {
     },
     async confirmOrder(order) {
       const res = await shopApi.confirmOrderApi({
-        orderId: order.orderSn,
+        orderId: order.id,
         userId: this.loginData.userId,
       });
-      if (res.code === 200) {
+      if (res.errno === 0) {
         uni.showToast({
           title: "确认收货成功",
           icon: "success",
         });
-        this.getOrderList();
+        this.$emit("getOrderListEmit");
       }
     },
     async cancelOrder(order) {
@@ -103,12 +103,12 @@ export default {
         orderId: order.id,
         userId: this.loginData.userId,
       });
-      if (res.code === 200) {
+      if (res.errno === 0) {
         uni.showToast({
           title: "取消成功",
           icon: "success",
         });
-        this.getOrderList();
+        this.$emit("getOrderListEmit");
       }
     },
     payNow(order) {

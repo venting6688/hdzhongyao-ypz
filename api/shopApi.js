@@ -166,12 +166,8 @@ const shop = {
   async cancelOrderApi({ orderId, userId }) {
     const res = await cjRequest(
       {
-        url: "/api/order/cancelOrder",
+        url: `/api/order/cancelOrder?orderId=${orderId}&userId=${userId}`,
         method: "post",
-        data: {
-          orderId,
-          userId,
-        },
       },
       2
     );
@@ -181,12 +177,8 @@ const shop = {
   async confirmOrderApi({ orderId, userId }) {
     const res = await cjRequest(
       {
-        url: "/api/order/confirmOrder",
+        url: `/api/order/confirmOrder?orderId=${orderId}&userId=${userId}`,
         method: "post",
-        data: {
-          orderId,
-          userId,
-        },
       },
       2
     );

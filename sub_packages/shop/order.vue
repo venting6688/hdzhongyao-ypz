@@ -14,7 +14,7 @@
     <!-- 订单列表 -->
     <scroll-view scroll-y class="order-list">
       <view v-for="(item, index) in filteredOrders" :key="index">
-        <order-item :order="item" />
+        <order-item :order="item" @getOrderListEmit="getOrderList" />
       </view>
 
       <view v-if="filteredOrders.length === 0" class="empty">
