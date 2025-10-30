@@ -313,7 +313,6 @@ export default {
     startPayment({ data }, { id, orderSn }) {
       if (!data?.miniPayRequest || !orderSn) throw new Error("缺少支付参数");
       // 这里调用 uni.requestPayment 发起微信/支付宝支付
-      uni.showToast({ title: "订单提交成功，跳转支付", icon: "success" });
       uni.requestPayment({
         provider: "wxpay", // 服务提提供商
         timeStamp: data.miniPayRequest.timeStamp, // 时间戳
