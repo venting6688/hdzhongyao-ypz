@@ -179,14 +179,14 @@ export default {
 		this.buyType = options.buyType ? options.buyType : this.buyType;
 		this.getDefaultAddress();
 
-    if (options.goodsData) {
+    if (options.goodsData) { 
       const goods = JSON.parse(decodeURIComponent(options.goodsData));
       const newGoods = goods.map((item, index) => ({
         id: item.id,
         img: item.image,
         name: item.name,
         price: item.price,
-				goodsId: item.goodsId,
+				goodsId: item.goodsId ? item.goodsId : item.id,
         quantity: item.quantity,
       }));
       this.orderData.goods = [...newGoods];
@@ -200,7 +200,7 @@ export default {
 
     if (this.orderData.goods.length > 0) {
       await this.getProductById(this.orderData.goods[0].id);
-      if (this.buyType == 'add') this.buyAdd(this.orderData.goods[0].id);
+      if (this.buyType == 'buy') this.buyAdd(this.orderData.goods[0].id);
     }
   },
   methods: {
@@ -250,7 +250,6 @@ export default {
         number: 10,
         userId: this.loginData.userId,
       });
-      console.log(res);
       if (res) {
       } else {
       }
@@ -279,34 +278,38 @@ export default {
     async submitOrder() {
 			let goodsId = this.orderData.goods.map(v => v.goodsId)
 			goodsId = goodsId.join(',')
-      uni.showLoading({ title: "提交中..." });
-      const payload = {
-				goodsId,
-        addressId: this.defaultAddress.id,
-        userId: this.loginData.userId,
-        postscript: this.orderData.note,
-				type: this.buyType
-      };
-      const res = await shopApi.submitOrderApi(payload);
-      if (res.data && res.errno == 0) {
-        uni.hideLoading();
-        const { orderInfo } = res.data;
-        const datas = {
-          lockId: "",
-          patientId: this.loginData.defaultArchives?.idNum,
-          patientName: this.loginData.defaultArchives?.patientName,
-          subOpenId: this.loginData?.xcxOpenId,
-          totalAmount: String(orderInfo?.actualPrice),
-          merOrderId: orderInfo?.orderSn,
-          uploadData: {},
-          payType: "shopPay",
-        };
-        const resRegister = await registrationApi.registerOrder(datas);
-        this.startPayment(resRegister, orderInfo);
-      } else {
-        uni.hideLoading();
-        uni.showToast({ title: "提交订单失败", icon: "none" });
-      }
+			if (!this.defaultAddress.id) {
+				uni.showToast({ title: "请选择收货地址", icon: "none" });
+			} else {
+				const payload = {
+					goodsId,
+				  addressId: this.defaultAddress.id,
+				  userId: this.loginData.userId,
+				  postscript: this.orderData.note,
+					type: this.buyType
+				};
+				const res = await shopApi.submitOrderApi(payload);
+				if (res.data && res.errno == 0) {
+				  uni.hideLoading();
+				  const { orderInfo } = res.data;
+				  const datas = {
+				    lockId: "",
+				    patientId: this.loginData.defaultArchives?.idNum,
+				    patientName: this.loginData.defaultArchives?.patientName,
+				    subOpenId: this.loginData?.xcxOpenId,
+				    totalAmount: String(orderInfo?.actualPrice),
+				    merOrderId: orderInfo?.orderSn,
+				    uploadData: {},
+				    payType: "shopPay",
+				  };
+				  const resRegister = await registrationApi.registerOrder(datas);
+				  this.startPayment(resRegister, orderInfo);
+				} else {
+				  uni.hideLoading();
+				  uni.showToast({ title: "提交订单失败", icon: "none" });
+				}
+			}
+      
     },
 
     /** 启动支付流程 */

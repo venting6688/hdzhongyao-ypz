@@ -241,7 +241,7 @@ export default {
   align-items: center;
   background: #fff;
   border-radius: 12rpx;
-  padding: 20rpx;
+  padding: 40rpx 30rpx;
   box-sizing: border-box;
 }
 .check-box {
@@ -290,8 +290,8 @@ export default {
   height: 40rpx;
   border: 1rpx solid #ddd;
   text-align: center;
-  line-height: 40rpx;
-  border-radius: 25rpx;
+  line-height: 37rpx;
+  border-radius: 15rpx;
 }
 .num {
   width: 50rpx;

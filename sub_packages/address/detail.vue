@@ -3,13 +3,18 @@
 		<view class="content">
 			<form>
 				<view class="cu-form-group">
+					<view class="x">*</view>
 					<view class="title">收件人</view>
-					<input v-model="informationObj.userName" name="input" />
-					<view class="title">手机号</view>
-					<input type="number" maxlength="11" v-model="informationObj.telNumber" name="input" />
+					<input v-model="informationObj.userName" name="input" placeholder="请输入姓名"  />
 				</view>
 				<view class="cu-form-group">
-					<view class="title">地址</view>
+					<view class="x">*</view>
+					<view class="title">手机号</view>
+					<input type="number" maxlength="11" v-model="informationObj.telNumber" name="input" placeholder="请输入手机号" />
+				</view>
+				<view class="cu-form-group">
+					<view class="x">*</view>
+					<view class="title">省市区</view>
 					<picker mode="region" @change="chooseregion" :value="provincesAndMunicipalities">
 						<view class="picker">
 							<text>{{ regionText }}</text>
@@ -17,13 +22,14 @@
 					</picker>
 				</view>
 				<view class="cu-form-group">
+					<view class="x">*</view>
 					<view class="title">详细地址</view>
-					<input v-model="informationObj.detailInfo" name="input" />
+					<input v-model="informationObj.detailInfo" name="input" placeholder="请输入详细地址"  />
 				</view>
 			</form>
 			<view class="bottom">
+				<view class="confirm delete" @click="deleteBtn">清空</view>
 				<view class="confirm" @click="type == 'add' ? save() : editAddress(informationObj)">确认保存</view>
-				<view class="delete" @click="deleteBtn">清空</view>
 			</view>
 		</view>
 	</view>
@@ -62,50 +68,68 @@
 			//新增地址
 			save() {
 				this.informationObj.userId = this.userId;
-				shopApi.saveAddress(this.informationObj).then(res => {
-					if(res.statusCode == 200) {
-						uni.showToast({
-							title: '添加成功',
-							duration: 3000
-						});
-						setTimeout(()=>{
-							uni.navigateBack();
-						},3000)
-					} else {
-						uni.showToast({
-							title: '保存失败',
-							icon: 'error',
-							duration: 3000
-						});
-					}
-				})
-				.catch(err => {
-					console.log('2：', err);
-				})
+				if (!this.informationObj.userName || !this.informationObj.telNumber || !this.informationObj.detailInfo) {
+					uni.showToast({
+						title: '请填写必要信息',
+						icon: 'error',
+						duration: 3000
+					});
+				} else {
+					this.informationObj.provinceName = this.provincesAndMunicipalities[0];
+					this.informationObj.cityName = this.provincesAndMunicipalities[1];
+					this.informationObj.countyName = this.provincesAndMunicipalities[2];
+					shopApi.saveAddress(this.informationObj).then(res => {
+						if(res.statusCode == 200) {
+							uni.showToast({
+								title: '添加成功',
+								duration: 3000
+							});
+							setTimeout(()=>{
+								uni.navigateBack();
+							},3000)
+						} else {
+							uni.showToast({
+								title: '保存失败',
+								icon: 'error',
+								duration: 3000
+							});
+						}
+					}).catch(err => {
+						console.log('2：', err);
+					})
+				}
 			},
 			//编辑地址
 			editAddress(item) {
-				this.informationObj.fullRegion = this.informationObj.provinceName+this.informationObj.cityName+this.informationObj.countyName
-				shopApi.saveAddress(item).then(res => {
-					if(res.statusCode == 200) {
-						uni.showToast({
-							title: '修改成功',
-							duration: 3000
-						});
-						setTimeout(()=>{
-							uni.navigateBack();
-						},3000)
-					} else {
-						uni.showToast({
-							title: '修改失败',
-							icon: 'error',
-							duration: 3000
-						});
-					}
-				})
-				.catch(err => {
-					console.log('2：', err);
-				})
+				if (!this.informationObj.userName || !this.informationObj.telNumber || !this.informationObj.detailInfo) {
+					uni.showToast({
+						title: '请填写必要信息',
+						icon: 'error',
+						duration: 3000
+					});
+				} else {
+					this.informationObj.fullRegion = this.informationObj.provinceName+this.informationObj.cityName+this.informationObj.countyName
+					shopApi.saveAddress(item).then(res => {
+						if(res.statusCode == 200) {
+							uni.showToast({
+								title: '修改成功',
+								duration: 3000
+							});
+							setTimeout(()=>{
+								uni.navigateBack();
+							},3000)
+						} else {
+							uni.showToast({
+								title: '修改失败',
+								icon: 'error',
+								duration: 3000
+							});
+						}
+					})
+					.catch(err => {
+						console.log('2：', err);
+					})
+				}
 			},
 			//省市change function
 			chooseregion(event){
@@ -143,13 +167,11 @@
 		flex-direction: column;
 		
 		.content {
-			
 			margin:10rpx auto;
 			width: 714rpx;
 			background: #ffffff;
 			border-radius: 16rpx;
 			padding: 20rpx;
-			
 			.head {
 				display: flex;
 				align-items: center;
@@ -168,26 +190,31 @@
 					&:last-child{
 						border-bottom: 2rpx solid #eeeeee;
 					}
+					.x {
+						color: red;
+						margin-right: 10rpx;
+					}
 				}
 			}
 			.bottom {
-				margin-top: 60rpx;
+				width: 60%;
 				display: flex;
+				margin: 30rpx auto 0;
 				align-items: center;
+				justify-content: space-between;
 				.confirm {
-					width: 322rpx;
+					display: flex;
+					padding: 20rpx;
 					height: 64rpx;
 					background: #9A7546;
 					border-radius: 20rpx;
-					display: flex;
 					justify-content: center;
 					align-items: center;
 					font-size: 32rpx;
 					color: #ffffff;
-					margin:0 auto;
 				}
 				.delete {
-					color: #999999;
+					color: #fff;
 				}
 			}
 			.tips{

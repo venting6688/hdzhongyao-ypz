@@ -114,7 +114,7 @@ export default {
 	.content {
 		flex: auto;
 		overflow: auto;
-		margin-bottom: 50rpx;
+		// margin-bottom: 50rpx;
 	}
 	.btn {
 		background: #fff;
