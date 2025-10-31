@@ -289,12 +289,11 @@ export default {
   font-size: 36rpx;
   font-weight: bold;
   text-align: center;
-  padding: 30rpx;
   color: #333;
 }
 
 .popup-content {
-  height: 60vh;
+  height: 770rpx;
   overflow: auto;
   padding: 0 30rpx;
   .refund-amount-container {
@@ -315,14 +314,7 @@ export default {
   }
 }
 
-.popup-text {
-  font-size: 28rpx;
-  color: #666;
-  line-height: 1.8;
-}
-
 .popup-footer {
-  padding: 30rpx;
   .confirm-btn {
     background-color: #9a7546;
     color: #fff;
@@ -334,14 +326,6 @@ export default {
   }
 }
 
-.popup-btn {
-  background-color: #4286ff;
-  color: #fff;
-  border: none;
-  border-radius: 50rpx;
-  font-size: 32rpx;
-  width: 100%;
-}
 .note-textarea {
   //width: 75%;
   height: 250rpx;
@@ -354,7 +338,4 @@ export default {
   background-color: #f5f5f5;
 }
 
-.popup-content {
-  height: 770rpx;
-}
 </style>
