@@ -165,7 +165,7 @@ export default {
   filters: {
     formatPrice(value) {
       if (typeof value !== "number") return "0.00";
-      return value.toFixed(2);
+      return (value / 100).toFixed(2);
     },
   },
   async onLoad(options) {
@@ -179,7 +179,7 @@ export default {
 		this.buyType = options.buyType ? options.buyType : this.buyType;
 		this.getDefaultAddress();
 
-    if (options.goodsData) { 
+    if (options.goodsData) {
       const goods = JSON.parse(decodeURIComponent(options.goodsData));
       const newGoods = goods.map((item, index) => ({
         id: item.id,
@@ -247,11 +247,11 @@ export default {
       const res = await shopApi.buyAddApi({
         goodsId: drugId,
         productId: this.productId,
-        number: 10,
+        number: 1,
         userId: this.loginData.userId,
       });
-      if (res) {
-      } else {
+      if (res.errno === 1) {
+
       }
     },
     handleConfirm() {
@@ -292,6 +292,7 @@ export default {
 				if (res.data && res.errno == 0) {
 				  uni.hideLoading();
 				  const { orderInfo } = res.data;
+          console.log(orderInfo);
 				  const datas = {
 				    lockId: "",
 				    patientId: this.loginData.defaultArchives?.idNum,
@@ -309,7 +310,7 @@ export default {
 				  uni.showToast({ title: "提交订单失败", icon: "none" });
 				}
 			}
-      
+
     },
 
     /** 启动支付流程 */
@@ -397,11 +398,11 @@ export default {
     border: 1rpx solid #ccc;
     border-radius: 12rpx;
     resize: none;
-    background-color: #e9e2da;
+    background-color: #f5f5f5;
   }
 
   .popup-content {
-    height: 1100rpx;
+    height: 770rpx;
   }
 
   .confirm-btn {
