@@ -232,7 +232,7 @@ export default {
     background-image: url("@/static/image/shop-bg.png");
 		background-position: right 0px center;
     background-repeat: no-repeat;
-		
+
 		z-index: 99;
 
     .header-image {
@@ -244,7 +244,7 @@ export default {
     .search-bar {
       padding: 20rpx 0 0;
       ::v-deep .uni-searchbar__box {
-        box-shadow: 0rpx 4rpx 16rpx 0rpx rgba(135,101,58,0.08); 
+        box-shadow: 0rpx 4rpx 16rpx 0rpx rgba(135,101,58,0.08);
 				height: 78rpx;
       }
 			// ::v-deep .uni-search-bar__icon {
@@ -259,7 +259,7 @@ export default {
     flex-direction: column;
 		margin-top: 15rpx;
   }
-  
+
   .list-scroll {
     flex: 1;
     min-height: 100px;
@@ -269,7 +269,8 @@ export default {
   .category-scroll {
     display: flex;
     white-space: nowrap;
-    // padding: 16rpx 0;
+    scrollbar-width: none;
+    padding: 5rpx 0;
   }
 
   .category-item {
@@ -291,7 +292,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20rpx 28rpx;
+    padding: 26rpx 28rpx;
     font-size: 28rpx;
     color: #333;
 

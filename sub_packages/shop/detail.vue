@@ -292,7 +292,7 @@ export default {
   .drug-name {
     font-size: 32rpx;
     font-weight: bold;
-    margin-bottom: 10rpx;
+    margin: 15rpx 0 20rpx;
   }
 
   .drug-price {
@@ -305,10 +305,10 @@ export default {
       font-size: 24rpx;
       color: #87653a;
       font-weight: 500;
-      padding-right: 7rpx;
+      padding-right: 70rpx;
     }
     .drug-stock {
-      border-left: solid 1px #87653a;
+      //border-left: solid 1px #87653a;
       padding-left: 8rpx;
       float: right;
       font-size: 24rpx;
@@ -321,7 +321,7 @@ export default {
   .drug-desc {
     font-size: 28rpx;
     color: #666666;
-    padding-bottom: 15rpx;
+    padding-bottom: 20rpx;
     border-bottom: 1px solid #f5f5f5;
     //display: -webkit-box;
     //-webkit-box-orient: vertical;
@@ -485,6 +485,7 @@ export default {
       border: #9a7546 1px solid;
       font-size: 28rpx;
       color: #87653a;
+      line-height: 73rpx;
     }
     .buy-now {
       width: 200rpx;
@@ -492,6 +493,7 @@ export default {
       background-color: #9a7546;
       color: #fff;
       font-size: 28rpx;
+      line-height: 73rpx;
     }
   }
 }

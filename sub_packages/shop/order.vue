@@ -115,7 +115,7 @@ export default {
 }
 .order-list {
   padding: 20rpx;
-  max-height: calc(100vh - 200rpx);
+  max-height: calc(100vh - 100rpx);
 }
 .empty {
   text-align: center;

@@ -66,7 +66,7 @@
 
       <view class="item-line total-price-line">
         <text class="value actual-price">
-          <text class="label shifu-text">实付</text>¥{{ orderData.total }}</text
+          <text class="label shifu-text">实付</text>¥{{ orderData.total | formatPrice }}</text
         >
       </view>
 
@@ -102,7 +102,13 @@ export default {
   onLoad(options) {
     const orderId = options.id;
     this.loginData = uni.getStorageSync("loginData");
-    this.getOrderDetail(orderId);
+    this.getOrderDetail(orderId);;
+  },
+  filters: {
+    formatPrice(value) {
+      if (typeof value !== "number") return "0.00";
+      return (value / 100).toFixed(2);
+    },
   },
   methods: {
     getOrderDetail(orderId) {
@@ -158,7 +164,8 @@ export default {
 
 .order-detail {
   .order-detail-header {
-    padding: 20rpx;
+    margin: 10rpx 20rpx 0;
+    padding: 20rpx 20rpx 10rpx;
 
     .order-title {
       font-size: 30.53rpx;
