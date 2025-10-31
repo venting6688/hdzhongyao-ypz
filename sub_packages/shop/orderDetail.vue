@@ -63,30 +63,13 @@
     <!--订单详情-->
     <view class="goods-card">
       <order-item :order="orderData" :isShowFooter="false"></order-item>
-      <!--      <view class="goods-item">-->
-      <!--        <image-->
-      <!--          :src="orderData.goods.image"-->
-      <!--          mode="aspectFill"-->
-      <!--          class="goods-image"-->
-      <!--        ></image>-->
-      <!--        <view class="goods-info">-->
-      <!--          <view class="goods-name">{{ orderData.goods.name }}</view>-->
-      <!--          <view class="goods-price">¥{{ orderData.goods.price }}</view>-->
-      <!--        </view>-->
-      <!--        <view class="goods-quantity">-->
-      <!--          ×-->
-      <!--          {{ orderData.goods.quantity }}</view-->
-      <!--        >-->
-      <!--      </view>-->
 
       <view class="item-line total-price-line">
         <text class="value actual-price">
           <text class="label shifu-text">实付</text>¥{{ orderData.total }}</text
         >
       </view>
-      <!--    </view>-->
 
-      <!--    <view class="extra-info-card">-->
       <view class="item-line">
         <text class="label">下单时间:</text>
         <view class="value">{{ orderData.date }}</view>
@@ -111,36 +94,7 @@ export default {
   components: { orderItem },
   data() {
     return {
-      orderData: {
-        date: "2023-08-15",
-        status: "待收货",
-        goods: {
-          image: "/static/image/test.png",
-          name: "四君子茶",
-          price: 4.93,
-          quantity: 7,
-          actualPrice: 30,
-        },
-        address: {
-          region: "广东省 广州市",
-          street: "广州市海珠区",
-          name: "张三",
-          phone: "13800000000",
-        },
-        deliveryMethod: "快递",
-        note: "请在配送时带上身份证",
-        orderId: "P73641843423425556",
-      },
-      list2: [
-        {
-          title: "买家下单",
-          desc: "2018-11-11",
-        },
-        {
-          title: "卖家发货",
-          desc: "2018-11-12",
-        },
-      ],
+      orderData: {},
       active: 2,
       loginData: null,
     };
@@ -148,7 +102,6 @@ export default {
   onLoad(options) {
     const orderId = options.id;
     this.loginData = uni.getStorageSync("loginData");
-    console.log("订单详情", orderId);
     this.getOrderDetail(orderId);
   },
   methods: {
@@ -176,7 +129,6 @@ export default {
             ),
           };
           this.orderData = newOrders;
-          console.log(newOrders);
         });
     },
     onClickCopy() {

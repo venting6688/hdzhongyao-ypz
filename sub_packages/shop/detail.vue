@@ -456,11 +456,11 @@ export default {
         line-height: 28rpx;
         text-align: center;
       }
-      .cart-text {
-        margin-top: 6rpx;
-        font-size: 24rpx;
-        color: #333;
-      }
+    }
+    .cart-text {
+      margin-top: 6rpx;
+      font-size: 24rpx;
+      color: #333;
     }
     .action-item {
       text-align: center;
