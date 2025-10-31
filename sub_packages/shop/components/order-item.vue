@@ -309,10 +309,8 @@ export default {
 
   .refund-reason {
     display: flex;
-    //flex-direction: column;
-    //align-items: center;
     > text {
-      width: 200rpx;
+      width: 160rpx;
     }
   }
 }
@@ -325,6 +323,15 @@ export default {
 
 .popup-footer {
   padding: 30rpx;
+  .confirm-btn {
+    background-color: #9a7546;
+    color: #fff;
+    border: none;
+    border-radius: 50rpx;
+    font-size: 32rpx;
+    width: 95%;
+    margin-bottom: 20rpx;
+  }
 }
 
 .popup-btn {
