@@ -100,7 +100,7 @@
         </view>
       </view>
       <view class="popup-footer">
-        <button class="confirm-btn" @click="confirmNote">确认</button>
+        <button class="confirm-btn" @click="onClickConfirm">确认</button>
       </view>
     </uni-popup>
   </view>
@@ -184,6 +184,26 @@ export default {
     },
     closeNotePopup() {
       this.$refs.refundPopup.close();
+    },
+    async onClickConfirm() {
+      const res = await shopApi.applyRefundApi({
+        orderId: this.order.id,
+        userId: this.loginData.userId,
+        note: this.orderData.note,
+      });
+      if (res.errno === 0) {
+        uni.showToast({
+          title: "申请退款成功",
+          icon: "success",
+        });
+        this.$emit("getOrderListEmit");
+        this.closeNotePopup();
+      } else {
+        uni.showToast({
+          title: res.errmsg || "申请退款失败",
+          icon: "error",
+        });
+      }
     },
   },
 };

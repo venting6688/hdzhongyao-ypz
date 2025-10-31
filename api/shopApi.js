@@ -256,5 +256,17 @@ const shop = {
     );
     return res?.data || {};
   },
+  //   申请退款
+  async applyRefundApi(data) {
+    const res = await cjRequest(
+      {
+        url: "api/order/applyRefund",// !! 这个接口还没有实现
+        method: "post",
+        data,
+      },
+      2
+    );
+    return res?.data || {};
+  },
 };
 export default shop;
