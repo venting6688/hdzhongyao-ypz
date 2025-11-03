@@ -1,5 +1,10 @@
 <template>
 	<view class="virtual">
+		<aiNotice
+		ref="notice" 
+		:tipMsg="tipMsg" 
+		@confirmed="handleConfirm" 
+		/>
 		<view class=""   :animation="anData"  style="height:0rpx;"></view>
 		<image class="background" src="../../static/image/virtualBg.png"></image>
 		<view class="head">
@@ -22,66 +27,93 @@
 						</view>
 				    </view>
 					<!-- AI消息 -->
-					<view class="robot" v-else>
-						<view class="robot-box"  v-if="x.type!==2">
-							<view class="tubiao">
-								<image src="../../static/image/Group 998.png" mode="widthFix"></image>
-							</view>
-							<view class="triangle"></view>
-							<view class="center">
-								<view class="loading" v-if="x.msgLoad">
-									<text>思考中</text>
-									<view class="dot">
-										<view class="stage">
-											<view  class="dot-typing"></view>
-										</view>
-									</view>
+						<view class="robot" v-else>
+							<view class="robot-box"  v-if="x.type!==2">
+								<view class="tubiao">
+									<image src="../../static/image/Group 998.png" mode="widthFix" />
 								</view>
-								<!-- <view v-if="x.msgLoad" class="cuIcon-loading turn-load" style="font-size: 50rpx;color: #60B6FE;"></view> -->
-								<view v-else class="msg" v-html="markdown(x.msg)"></view>
-								<!-- 消息模板 -->
-								<view class="top1" v-if="x.type==1">
-									<view @click="answer(item)" v-for="(item,index) in x.questionList" :key="index">
-										<text>{{item}}</text>
-									</view>
-								</view>
-								<view class="ai-tips" v-if="pattern!==1 && !x.msgLoad && x.type!==1">
-									此内容由AI生成，仅供参考
-								</view>
-							</view>
-						</view>
-						<!-- 推荐科室 -->
-						<view class="top2" v-if="x.type==2">
-							<!-- <image src="@/static/image/department.png" mode="widthFix"></image> -->
-							<view class="top2-content">
-								<view class="department" v-for="(clinic,u) in x.department" :key="u">
-									<view class="title">
-										推荐科室{{u+1}}
-									</view>
-									<view class="top2-center">
-										<text>{{clinic.name}}</text>
-										<view class="top2-btn" @click="footType(clinic)">
-											<view class="top2-img">
-												<image src="@/static/image/plus.png" mode="widthFix"></image>
+								<view class="triangle"></view>
+								<view class="center" style="opacity: 0.95;">
+									<view class="loading" v-if="x.msgLoad">
+										<text>思考中</text>
+										<view class="dot">
+											<view class="stage">
+												<view  class="dot-typing"></view>
 											</view>
-											<view class="text" >挂号</view>
 										</view>
 									</view>
+									<!-- <view v-if="x.msgLoad" class="cuIcon-loading turn-load" style="font-size: 50rpx;color: #60B6FE;"></view> -->
+									<view v-else class="msg" v-html="markdown(x.msg)"></view>
+									<!-- 消息模板 -->
+									<view class="top1" v-if="x.type==1">
+										<view @click="answer(item)" v-for="(item,index) in x.questionList" :key="index">
+											<text>{{item}}</text>
+										</view>
+									</view>
+									<view class="ai-tips" v-if="pattern!==1 && !x.msgLoad && x.type!==1">
+										此内容由AI生成，仅供参考
+									</view>
 								</view>
-								
-								<view class="more">
-									<text @click="more">更多</text>
-									<image @click="tipsBtn(i)" src="../../static/image/question.png" mode="widthFix"></image>
+							</view>
+							<!-- 推荐科室 -->
+							<view class="top2" v-if="x.type==2 && x.department">
+								<view class="top2-content">
+									<view class="department" v-for="(clinic,u) in x.department" :key="u">
+										<view class="title">推荐科室</view>
+										<view class="top2-center">
+											<text>{{clinic.name}}</text>
+											<view class="top2-btn" @click="footType(clinic)">
+												<view class="top2-img">
+													<image src="@/static/image/plus.png" mode="widthFix"></image>
+												</view>
+												<view class="text">挂号</view>
+											</view>
+										</view>
+									</view>
+									<view class="more">
+										<text @click="more">更多</text>
+										<image @click="tipsBtn(i)" src="../../static/image/question.png" mode="widthFix"></image>
+									</view>
+									<view class="dept-tips" v-if="x.tipsState">
+										{{x.tips}}
+									</view>
+									<view class="ai-tips" v-if="!x.msgLoad">
+										此内容由AI生成，仅供参考
+									</view>
 								</view>
-								<view class="dept-tips" v-if="x.tipsState">
-									{{x.tips}}
+							</view>
+							<!-- 医生排班 -->
+							<view class="doctor" v-if="x.type==2 && x.scheduling">
+								<view class="top2-content">
+									<view class="title">医生排班</view>
+									<view class="scheduling" v-for="(item, index) in x.scheduling" :key="index" v-show="x.scheduling">
+										<view class="img">
+											<image :src="item.DoctorImg" v-if="item.DoctorImg" mode="aspectFit"></image>
+											<image src="../../static/image/doctor.png" mode="" v-else></image>
+										</view>
+										<view class="name">
+											<view class="price">
+												<view>{{item.DoctorName}} ({{item.SessionName}})</view>
+												<view class="fee">￥{{item.Fee}}</view>
+											</view>
+											<view>{{item.DoctorSessType}}</view>
+											<view>{{item.DepartmentName}}</view>
+											<view></view>
+										</view>
+									</view>
+									<view class="noData" v-show="x.scheduling.length == 0">很抱歉，暂无当前科室排班</view>
+									<view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
 								</view>
-								<view class="ai-tips" v-if="!x.msgLoad">
-									此内容由AI生成，仅供参考
+							</view>
+							<!-- 地图导航 -->
+							<view class="doctor" v-if="x.type==2 && x.map">
+								<view class="top2-content">
+									<view class="title">科室导航</view>
+									<view class="noData">很抱歉，科室导航暂未开通，您可以查询科室排班，敬请期待。</view>
+									<view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
 								</view>
 							</view>
 						</view>
-					</view>
 					</view>
 				</view>
 		    </scroll-view>
@@ -104,11 +136,6 @@
 			  </view>
 			</uni-popup>
 		    <view class="foot">
-				<view class="foot-bar">
-					<view :class="{blue:item.state===pattern}" class="test" v-for="item in footBar" :key="item" @click="footBarBtn(item)">
-						<text>{{item.name}}</text>
-					</view>
-				</view>
 				<view v-if="voiceState" class="foot-center">
 					<view class="image">
 					<image @click="voiceState=false" src="@/static/image/keyword.png" mode=""></image>	
@@ -184,15 +211,22 @@
 	// 顶部空盒子的高度
 	var mgUpHeight
 	
+	import bus from "@/utils/bus";
 	import {mapActions} from 'vuex'
 	import MarkdownIt from 'markdown-it';
-	import bus from "@/utils/bus";
+	import mixin from '@/mixins/mixin.js'
 	import login from '@/utils/login.js'
 	import { parse } from 'best-effort-json-parser'
+	import aiNotice from '@/components/aiNotice.vue'
 	
 	export default {
+		mixins: [mixin],
+	  components: { aiNotice },
 		data() {
 			return {
+				siginVal: {},
+				showMsg: false,
+				tipMsg: 'normal',
 				md: new MarkdownIt(),
 				pattern:2,
 				patternList:[
@@ -210,23 +244,13 @@
 				mode:'',
 				msgList:[
 					{
-						my:false,
+					  my:false,
 						type:1,
 						msg:'您可以向我询问以下问题：',
-						questionList:['感冒吃什么药','头孢的作用是什么'],
+						questionList:['儿科排班','如何进行退烧？','腹痛挂什么科？'],
 					}
-				],      //消息集合
-				DataList:{},    //底部弹窗
-				footBar: [
-					{
-						name:'智能导诊',
-						state:1,
-					},
-					{
-					name:'智能问答',
-					state:2,
-					},
 				],
+				DataList:{},    //底部弹窗
 				voiceState:false,        //底部切换状态
 				reply:[],
 				Focus:false,  //输入框聚焦
@@ -309,6 +333,9 @@
 		    }
 		},
 		methods: {
+			handleConfirm() {
+				this.showMsg = true;
+			},
 			tipsBtn(index){
 				// 使用 this.$set 修改数组中某一项的属性
 				this.$set(this.msgList[index], 'tipsState', !this.msgList[index].tipsState);
@@ -442,44 +469,43 @@
 				// 必须建档
 				this.msgList.push({msgLoad:true})
 				this.inputState = false
+				let genderCode = this.siginVal.idNum.charAt(16);
+				let sex = genderCode % 2 === 0 ? '女' : '男';
 				const requestTask = wx.request({
 				  url: 'https://www.chinzsoft.com/api/v1/chat-messages', // 流式接口的URL
 				  method: 'POST',
 				  data: {
 				    query: msg,
-				   inputs: {
-				     sex: this.patient.sex?this.patient.sex:'男',
-				     age: this.patient.age?this.patient.age:24,
-				   },
+						inputs: {
+				     sex,
+				     age: this.calculateAge(this.siginVal.idNum),
+						},
 				    response_mode: "streaming",
 				    conversation_id: this.conversation_id,
-				    user: "abc-123"
+				    user: this.siginVal.patientName,
 				  },
 				  enableChunked: true,
-				  // enableHttp2:true,
 				  header: {
-				    'Authorization': `Bearer ${this.pattern===1?this.patternList[0]:this.patternList[1]}`,
+				    'Authorization': `Bearer app-v8Wx9g1k1qZ21ycQbHlO3Yzf`,
 				    'content-type': 'application/json',
 				  },
 				  success: (res) => {
 					  if(this.pattern===1){
-						this.test1 = ''
-						if(!this.test2.is_complete){
-							this.mode = this.test2.mode
-							console.log(JSON.stringify(this.test2),'=s=s=s=s=s=s=s');
-							if(this.test2.option.length){
-								this.DataList.main = this.test2.option.map(item=> {
-								    return {value:item}
-								})
-								this.$refs.popup.open('bottom')   //弹框
+							this.test1 = ''
+							if(!this.test2.is_complete){
+								this.mode = this.test2.mode
+								if(this.test2.option.length){
+									this.DataList.main = this.test2.option.map(item=> {
+										return {value:item}
+									})
+									this.$refs.popup.open('bottom')   //弹框
+								}
+							}else {
+								this.conversation_id = ''
 							}
-						}else {
-							this.conversation_id = ''
-						}  
-					  }else {
+					  } else {
 						  this.test1 = ''
 					  }
-					  
 					  this.msgGo()
 					  this.inputState = true
 				  },
@@ -488,67 +514,152 @@
 					  this.inputState = true
 				  },
 				});
-				requestTask.onChunkReceived((response) => {
-					try {
-						// 收到流式数据，根据返回值进行相对应数据解码
-						const arrayBuffer = response.data;
-						const uint8Array = new Uint8Array(arrayBuffer);
-						let text = uni.arrayBufferToBase64(uint8Array)
-						text = new Buffer(text, 'base64')
-						let responseText = text.toString('utf-8')
-						let data = responseText.split('data: ')
-						let i 
-						for (let j = 0; j < data.length; j++) {
-							if(!j) continue;
-							if(!data[j].includes('message') || data[j].includes('message_end')){
-								break
+				let buffer = '';
+				let partialAnswer = '';
+				let lastIntent = null;
+				requestTask.onChunkReceived((res) => {
+				  try {
+						const responseText = this.arrayBufferToString(res.data)
+						//如果流式文件内容过长内容不全面，导致解析失败
+						buffer += responseText;
+						let lines = buffer.split('\n');
+						buffer = lines.pop();
+						for (const line of lines) {
+							if (!line.startsWith('data:')) continue;
+							const jsonStr = line.replace(/^data:\s*/, '').trim();
+							if (!jsonStr) continue;
+							if (jsonStr === '[DONE]' || jsonStr.includes('message_end')) {
+							  break
+							}
+							let obj;
+							try {
+								obj = JSON.parse(jsonStr);
+							} catch (e) {
+								console.warn('解析失败, 跳过:', jsonStr);
+							}
+							if (obj.event == 'error') {
+								this.msgList.splice(this.msgList.length - 1, 1, {
+								  my: false,
+								  msgLoad: false,
+								  msg: "很抱歉，您的问题暂时没查询到，我还在努力学习中...",
+								})
+							}
+							this.conversation_id = obj.conversation_id || this.conversation_id
+							let answer = obj.answer || obj.data?.outputs?.answer
+							if (!answer) continue
+							
+							
+							const isJsonText = answer.trim().startsWith('{') && answer.trim().endsWith('}');
+							if (isJsonText) {
+								this.msgList.splice(this.msgList.length - 1, 1, {
+									my: false,
+									msgLoad: false,
+									msg: answer,
+								});
+							} else {
+								if (!this.test1) this.test1 = '';
+								if (!this.test1.endsWith(answer)) {
+									this.test1 += answer;
+								}
+								this.msgList.splice(this.msgList.length - 1, 1, {
+									my: false,
+									msgLoad: false,
+									msg: this.test1,
+								});
 							}
 							
-							i = JSON.parse(data[j])
-							this.conversation_id = i.conversation_id
-							// i.answer = i.answer&&i.answer.replace(/[ \r\n\u21B5]/g,'')
-							if(i.answer){
-								this.test1 += i.answer
-								if(this.pattern===1){
-									this.test2 = parse(this.test1)
-									if(!this.test2.is_complete){
-										if(this.test2.response){
-											const content = {
-												my:false,
-												msgLoad:false,
-												msg:this.test2.response?this.test2.response.replace(/\[.*?\]/, ''):'',
-											}
-											this.msgList.splice(this.msgList.length-1,1,content)		  
-										}
-									}else {
-										const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState;
-										const content = {
-											my:false,
-											type:2,
-											msgLoad:false,
-											department:this.test2.option?this.test2.option:[],
-											tips:this.test2.reason?this.test2.reason:'',
-											tipsState: originalTipsState
-										}
-										this.msgList.splice(this.msgList.length-1,1,content)
-									}
-								}else {
-									const content = {
+							
+							if (typeof answer === 'string' && answer.trim().startsWith('{') && answer.trim().endsWith('}')) {
+								answer = answer.replace(/[\r\n]+/g, '\\n')
+								answer = JSON.parse(answer);
+								let content = answer.content;
+								let type = answer.intent;
+								
+								if (type == 'A001') {
+									const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState;
+									this.msgList.splice(this.msgList.length-1,1,{
 										my:false,
+										type:2,
 										msgLoad:false,
-										msg:this.test1?this.test1.replace(/\[.*?\]/, ''):'',
-									}
-									this.msgList.splice(this.msgList.length-1,1,content)
+										department: answer.content.option,
+										tips: answer.content.reason,
+										tipsState: originalTipsState
+									})
+								} 
+								if (type == 'A002' && content.code != 500) {
+									this.msgList.splice(this.msgList.length-1,1,{
+										my:false,
+										type: 2,
+										msgLoad:false,
+										scheduling: content,
+									})
+								} 
+								if (type == 'A002' && content.code == 500) {
+									this.msgList.splice(this.msgList.length - 1, 1, {
+										my: false,
+										msgLoad: false,
+										msg: content.msg,
+									})
+								}
+								if (type == 'A003') {
+									this.msgList.splice(this.msgList.length-1,1,{
+										my:false,
+										type: 2,
+										msgLoad:false,
+										map: answer.slots.department,
+									})
+								} 
+								if (type == 'A005' || type == 'A999' || type == 'A004') {
+									this.msgList.splice(this.msgList.length - 1, 1, {
+										my: false,
+										msgLoad: false,
+										msg: content,
+									})
 								}
 							}
 						}
-					} catch (error) {
-						console.log('error',error)
-						//TODO handle the exception
-					}
-				  
+						
+				  } catch (e) {
+				    console.error('解析流式返回数据异常:', e)
+				  }
 				});
 			},
+			arrayBufferToString(buffer) {
+			  const bytes = new Uint8Array(buffer);
+			  let out = '', i = 0, len = bytes.length;
+			  while (i < len) {
+			    let c = bytes[i++];
+			    if (c >> 7 === 0) {
+			      // 单字节
+			      out += String.fromCharCode(c);
+			    } else if (c >> 5 === 0b110) {
+			      // 双字节
+			      let c2 = bytes[i++];
+			      out += String.fromCharCode(((c & 0x1F) << 6) | (c2 & 0x3F));
+			    } else if (c >> 4 === 0b1110) {
+			      // 三字节
+			      let c2 = bytes[i++];
+			      let c3 = bytes[i++];
+			      out += String.fromCharCode(((c & 0x0F) << 12) |
+			                                 ((c2 & 0x3F) << 6) |
+			                                 (c3 & 0x3F));
+			    } else {
+			      // 四字节 (surrogate pair)
+			      let c2 = bytes[i++];
+			      let c3 = bytes[i++];
+			      let c4 = bytes[i++];
+			      let codepoint = ((c & 0x07) << 18) |
+			                      ((c2 & 0x3F) << 12) |
+			                      ((c3 & 0x3F) << 6) |
+			                      (c4 & 0x3F);
+			      codepoint -= 0x10000;
+			      out += String.fromCharCode(0xD800 + (codepoint >> 10));
+			      out += String.fromCharCode(0xDC00 + (codepoint & 0x3FF));
+			    }
+			  }
+			  return out;
+			},
+			
 			//弹窗事件
 			choice(index){
 				let reply = this.reply.join(',')
@@ -664,6 +775,8 @@
 			  },
 		},
 	  mounted() {
+			let loginValue = uni.getStorageSync("loginData");
+			this.siginVal = loginValue ? loginValue.defaultArchives : {};
 			 // let loginData = uni.getStorageSync("loginData");
 			 // loginData = loginData.defaultArchives ? loginData.defaultArchives : false;
 			 // if (!loginData) {
@@ -714,7 +827,7 @@
 		flex-direction: column;  
 		
 		.tubiao {
-			margin: 0 10rpx 0 15rpx;
+			margin: 0 10rpx;
 		  image {
 				width: 72rpx;
 		  }
@@ -767,7 +880,7 @@
 							justify-content: flex-end;
 							align-items: center;
 							width: 630rpx;
-							margin: 20rpx 7rpx 20rpx 0;
+							margin: 20rpx 25rpx 20rpx 0;
 							
 							.triangle {
 								width: 0;
