@@ -59,6 +59,15 @@ const patient = {
 		})
 	   	return res
 	},
+  //继续支付订单
+	async againOrderApi(data) {
+		const res = await cjRequest({
+			url: "againOrder",
+			method: "post",
+			data
+		})
+	   	return res
+	},
 	//支付
 	async wxPay(data) {
 		const res = await cjRequest({

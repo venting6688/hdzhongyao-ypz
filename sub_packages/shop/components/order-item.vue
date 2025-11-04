@@ -108,6 +108,7 @@
 
 <script>
 import shopApi from "@/api/shopApi.js";
+import registrationApi from "@/api/registrationApi";
 
 export default {
   props: {
@@ -161,15 +162,48 @@ export default {
         this.$emit("getOrderListEmit");
       }
     },
-    payNow(order) {
-      // console.log(order);
-      // const goodsData = [{
-      //   ...this.order,
-      //   quantity: 1,
-      // }];
-      // uni.navigateTo({
-      //   url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(JSON.stringify(goodsData))}`,
-      // });
+    async payNow(orderInfo) {
+      const datas = {
+        lockId: "",
+        patientId: this.loginData.defaultArchives?.idNum,
+        patientName: this.loginData.defaultArchives?.patientName,
+        subOpenId: this.loginData?.xcxOpenId,
+        totalAmount: String(orderInfo?.total),
+        merOrderId: orderInfo?.orderSn,
+        uploadData: {},
+        payType: "shopPay",
+      };
+      const resRegister = await registrationApi.againOrderApi(datas);
+      this.startPayment(resRegister, orderInfo);
+    },
+    /** 启动支付流程 */
+    startPayment({ data }, { id, orderSn }) {
+      if (!data?.miniPayRequest || !orderSn) throw new Error("缺少支付参数");
+      uni.requestPayment({
+        provider: "wxpay", // 服务提提供商
+        timeStamp: data.miniPayRequest.timeStamp, // 时间戳
+        nonceStr: data.miniPayRequest.nonceStr, // 随机字符串
+        package: data.miniPayRequest.package,
+        signType: data.miniPayRequest.signType, // 签名算法
+        paySign: data.miniPayRequest.paySign, // 签名
+        success: (result) => {
+          uni.showToast({
+            title: "支付成功",
+            icon: "success",
+          });
+          shopApi.updateSuccessApi({
+            orderId: id,
+            orderSn: orderSn,
+            userId: this.loginData.userId,
+          });
+        },
+        fail: (result) => {
+          uni.showToast({
+            title: "支付失败",
+            icon: "none",
+          });
+        },
+      });
     },
     buyAgain(order) {
       console.log("再次购买", order.id);

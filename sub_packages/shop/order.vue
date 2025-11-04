@@ -77,13 +77,14 @@ export default {
       ) {
         const newOrders = res.data.orders.map(
           ({
-            orderInfo: { id, addTime, goodsPrice, orderStatusText },
+            orderInfo: { id, addTime, goodsPrice, orderStatusText, orderSn },
             orderGoods,
           }) => ({
             id,
             date: addTime,
             total: goodsPrice,
             status: orderStatusText,
+            orderSn,
             goods: orderGoods.map(
               ({ id, goodsName, retailPrice, number, listPicUrl }) => ({
                 id,
