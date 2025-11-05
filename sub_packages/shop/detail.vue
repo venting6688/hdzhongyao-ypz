@@ -21,7 +21,7 @@
       </view>
       <view class="drug-info">
         <view class="drug-price">
-          ￥{{ Number(drug.price).toFixed(2) }}
+          ￥{{ drug.price | formatPrice }}
           <text class="drug-stock">库存&nbsp;{{ drug.stock }}</text>
           <text class="drug-monthly-sales">已售出&nbsp;{{ drug.salesVolume }}</text>
         </view>
@@ -109,6 +109,12 @@
           desc: ''
         },
         serviceText: '药品配送业务由第三方快递公司承接，由不可预知的缘故导致的药品配送延误，由患者本人与ム江递公司协商解决。药品离柜进入配送环节之后，无特殊原因，不予退换。'
+      }
+    },
+    filters: {
+      formatPrice(value) {
+        if (typeof value !== 'number') return '0.00'
+        return (value / 100).toFixed(2)
       }
     },
     onLoad(options) {
