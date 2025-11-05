@@ -249,7 +249,10 @@
             addressId: this.defaultAddress.id,
             userId: this.loginData.userId,
             postscript: this.orderData.note,
-            type: this.buyType
+            type: "cart",
+            tmpGoodsId: goodsId,
+            productId: this.productId,
+            number: 1
           }
           const res = await shopApi.submitOrderApi(payload)
           if (res.data && res.errno == 0) {
@@ -296,16 +299,24 @@
           package: data.miniPayRequest.package,
           signType: data.miniPayRequest.signType, // 签名算法
           paySign: data.miniPayRequest.paySign, // 签名
-          success: result => {
+          success: async (result) => {
             uni.showToast({
               title: '支付成功',
               icon: 'success'
             })
-            shopApi.updateSuccessApi({
+            const res = await shopApi.updateSuccessApi({
               orderId: id,
               orderSn: orderSn,
-              userId: this.loginData.userId
-            })
+              userId: this.loginData.userId,
+            });
+            if (res.errno === 0) {
+                uni.navigateTo({ url: "/sub_packages/orderDetail/index?id=" + id });
+            } else {
+              uni.showToast({
+                title: res.errmsg || "支付失败",
+                icon: "error",
+              });
+            }
           },
           fail: result => {
             uni.showToast({
