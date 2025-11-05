@@ -244,15 +244,32 @@
             icon: 'none'
           })
         } else {
+          let data = {
+            number: 1,
+            goodsId,
+            userId: this.loginData.userId,
+            productId: this.productId
+          }
+          if (this.buyType == 'buy') {
+            const addCartRes = await shopApi.addCart(data)
+            if (addCartRes.data.errno != 400) {
+            } else {
+              uni.showToast({
+                title: addCartRes.data.errmsg,
+                icon: 'none'
+              })
+            }
+          }
+
           const payload = {
             goodsId,
             addressId: this.defaultAddress.id,
             userId: this.loginData.userId,
             postscript: this.orderData.note,
             type: "cart",
-            tmpGoodsId: goodsId,
-            productId: this.productId,
-            number: 1
+            // tmpGoodsId: goodsId,
+            // productId: this.productId,
+            // number: 1
           }
           const res = await shopApi.submitOrderApi(payload)
           if (res.data && res.errno == 0) {
@@ -299,6 +316,7 @@
           package: data.miniPayRequest.package,
           signType: data.miniPayRequest.signType, // 签名算法
           paySign: data.miniPayRequest.paySign, // 签名
+          // expireTime: ,
           success: async (result) => {
             uni.showToast({
               title: '支付成功',
@@ -310,7 +328,7 @@
               userId: this.loginData.userId,
             });
             if (res.errno === 0) {
-                uni.navigateTo({ url: "/sub_packages/orderDetail/index?id=" + id });
+                uni.navigateTo({ url: "/sub_packages/shop/orderDetail?id=" + id });
             } else {
               uni.showToast({
                 title: res.errmsg || "支付失败",
