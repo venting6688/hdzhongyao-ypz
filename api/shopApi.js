@@ -93,7 +93,7 @@ const shop = {
 	  );
 	  return res;
 	},
-	
+
   // 获取订单列表
   // async getOrderListApi({ userId, page, size }) {
   //   const res = await cjRequest(
@@ -263,6 +263,21 @@ const shop = {
         url: "api/order/applyRefund",// !! 这个接口还没有实现
         method: "post",
         data,
+      },
+      2
+    );
+    return res?.data || {};
+  },
+  // 获取数据
+  async getRowDataApi({ merOrderId, userId }) {
+    const res = await cjRequest(
+      {
+        url: "getRowData",
+        method: "get",
+        data: {
+          merOrderId,
+          userId,
+        },
       },
       2
     );
