@@ -39,7 +39,7 @@
             <view class="item-name">{{ item.name }}</view>
             <view class="item-desc">{{ item.desc }}</view>
             <view class="item-desc">{{ item.category }}</view>
-            <view class="item-price">￥{{ item.price }}</view>
+            <view class="item-price">￥{{ item.price | formatPrice }}</view>
           </view>
         </view>
 
@@ -78,6 +78,12 @@
         pageSize: 6,
         loading: false,
         noMore: false
+      }
+    },
+    filters: {
+      formatPrice(value) {
+        if (typeof value !== 'number') return '0.00'
+        return (value / 100).toFixed(2)
       }
     },
     onLoad() {

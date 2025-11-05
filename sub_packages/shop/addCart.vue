@@ -16,7 +16,7 @@
               <view class="item-info" @click="onDetail(item.goodsId)">
                 <text class="title">{{ item.name }}</text>
                 <text class="spec">规格：{{ item.spec ? item.spec : '' }}</text>
-                <text class="price">￥{{ item.price }}</text>
+                <text class="price">￥{{ item.price | formatPrice }}</text>
               </view>
 
               <view class="quantity-box">
@@ -34,7 +34,7 @@
         <view class="left">
           <uni-data-checkbox v-model="allCheckedArr" :localdata="[{ text: '', value: '1' }]" selected-color="#9A7546"
             multiple @change="toggleAll" />
-          <text class="total">合计 ￥{{ totalPrice.toFixed(2) }}</text>
+          <text class="total">合计 ￥{{ totalPrice | formatPrice }}</text>
         </view>
 
         <view class="right">
@@ -87,6 +87,12 @@
         handler() {
           this.allCheckedArr = this.isAllChecked ? ['1'] : []
         }
+      }
+    },
+    filters: {
+      formatPrice(value) {
+        if (typeof value !== 'number') return '0.00'
+        return (value / 100).toFixed(2)
       }
     },
     onLoad() {
