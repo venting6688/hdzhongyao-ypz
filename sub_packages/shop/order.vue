@@ -85,12 +85,16 @@
               orderSn,
               goods: orderGoods.map(({
                 id,
+                goodsId,
+                productId,
                 goodsName,
                 retailPrice,
                 number,
                 listPicUrl
               }) => ({
                 id,
+                goodsId,
+                productId,
                 name: goodsName,
                 price: retailPrice,
                 quantity: number,

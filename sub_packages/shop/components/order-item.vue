@@ -39,10 +39,7 @@
         </view>
 
         <view
-          v-if="
-            order.status === '未付款' &&
-            !isExpired(order)
-          "
+          v-if="order.status === '未付款' && !isExpired(order)"
           class="btn primary"
           @click="payNow(order)"
         >
@@ -107,7 +104,8 @@ export default {
   },
   data() {
     return {
-      loginData: null
+      loginData: null,
+      productIds: []
     }
   },
   filters: {
@@ -151,7 +149,7 @@ export default {
     },
     // 判断订单是否过期，订单创建超过1小时则认为过期，不可继续支付
     isExpired(order) {
-      return dayjs().isAfter(dayjs(order.date).add(1, "hour"))
+      return dayjs().isAfter(dayjs(order.date).add(1, 'hour'))
     },
     async payNow(orderInfo) {
       const res = await shopApi.getRowDataApi({
@@ -159,8 +157,8 @@ export default {
         userId: this.loginData.userId
       })
       if (res.code == 200) {
-        const payParams = JSON.parse(res.data.rowData);
-        if (payParams && "miniPayRequest" in payParams) {
+        const payParams = JSON.parse(res.data.rowData)
+        if (payParams && 'miniPayRequest' in payParams) {
           this.startPayment(payParams.miniPayRequest, orderInfo)
         }
       } else {
@@ -185,11 +183,13 @@ export default {
             title: '支付成功',
             icon: 'success'
           })
-          shopApi.updateSuccessApi({
+          shopApi
+            .updateSuccessApi({
               orderId: id,
               orderSn: orderSn,
               userId: this.loginData.userId
-            }).then(res => {
+            })
+            .then(res => {
               if (res.errno === 0) {
                 this.$emit('getOrderListEmit')
               }
@@ -203,8 +203,52 @@ export default {
         }
       })
     },
-    buyAgain(order) {
-      console.log('再次购买', order.id)
+    async getPorductId(goodsid) {
+      let res = await shopApi.getProductById(goodsid)
+      if (res.statusCode == 200 && res.data.length) {
+        let productId = []
+        res.data.map(v => {
+          productId.push(v.id)
+        })
+        this.productIds = productId.join(',')
+      }
+    },
+    async addCart(goods) {
+      let data = {
+        number: goods.quantity,
+        goodsId: goods.goodsId,
+        userId: this.loginData.userId,
+        productId: goods.productId
+      }
+
+      const res = await shopApi.addCart(data)
+      if (res.data.errno != 400) {
+        uni.showToast({
+          title: '已加入购物车',
+          icon: 'none'
+        })
+        this.getCartList()
+      } else {
+        uni.showToast({
+          title: res.data.errmsg,
+          icon: 'none'
+        })
+      }
+    },
+    async buyAgain(order) {
+      const goods = order.goods.map(v => ({
+        goodsId: v.goodsId,
+        productId: v.productId,
+        quantity: v.quantity
+      }))
+      goods.forEach(async v => {
+        await this.addCart(v)
+      })
+      uni.navigateTo({
+        url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(
+          JSON.stringify(order.goods)
+        )}&buyType=cart`
+      })
     },
     onClickOrderDetail(order) {
       uni.navigateTo({

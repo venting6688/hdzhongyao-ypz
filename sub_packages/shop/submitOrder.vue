@@ -160,8 +160,7 @@
       this.orderData.actualPrice = this.orderData.totalPrice + (this.orderData.deliveryFee || 0)
 
       if (this.orderData.goods.length > 0) {
-        await this.getProductById(this.orderData.goods[0].id)
-        if (this.buyType == 'buy') this.buyAdd(this.orderData.goods[0].id)
+        if (this.buyType == 'buy') await this.getProductById(this.orderData.goods[0].id)
       }
     },
     methods: {
@@ -204,26 +203,10 @@
           this.productId = res.data[0]?.id
         }
       },
-
-      /** 提交订单前检查 */
-      async buyAdd(drugId) {
-        const res = await shopApi.buyAddApi({
-          goodsId: drugId,
-          productId: this.productId,
-          number: 1,
-          userId: this.loginData.userId
-        })
-        if (res.errno === 1) {}
-      },
       handleConfirm() {
         this.showMain = true
         this.canPay = true
       },
-      // toSelectAddress() {
-      //   uni.navigateTo({
-      //     url: "/sub_packages/address/index",
-      //   });
-      // },
       // 点击添加备注，多行输入框，最多输入100个字符
       toEditNote() {
         this.$refs.notePopup.open()
