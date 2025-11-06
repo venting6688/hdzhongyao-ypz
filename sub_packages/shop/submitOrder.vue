@@ -99,6 +99,7 @@
   import visitNotice from '@/components/visitNotice.vue'
   import addressItem from '../components/addressItem.vue'
   import orderItem from '@/sub_packages/shop/components/order-item.vue'
+  import dayjs from 'dayjs'
 
   export default {
     components: {
@@ -267,9 +268,6 @@
             userId: this.loginData.userId,
             postscript: this.orderData.note,
             type: "cart",
-            // tmpGoodsId: goodsId,
-            // productId: this.productId,
-            // number: 1
           }
           const res = await shopApi.submitOrderApi(payload)
           if (res.data && res.errno == 0) {
@@ -277,7 +275,6 @@
             const {
               orderInfo
             } = res.data
-            console.log(orderInfo)
             const datas = {
               lockId: '',
               patientId: this.loginData.defaultArchives?.idNum,
@@ -286,7 +283,8 @@
               totalAmount: String(orderInfo?.actualPrice),
               merOrderId: orderInfo?.orderSn,
               uploadData: {},
-              payType: 'shopPay'
+              payType: 'shopPay',
+              expireTime: dayjs().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss'),
             }
             const resRegister = await registrationApi.registerOrder(datas)
             this.startPayment(resRegister, orderInfo)

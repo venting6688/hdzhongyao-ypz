@@ -38,7 +38,14 @@
           取消订单
         </view>
 
-        <view v-if="order.status === '未付款'" class="btn primary" @click="payNow(order)">
+        <view
+          v-if="
+            order.status === '未付款' &&
+            !isExpired(order)
+          "
+          class="btn primary"
+          @click="payNow(order)"
+        >
           继续支付
         </view>
 
@@ -88,7 +95,7 @@
 
 <script>
 import shopApi from '@/api/shopApi.js'
-import registrationApi from '@/api/registrationApi'
+import dayjs from 'dayjs'
 
 export default {
   props: {
@@ -142,6 +149,10 @@ export default {
         this.$emit('getOrderListEmit')
       }
     },
+    // 判断订单是否过期，订单创建超过1小时则认为过期，不可继续支付
+    isExpired(order) {
+      return dayjs().isAfter(dayjs(order.date).add(1, "hour"))
+    },
     async payNow(orderInfo) {
       const res = await shopApi.getRowDataApi({
         merOrderId: orderInfo?.orderSn,
@@ -175,14 +186,14 @@ export default {
             icon: 'success'
           })
           shopApi.updateSuccessApi({
-            orderId: id,
-            orderSn: orderSn,
-            userId: this.loginData.userId
-          }).then(res => {
-            if (res.errno === 0) {
-              this.$emit('getOrderListEmit')
-            }
-          })
+              orderId: id,
+              orderSn: orderSn,
+              userId: this.loginData.userId
+            }).then(res => {
+              if (res.errno === 0) {
+                this.$emit('getOrderListEmit')
+              }
+            })
         },
         fail: result => {
           uni.showToast({
