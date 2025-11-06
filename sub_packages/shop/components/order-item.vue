@@ -222,13 +222,7 @@ export default {
       }
 
       const res = await shopApi.addCart(data)
-      if (res.data.errno != 400) {
-        uni.showToast({
-          title: '已加入购物车',
-          icon: 'none'
-        })
-        this.getCartList()
-      } else {
+      if (res.data.errno == 400) {
         uni.showToast({
           title: res.data.errmsg,
           icon: 'none'
@@ -241,9 +235,7 @@ export default {
         productId: v.productId,
         quantity: v.quantity
       }))
-      goods.forEach(async v => {
-        await this.addCart(v)
-      })
+      await Promise.all(goods.map(v => this.addCart(v)))
       uni.navigateTo({
         url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(
           JSON.stringify(order.goods)
