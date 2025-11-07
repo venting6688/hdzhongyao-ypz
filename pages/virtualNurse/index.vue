@@ -409,169 +409,202 @@ export default {
       this.msg = ''
     },
     msgKf(msg) {
-      // 必须建档
-      this.msgList.push({
-        msgLoad: true
-      })
-      this.inputState = false
-      let genderCode = this.siginVal.idNum.charAt(16)
-      let sex = genderCode % 2 === 0 ? '女' : '男'
-      const requestTask = wx.request({
-        url: 'https://www.chinzsoft.com/api/v1/chat-messages', // 流式接口的URL
-        method: 'POST',
-        data: {
-          query: msg,
-          inputs: {
-            sex,
-            age: this.calculateAge(this.siginVal.idNum)
+      if (JSON.stringify(this.siginVal) == '{}') {
+        uni.navigateTo({
+          url: '/sub_packages/login/index?title=青岛西海岸新区第二中医医院'
+        })
+      } else {
+        // 必须建档
+        this.msgList.push({
+          msgLoad: true
+        })
+        this.inputState = false
+        let genderCode = this.siginVal.idNum.charAt(16)
+        let sex = genderCode % 2 === 0 ? '女' : '男'
+        const requestTask = wx.request({
+          url: 'https://www.chinzsoft.com/api/v1/chat-messages', // 流式接口的URL
+          method: 'POST',
+          data: {
+            query: msg,
+            inputs: {
+              sex,
+              age: this.calculateAge(this.siginVal.idNum)
+            },
+            response_mode: 'streaming',
+            conversation_id: this.conversation_id,
+            user: this.siginVal.patientName
           },
-          response_mode: 'streaming',
-          conversation_id: this.conversation_id,
-          user: this.siginVal.patientName
-        },
-        enableChunked: true,
-        header: {
-          Authorization: `Bearer app-v8Wx9g1k1qZ21ycQbHlO3Yzf`,
-          'content-type': 'application/json'
-        },
-        success: res => {
-          if (this.pattern === 1) {
-            this.test1 = ''
-            if (!this.test2.is_complete) {
-              this.mode = this.test2.mode
-              if (this.test2.option.length) {
-                this.DataList.main = this.test2.option.map(item => {
-                  return {
-                    value: item
-                  }
-                })
-                this.$refs.popup.open('bottom') //弹框
+          enableChunked: true,
+          header: {
+            Authorization: `Bearer app-v8Wx9g1k1qZ21ycQbHlO3Yzf`,
+            'content-type': 'application/json'
+          },
+          success: res => {
+            if (this.pattern === 1) {
+              this.test1 = ''
+              if (!this.test2.is_complete) {
+                this.mode = this.test2.mode
+                if (this.test2.option.length) {
+                  this.DataList.main = this.test2.option.map(item => {
+                    return {
+                      value: item
+                    }
+                  })
+                  this.$refs.popup.open('bottom') //弹框
+                }
+              } else {
+                this.conversation_id = ''
               }
             } else {
-              this.conversation_id = ''
+              this.test1 = ''
             }
-          } else {
-            this.test1 = ''
+            this.msgGo()
+            this.inputState = true
+          },
+          fail: err => {
+            console.log('err', err)
+            this.inputState = true
           }
-          this.msgGo()
-          this.inputState = true
-        },
-        fail: err => {
-          console.log('err', err)
-          this.inputState = true
-        }
-      })
-      let buffer = ''
-      let partialAnswer = ''
-      let lastAnswer = ''
-      let messageStarted = false // 🟡 确保全程只创建一次消息
+        })
+        let buffer = ''
+        let partialAnswer = ''
+        let lastAnswer = ''
+        let messageStarted = false
 
-      requestTask.onChunkReceived(res => {
-        try {
-          const responseText = this.arrayBufferToString(res.data)
-          buffer += responseText
-          let lines = buffer.split('\n')
-          buffer = lines.pop()
+        requestTask.onChunkReceived(res => {
+          try {
+            const responseText = this.arrayBufferToString(res.data)
+            buffer += responseText
+            let lines = buffer.split('\n')
+            buffer = lines.pop()
 
-          for (const line of lines) {
-            if (!line.startsWith('data:')) continue
-            const jsonStr = line.replace(/^data:\s*/, '').trim()
-            if (!jsonStr) continue
+            for (const line of lines) {
+              if (!line.startsWith('data:')) continue
+              const jsonStr = line.replace(/^data:\s*/, '').trim()
+              if (!jsonStr) continue
 
-            // 流式结束信号
-            if (jsonStr === '[DONE]' || jsonStr.includes('message_end')) {
-              messageStarted = false
-              lastAnswer = ''
-              partialAnswer = ''
-              break
-            }
-
-            const obj = safeParseJSON(jsonStr)
-            if (!obj) continue
-
-            // 错误处理
-            if (obj.event === 'error') {
-              this.msgList.splice(this.msgList.length - 1, 1, {
-                my: false,
-                msgLoad: false,
-                msg: '很抱歉，您的问题暂时没查询到，我还在努力学习中...'
-              })
-              continue
-            }
-
-            const answer = obj.answer || obj.data?.outputs?.answer
-            if (!answer) continue
-            const jsonData = safeParseJSON(answer)
-            if (!jsonData || !jsonData.intent || jsonData.content == null) continue
-
-            const type = jsonData.intent
-            const content = jsonData.content
-
-            // 仅处理普通文本流
-            if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
-              const newPart = content.slice(lastAnswer.length)
-              lastAnswer = content
-              partialAnswer += newPart
-
-              // 🟡 找出当前“思考中”的那条消息（最后一条）
-              const lastMsg = this.msgList[this.msgList.length - 1]
-
-              // ⚠️ 不再 push 新消息，而是直接修改这一条
-              if (lastMsg && lastMsg.msgLoad) {
-                lastMsg.msgLoad = false
-                lastMsg.msg = partialAnswer
-              } else if (lastMsg && !lastMsg.msgLoad) {
-                lastMsg.msg = partialAnswer
-              } else {
-                // 万一前面没有“思考中”，才创建新消息
-                this.msgList.push({
-                  my: false,
-                  msgLoad: false,
-                  msg: partialAnswer
-                })
+              // 流式结束信号
+              if (jsonStr === '[DONE]' || jsonStr.includes('message_end')) {
+                messageStarted = false
+                lastAnswer = ''
+                partialAnswer = ''
+                break
               }
 
-              this.$forceUpdate()
-            }
+              const obj = safeParseJSON(jsonStr)
+              if (!obj) continue
 
-            // 其他类型的逻辑保持不变
-            else if (type === 'A001') {
-              const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
-              this.msgList.splice(this.msgList.length - 1, 1, {
-                my: false,
-                type: 2,
-                msgLoad: false,
-                department: content.option,
-                tips: content.reason,
-                tipsState: originalTipsState
-              })
-            } else if (type === 'A002' && content.code != 500) {
-              this.msgList.splice(this.msgList.length - 1, 1, {
-                my: false,
-                type: 2,
-                msgLoad: false,
-                scheduling: content.data
-              })
-            } else if (type === 'A002' && content.code == 500) {
-              this.msgList.splice(this.msgList.length - 1, 1, {
-                my: false,
-                msgLoad: false,
-                msg: content.msg
-              })
-            } else if (type === 'A003') {
-              this.msgList.splice(this.msgList.length - 1, 1, {
-                my: false,
-                type: 2,
-                msgLoad: false,
-                map: content
-              })
+              // 错误处理
+              if (obj.event === 'error') {
+                this.msgList.splice(this.msgList.length - 1, 1, {
+                  my: false,
+                  msgLoad: false,
+                  msg: '很抱歉，您的问题暂时没查询到，我还在努力学习中...'
+                })
+                continue
+              }
+
+              const answer = obj.answer || obj.data?.outputs?.answer
+              if (!answer) continue
+              const jsonData = safeParseJSON(answer)
+              if (!jsonData || !jsonData.intent || jsonData.content == null) continue
+
+              const type = jsonData.intent
+              const content = jsonData.content
+
+              // 仅处理普通文本流
+              if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
+                const newPart = content.slice(lastAnswer.length)
+                lastAnswer = content
+                partialAnswer += newPart
+
+                const lastMsg = this.msgList[this.msgList.length - 1]
+
+                if (lastMsg && lastMsg.msgLoad) {
+                  lastMsg.msgLoad = false
+                  lastMsg.msg = partialAnswer
+                } else if (lastMsg && !lastMsg.msgLoad) {
+                  this.showTypewriterEffect(partialAnswer)
+                } else {
+                  this.msgList.push({
+                    my: false,
+                    msgLoad: false,
+                    msg: partialAnswer
+                  })
+                }
+
+                this.$forceUpdate()
+              } else if (type === 'A001') {
+                const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
+                this.msgList.splice(this.msgList.length - 1, 1, {
+                  my: false,
+                  type: 2,
+                  msgLoad: false,
+                  department: content.option,
+                  tips: content.reason,
+                  tipsState: originalTipsState
+                })
+              } else if (type === 'A002' && content.code != 500) {
+                this.msgList.splice(this.msgList.length - 1, 1, {
+                  my: false,
+                  type: 2,
+                  msgLoad: false,
+                  scheduling: content.data
+                })
+              } else if (type === 'A002' && content.code == 500) {
+                this.msgList.splice(this.msgList.length - 1, 1, {
+                  my: false,
+                  msgLoad: false,
+                  msg: content.msg
+                })
+              } else if (type === 'A003') {
+                this.msgList.splice(this.msgList.length - 1, 1, {
+                  my: false,
+                  type: 2,
+                  msgLoad: false,
+                  map: content
+                })
+              }
             }
+          } catch (e) {
+            console.error('解析流式返回数据异常:', e)
           }
-        } catch (e) {
-          console.error('解析流式返回数据异常:', e)
-        }
-      })
+        })
+      }
     },
+    // 模拟 ChatGPT 式逐字展示
+    showTypewriterEffect(fullText) {
+      const lastMsg = this.msgList[this.msgList.length - 1]
+      if (!lastMsg) return
+
+      // 如果第一次接收到内容，替换掉“思考中”
+      if (lastMsg.msgLoad) {
+        lastMsg.msgLoad = false
+        lastMsg.msg = ''
+      }
+
+      // 清理上次定时器
+      if (this.typewriterTimer) clearInterval(this.typewriterTimer)
+
+      let displayLength = lastMsg.msg.length
+      const step = 1 // 每次显示的字数
+      const speed = 30 // 每30ms 显示一个字（越小越快）
+
+      // 保存目标文本
+      this.targetMsg = fullText
+
+      this.typewriterTimer = setInterval(() => {
+        if (displayLength < this.targetMsg.length) {
+          displayLength += step
+          lastMsg.msg = this.targetMsg.slice(0, displayLength)
+          this.$forceUpdate()
+        } else {
+          clearInterval(this.typewriterTimer)
+          this.typewriterTimer = null
+        }
+      }, speed)
+    },
+
     arrayBufferToString(buffer) {
       const bytes = new Uint8Array(buffer)
       let out = '',
@@ -721,6 +754,10 @@ export default {
         this.needCancel = false
       }
     }
+  },
+  onShow() {
+    let loginValue = uni.getStorageSync('loginData')
+    this.siginVal = loginValue ? loginValue.defaultArchives : {}
   },
   mounted() {
     let loginValue = uni.getStorageSync('loginData')
