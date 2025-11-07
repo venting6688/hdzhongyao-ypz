@@ -89,17 +89,36 @@ export default {
 				},
 			});
 		},
-		onCheckboxChange(item) {
-			this.list.forEach(it => {
-				this.$set(this.checkboxSelectedMap, it.id, [])
-				it.isDefault = 0
-			})
-			this.$set(this.checkboxSelectedMap, item.id, [item.id])
-			item.isDefault = 1
-			this.defaultAddressId = item.id
+	  async onCheckboxChange(item) {
+      const params = { ...item }
+      params.isDefault = 1;
+			const res = await shopApi.saveAddress(params, this.userId)
+			if (res.statusCode == 200 && res.data.errno == 0) {
+        const newDefaultAddressId = this.list.find(it => it.id === item.id)
+        this.list.forEach(it => {
+          this.$set(this.checkboxSelectedMap, it.id, [])
+          it.isDefault = 0
+        })
+        this.$set(this.checkboxSelectedMap, item.id, [item.id])
+        newDefaultAddressId.isDefault = 1
+        this.defaultAddressId = newDefaultAddressId.id
 
-			shopApi.saveAddress(item, this.userId).then()
-			uni.showToast({ title: '已设置为默认地址', icon: 'none' })
+        uni.showToast({ title: '已设置为默认地址', icon: 'none' })
+      } else {
+        const defaultAddress = this.list.find(it => it.isDefault === 1)
+
+        this.list.forEach(it => {
+          this.$set(this.checkboxSelectedMap, it.id, [])
+          it.isDefault = 0
+        })
+        // $nextTick是必要的，不然会出现多个默认值的情况
+        await this.$nextTick()
+        this.$set(this.checkboxSelectedMap, defaultAddress.id, [defaultAddress.id])
+        defaultAddress.isDefault = 1
+
+        uni.showToast({ title: res?.data?.errmsg, icon: 'none' })
+
+			}
 		}
 	}
 }
