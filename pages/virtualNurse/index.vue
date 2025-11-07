@@ -97,9 +97,7 @@
               <view class="doctor" v-if="x.type == 2 && x.map">
                 <view class="top2-content">
                   <view class="title">科室导航</view>
-                  <view class="noData">
-                    很抱歉，科室导航暂未开通，您可以查询科室排班，敬请期待。
-                  </view>
+                  <view class="noData">{{ x.map }}</view>
                   <view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
                 </view>
               </view>
@@ -488,6 +486,7 @@ export default {
               })
               continue
             }
+
             this.conversation_id = obj.conversation_id || this.conversation_id
             let answer = obj.answer || obj.data?.outputs?.answer
             if (!answer) continue
@@ -500,7 +499,6 @@ export default {
             ) {
               const type = jsonData.intent
               const content = jsonData.content
-
               if (type === 'A001') {
                 const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
                 this.msgList.splice(this.msgList.length - 1, 1, {
@@ -529,7 +527,7 @@ export default {
                   my: false,
                   type: 2,
                   msgLoad: false,
-                  map: content.data
+                  map: content
                 })
               } else if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
                 this.msgList.splice(this.msgList.length - 1, 1, {
