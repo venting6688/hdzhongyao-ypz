@@ -33,7 +33,6 @@
                       </view>
                     </view>
                   </view>
-                  <!-- <view v-if="x.msgLoad" class="cuIcon-loading turn-load" style="font-size: 50rpx;color: #60B6FE;"></view> -->
                   <view v-else class="msg" v-html="markdown(x.msg)"></view>
                   <!-- 消息模板 -->
                   <view class="top1" v-if="x.type == 1">
@@ -463,6 +462,10 @@ export default {
         }
       })
       let buffer = ''
+      let partialAnswer = ''
+      let lastAnswer = ''
+      let messageStarted = false // 🟡 确保全程只创建一次消息
+
       requestTask.onChunkReceived(res => {
         try {
           const responseText = this.arrayBufferToString(res.data)
@@ -474,11 +477,20 @@ export default {
             if (!line.startsWith('data:')) continue
             const jsonStr = line.replace(/^data:\s*/, '').trim()
             if (!jsonStr) continue
-            if (jsonStr === '[DONE]' || jsonStr.includes('message_end')) break
 
-            let obj = safeParseJSON(jsonStr)
+            // 流式结束信号
+            if (jsonStr === '[DONE]' || jsonStr.includes('message_end')) {
+              messageStarted = false
+              lastAnswer = ''
+              partialAnswer = ''
+              break
+            }
 
-            if (obj.event == 'error') {
+            const obj = safeParseJSON(jsonStr)
+            if (!obj) continue
+
+            // 错误处理
+            if (obj.event === 'error') {
               this.msgList.splice(this.msgList.length - 1, 1, {
                 my: false,
                 msgLoad: false,
@@ -487,55 +499,72 @@ export default {
               continue
             }
 
-            this.conversation_id = obj.conversation_id || this.conversation_id
-            let answer = obj.answer || obj.data?.outputs?.answer
+            const answer = obj.answer || obj.data?.outputs?.answer
             if (!answer) continue
             const jsonData = safeParseJSON(answer)
-            if (
-              JSON.stringify(jsonData) != '{}' &&
-              jsonData != null &&
-              jsonData.intent &&
-              jsonData.content != null
-            ) {
-              const type = jsonData.intent
-              const content = jsonData.content
-              if (type === 'A001') {
-                const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
-                this.msgList.splice(this.msgList.length - 1, 1, {
-                  my: false,
-                  type: 2,
-                  msgLoad: false,
-                  department: jsonData.content.option,
-                  tips: jsonData.content.reason,
-                  tipsState: originalTipsState
-                })
-              } else if (type === 'A002' && content.code != 500) {
-                this.msgList.splice(this.msgList.length - 1, 1, {
-                  my: false,
-                  type: 2,
-                  msgLoad: false,
-                  scheduling: content.data
-                })
-              } else if (type === 'A002' && content.code == 500) {
-                this.msgList.splice(this.msgList.length - 1, 1, {
+            if (!jsonData || !jsonData.intent || jsonData.content == null) continue
+
+            const type = jsonData.intent
+            const content = jsonData.content
+
+            // 仅处理普通文本流
+            if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
+              const newPart = content.slice(lastAnswer.length)
+              lastAnswer = content
+              partialAnswer += newPart
+
+              // 🟡 找出当前“思考中”的那条消息（最后一条）
+              const lastMsg = this.msgList[this.msgList.length - 1]
+
+              // ⚠️ 不再 push 新消息，而是直接修改这一条
+              if (lastMsg && lastMsg.msgLoad) {
+                lastMsg.msgLoad = false
+                lastMsg.msg = partialAnswer
+              } else if (lastMsg && !lastMsg.msgLoad) {
+                lastMsg.msg = partialAnswer
+              } else {
+                // 万一前面没有“思考中”，才创建新消息
+                this.msgList.push({
                   my: false,
                   msgLoad: false,
-                  msg: content.msg
-                })
-              } else if (type === 'A003') {
-                this.msgList.splice(this.msgList.length - 1, 1, {
-                  my: false,
-                  type: 2,
-                  msgLoad: false,
-                  map: content
-                })
-              } else if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
-                this.msgList.splice(this.msgList.length - 1, 1, {
-                  my: false,
-                  msgLoad: false,
-                  msg: content
+                  msg: partialAnswer
                 })
               }
+
+              this.$forceUpdate()
+            }
+
+            // 其他类型的逻辑保持不变
+            else if (type === 'A001') {
+              const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
+              this.msgList.splice(this.msgList.length - 1, 1, {
+                my: false,
+                type: 2,
+                msgLoad: false,
+                department: content.option,
+                tips: content.reason,
+                tipsState: originalTipsState
+              })
+            } else if (type === 'A002' && content.code != 500) {
+              this.msgList.splice(this.msgList.length - 1, 1, {
+                my: false,
+                type: 2,
+                msgLoad: false,
+                scheduling: content.data
+              })
+            } else if (type === 'A002' && content.code == 500) {
+              this.msgList.splice(this.msgList.length - 1, 1, {
+                my: false,
+                msgLoad: false,
+                msg: content.msg
+              })
+            } else if (type === 'A003') {
+              this.msgList.splice(this.msgList.length - 1, 1, {
+                my: false,
+                type: 2,
+                msgLoad: false,
+                map: content
+              })
             }
           }
         } catch (e) {
