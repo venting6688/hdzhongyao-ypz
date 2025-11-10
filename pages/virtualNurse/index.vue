@@ -37,15 +37,19 @@
                   <!-- 消息模板 -->
                   <view class="top1" v-if="x.type == 1">
                     <view
+                      class="answer"
                       @click="answer(item)"
                       v-for="(item, index) in x.questionList"
                       :key="index"
                     >
-                      <text>{{ item }}</text>
+                      <view class="tipContent">
+                        <view>{{ item }}</view>
+                        <image src="../../static/img/arrow.png" />
+                      </view>
                     </view>
                   </view>
                   <view class="ai-tips" v-if="pattern !== 1 && !x.msgLoad && x.type !== 1">
-                    此内容由AI生成，仅供参考
+                    · 此内容由AI生成，仅供参考
                   </view>
                 </view>
               </view>
@@ -62,7 +66,7 @@
                       <view class="registeredBtn" @click="footType(clinic)">去挂号</view>
                     </view>
                   </view>
-                  <view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
+                  <view class="ai-tips" v-if="!x.msgLoad">· 此内容由AI生成，仅供参考</view>
                 </view>
               </view>
               <!-- 医生排班 -->
@@ -89,7 +93,7 @@
                   <view class="noData" v-show="x.scheduling.length == 0">
                     很抱歉，暂无当前科室排班
                   </view>
-                  <view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
+                  <view class="ai-tips" v-if="!x.msgLoad">· 此内容由AI生成，仅供参考</view>
                 </view>
               </view>
               <!-- 地图导航 -->
@@ -97,7 +101,7 @@
                 <view class="top2-content">
                   <view class="title">科室导航</view>
                   <view class="noData">{{ x.map }}</view>
-                  <view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
+                  <view class="ai-tips" v-if="!x.msgLoad">· 此内容由AI生成，仅供参考</view>
                 </view>
               </view>
             </view>
@@ -504,6 +508,8 @@ export default {
                 continue
               }
 
+              this.conversation_id = obj.conversation_id || this.conversation_id
+
               const answer = obj.answer || obj.data?.outputs?.answer
               if (!answer) continue
               const jsonData = safeParseJSON(answer)
@@ -586,13 +592,20 @@ export default {
       // 清理上次定时器
       if (this.typewriterTimer) clearInterval(this.typewriterTimer)
 
-      let displayLength = lastMsg.msg.length
       const step = 1 // 每次显示的字数
-      const speed = 30 // 每30ms 显示一个字（越小越快）
-
-      // 保存目标文本
+      const speed = 30 // 每30ms 显示一个字
       this.targetMsg = fullText
 
+      let displayLength = lastMsg.msg.length
+
+      // 🚀 立即显示第一个字符，避免出现空白
+      if (displayLength === 0 && this.targetMsg.length > 0) {
+        displayLength = 1
+        lastMsg.msg = this.targetMsg.slice(0, displayLength)
+        this.$forceUpdate()
+      }
+
+      // 然后开始逐字显示
       this.typewriterTimer = setInterval(() => {
         if (displayLength < this.targetMsg.length) {
           displayLength += step
@@ -931,6 +944,7 @@ export default {
 
               .msg {
                 text-align: left;
+                margin-bottom: 20rpx;
               }
 
               .top1 {
@@ -939,19 +953,35 @@ export default {
                 color: #87653a;
                 display: flex;
                 flex-wrap: wrap;
-
-                view {
-                  margin: 20rpx 14rpx 0 14rpx;
-
-                  text {
-                    border-bottom: 2rpx solid #87653a;
-                  }
-                }
+               .answer {
+                 width: 100%;
+                 .tipContent {
+                   display: flex;
+                   padding: 20rpx;
+                   color: #87653A;
+                   background: #fff;
+                   border-radius: 50rpx;
+                   margin-bottom: 20rpx;
+                   align-items: center;
+                   justify-content: space-between;
+                   /* 半透明白色 + 毛玻璃效果 */
+                   background: rgba(255, 255, 255, 0.6);
+                   backdrop-filter: blur(10px);
+                   -webkit-backdrop-filter: blur(10px);
+                   /* 阴影和边框，提升立体感 */
+                   box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+                   border: 1rpx solid rgba(255, 255, 255, 0.4);
+                   image {
+                     width: 56rpx;
+                     height: 17rpx;
+                   }
+                 }
+               }
               }
 
               .ai-tips {
                 margin-top: 20rpx;
-                text-align: center;
+                text-align: left;
                 font-size: 26rpx;
                 color: #919191;
               }
@@ -1083,7 +1113,7 @@ export default {
 
             .ai-tips {
               margin-top: 20rpx;
-              text-align: center;
+              text-align: left;
               font-size: 26rpx;
               color: #919191;
             }
@@ -1156,7 +1186,7 @@ export default {
 
             .ai-tips {
               margin-top: 20rpx;
-              text-align: center;
+              text-align: left;
               font-size: 26rpx;
               color: #919191;
             }
