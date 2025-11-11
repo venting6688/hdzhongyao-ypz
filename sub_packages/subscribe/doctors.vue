@@ -12,8 +12,8 @@
 					v-for="(item,index) in timeList"
 					:key="index"
 					class="scroll-item"
-					:class="{back:(!schedule && timeObj.date === item.date) || (schedule && schedule === item.date)}"
-					@click="getScheduleDetail(item,index)"
+					:class="{back:timeObj.date === item.date}"
+					@click="getScheduleDetail(item, index, 'click')"
 				>
 					<view>{{item.week}}</view>
 					<view>{{item.date.substring(item.date.indexOf("-") + 1)}}</view>
@@ -129,8 +129,9 @@ import registrationApi from '@/api/registrationApi.js'
 				medAmPm: '',
 				restNum: '',
 				departmentName: '',
-        schedule: '',
+        schedule: {},
         thatDay: '',
+        jumpType: 'click'
 			}
 		},
 		computed: {
@@ -155,12 +156,15 @@ import registrationApi from '@/api/registrationApi.js'
 					});
 				}
 				this.nowDate = this.timeList[0].date;
-				this.getScheduleDetail(this.timeList[0],0)
+        let dateObj = JSON.stringify(this.schedule) != '{}' ? this.schedule : this.timeList[0];
+				this.getScheduleDetail(dateObj, 0, this.jumpType)
 			},
 
 			// 获取医生
-			getScheduleDetail(item,index){
-				this.timeObj = item
+			getScheduleDetail(item, index, type){
+				this.timeObj = item;
+        this.jumpType = type;
+        this.thatDay = this.jumpType == 'click' ? '' : this.thatDay;
 				if(index===0){
 					this.today = true
 				}else{
@@ -172,8 +176,8 @@ import registrationApi from '@/api/registrationApi.js'
 					regMode: this.regMode,
 					regType: '',
 					deptCode: this.deptCode,
-					startDate: this.schedule ? this.schedule : item.date,
-					endDate: this.schedule ? this.schedule : item.date
+					startDate: item.date,
+					endDate: item.date
 				}).then(res => {
 					let result = JSON.parse(res.data.msg);
 					if (result.success) {
@@ -315,8 +319,9 @@ import registrationApi from '@/api/registrationApi.js'
 			this.parentDeptName = e.parentDeptName;
 			this.detailName = e.detail;
 			this.deptCode = e.deptCode ? e.deptCode : e.CLGRPRowId
-			this.schedule = e.date ? e.date : '';
+			this.schedule = e.timeObj ? JSON.parse(e.timeObj) : {};
       this.thatDay = e.thatDay ? e.thatDay : '';
+      this.jumpType = e.jumpType ? e.jumpType :this.jumpType;
 			wx.setNavigationBarTitle({
 				title: e.title
 			})

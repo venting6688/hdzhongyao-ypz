@@ -340,19 +340,31 @@ export default {
     },
     footType(item, type) {
       let name = '',
-      id = '',
-      date = item.medDate ? item.medDate : dayjs().format('YYYY-MM-DD'),
-      today = date == dayjs().format('YYYY-MM-DD') ? 2 : 1;
+      id = '';
+      let date = item.medDate ? item.medDate : dayjs().format('YYYY-MM-DD');
+      let today = date == dayjs().format('YYYY-MM-DD') ? 2 : 1;
+      let week = this.getWeekday(date);
+      let timeObj = {};
+      let url = `/sub_packages/subscribe/doctors?title=${name}&CLGRPRowId=${id}`
       if (type == 'doctor') {
         name = item.deptName;
         id = item.deptCode;
+        timeObj = {
+          date,
+          week,
+          deptCode: id,
+          status: '有号'
+        };
+        url = `/sub_packages/subscribe/doctors?title=${name}&CLGRPRowId=${id}&timeObj=${JSON.stringify(timeObj)}&thatDay=${today}&jumpType='jump'`
       } else {
         name = item.name;
         id = item.id;
       }
-      uni.navigateTo({
-        url: `/sub_packages/subscribe/doctors?title=${name}&CLGRPRowId=${id}&date=${date}&thatDay=${today}`
-      })
+      uni.navigateTo({ url })
+    },
+    getWeekday(date) {
+      const weekMap = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+      return weekMap[dayjs(date).day()]
     },
     // 保持消息体可见
     msgGo(i) {
@@ -721,13 +733,6 @@ export default {
             .replace('？', '')
           this.voiceState = false
         }
-      }
-      this.manager.onStart = res => {
-        // uni.hideLoading()
-        // uni.showLoading({
-        // 	title:"语音识别中...",
-        // })
-        // console.log("成功开始录音识别", res)
       }
       this.manager.onError = res => {
         console.error('error msg', res.retcode, res.msg)
@@ -1116,6 +1121,7 @@ export default {
               text-align: left;
               font-size: 26rpx;
               color: #919191;
+              margin-left: 20rpx;
             }
           }
 
@@ -1189,6 +1195,7 @@ export default {
               text-align: left;
               font-size: 26rpx;
               color: #919191;
+              margin-left: 25rpx
             }
           }
         }
@@ -1283,9 +1290,12 @@ export default {
     }
 
     .foot {
-      margin-bottom: 24rpx; //带着footbar
-      // margin-bottom:50rpx;
       width: 750rpx;
+      padding: 30rpx 0 15rpx;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
 
       .foot-bar {
         margin-left: 12rpx;
