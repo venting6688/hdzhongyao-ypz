@@ -132,17 +132,11 @@
 				this.stateName = item.status;
 			},
 			distribution(prescNo){
-				if(this.distributionName==='申请配送'){
-					uni.navigateTo({
-						url:`/sub_packages/addressBook/index?num=${prescNo}&type=logistics`
-					})
-				}else{
-					uni.showToast({
-					    title: '暂未开放',
-					    icon: 'none',
-					    duration: 2000
-					})
-				}
+        uni.showToast({
+            title: '暂未开放',
+            icon: 'none',
+            duration: 2000
+        })
 			},
 			viewLogistics(){
 				uni.showToast({

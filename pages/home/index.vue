@@ -16,7 +16,7 @@
     </view>
     <view class="video">
       <image src="../../static/image/wenzhen.png" mode="aspectFit" @click="onAiClick"></image>
-      <image src="../../static/image/kaiyao.png" mode="aspectFit" @click="onAiClick"></image>
+      <image src="../../static/image/kaiyao.png" mode="aspectFit" @click="onShop"></image>
     </view>
     <view class="ai" @click="onAiClick">
       <image src="../../static/img/ai-banner.png" mode="aspectFit"></image>
@@ -181,6 +181,9 @@ export default {
         title: '暂未开放，敬请期待',
         icon: 'none'
       })
+    },
+    onShop() {
+      uni.navigateTo({ url: '/sub_packages/shop/index' })
     },
     onJumpClick(item) {
       if (item.url) {

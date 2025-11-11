@@ -334,7 +334,7 @@
 			},
 			{
 				"path" : "shop/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "",
 					"navigationStyle": "custom"
@@ -342,7 +342,7 @@
 			},
 			{
 				"path" : "shop/detail",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "商品详情",
 					"disableScroll": true
@@ -350,7 +350,7 @@
 			},
 			{
 				"path" : "shop/addCart",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "购物车",
 					"disableScroll": true
@@ -358,7 +358,7 @@
 			},
 			{
 				"path" : "shop/order",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "我的订单",
 					"disableScroll": true
@@ -367,7 +367,7 @@
 			{
 				//地址簿
 				"path" : "address/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "收货地址",
 					"disableScroll": true
@@ -376,7 +376,7 @@
 			{
 				//添加地址
 				"path" : "address/detail",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "地址管理",
 					"disableScroll": true
@@ -390,7 +390,7 @@
 					"disableScroll": false
 				}
 			},
-            {
+      {
 				"path" : "shop/orderDetail",
 				"style" :
 				{
