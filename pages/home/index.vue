@@ -15,8 +15,8 @@
       <patients :siginVal="defaultVal" />
     </view>
     <view class="video">
-      <image src="../../static/image/wenzhen.png" mode="aspectFit"></image>
-      <image src="../../static/image/kaiyao.png" mode="aspectFit"></image>
+      <image src="../../static/image/wenzhen.png" mode="aspectFit" @click="onAiClick"></image>
+      <image src="../../static/image/kaiyao.png" mode="aspectFit" @click="onAiClick"></image>
     </view>
     <view class="ai" @click="onAiClick">
       <image src="../../static/img/ai-banner.png" mode="aspectFit"></image>

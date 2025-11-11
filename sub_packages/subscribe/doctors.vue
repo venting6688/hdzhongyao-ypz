@@ -12,7 +12,7 @@
 					v-for="(item,index) in timeList"
 					:key="index"
 					class="scroll-item"
-					:class="{back:timeObj.date && !schedule === item.date || schedule && schedule === item.date}"
+					:class="{back:(!schedule && timeObj.date === item.date) || (schedule && schedule === item.date)}"
 					@click="getScheduleDetail(item,index)"
 				>
 					<view>{{item.week}}</view>

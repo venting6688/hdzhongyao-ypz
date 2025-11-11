@@ -319,10 +319,6 @@ export default {
     handleConfirm() {
       this.showMsg = true
     },
-    // tipsBtn(index) {
-    //   // 使用 this.$set 修改数组中某一项的属性
-    //   this.$set(this.msgList[index], 'tipsState', !this.msgList[index].tipsState)
-    // },
     markdown(content) {
       const safeContent = typeof content === 'string' ? content : String(content || '')
       return this.md.render(safeContent)
@@ -345,7 +341,7 @@ export default {
     footType(item, type) {
       let name = '',
       id = '',
-      date = item.medDate,
+      date = item.medDate ? item.medDate : dayjs().format('YYYY-MM-DD'),
       today = date == dayjs().format('YYYY-MM-DD') ? 2 : 1;
       if (type == 'doctor') {
         name = item.deptName;
