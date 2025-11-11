@@ -124,7 +124,7 @@
 			</view>
 			<!-- 暂无信息 -->
 			<view class="without" v-else>
-				<image src="@/sub_packages/static/image/no-data.png" mode="widthFix" style="width: 300rpx;"></image>
+				<image src="@/sub_packages/static/image/no-data.png" mode="widthFix" style="width: 300rpx;height: 300rpx"></image>
 				<text>未查询到您的挂号信息</text>
 			</view>
 		</view>
@@ -172,7 +172,7 @@
 			}
 		},
 		computed: {
-			...mapState({ 
+			...mapState({
 				footData: state => state.footData,
 				showState: state => state.showState,
 				visitNumber: state => state.department.visitNumber,
@@ -223,7 +223,7 @@
 					if(result.success){
 						let nowDate = dayjs().format('YYYY-MM-DD');
 						let subscribeList = result.data.map(item => {
-							let medDate = dayjs(item.medDate) 
+							let medDate = dayjs(item.medDate)
 							item.days = medDate.diff(nowDate, 'days');
 							return {
 								...item,
@@ -237,7 +237,7 @@
 							let timeB = new Date(`${b.medDate} ${b.medTime}`).getTime();
 							return timeB - timeA;
 						})
-						
+
 						if(this.departmentList.length){
 							let found = false
 							// 判断存下的visitNumber和数组中有没有匹配的如果没有重新赋值
@@ -319,10 +319,10 @@
 										];
 										subMessage.subscribeRegisterNotice(
 											tmplIds,
-											registrationApi.cancelRegistrationMsg, 
+											registrationApi.cancelRegistrationMsg,
 											sendMsg
 										).then(res => {
-											
+
 										});
 										//退款
 										registrationApi.refund({merOrderId: payOrderNo, refundAmount: item.regAmount, targerOrderId: ''}).then(r => {
@@ -342,13 +342,13 @@
 												];
 												subMessage.subscribeRegisterNotice(
 													ids,
-													registrationApi.wxRefund, 
+													registrationApi.wxRefund,
 													strs
 												).then((res) => {
 														uni.showToast({
 															title: '退号成功',
-															icon: 'none',   
-															duration: 2000 
+															icon: 'none',
+															duration: 2000
 														})
 														this.getFirstVisit();
 													})
@@ -356,32 +356,32 @@
 												this.getFirstVisit();
 												uni.showToast({
 													title: '退号成功, 退款失败，请移步人工窗口处理',
-													icon: 'none',   
-													duration: 2000 
+													icon: 'none',
+													duration: 2000
 												})
 											}
 										})
 									} else {
 										uni.showToast({
 											title: '退号失败，请移步人工窗口处理',
-											icon: 'none',   
-											duration: 2000 
+											icon: 'none',
+											duration: 2000
 										})
 									}
 								})
 							} else {
 								uni.showToast({
 									title: '未查询到就诊人信息，请移步人工窗口处理',
-									icon: 'none',   
-									duration: 2000 
+									icon: 'none',
+									duration: 2000
 								})
 							}
 						})
 					} else {
 						uni.showToast({
 							title: '未查询到挂号信息，请移步窗口处理',
-							icon: 'none',   
-							duration: 2000 
+							icon: 'none',
+							duration: 2000
 						})
 					}
 				})
@@ -408,20 +408,20 @@
 			.title {
 				font-size: 32rpx;
 			}
-	
+
 			.news {
 				margin-top: 10rpx;
 				font-size: 37rpx;
 			}
 		}
-	
+
 		.background {
 			display: block;
 			position: absolute;
 			// height: 325rpx;
 			width: 100%;
 		}
-	
+
 		.icon {
 			position: absolute;
 			top: 10rpx;
@@ -442,7 +442,7 @@
 				align-items: center;
 				margin:0 6rpx;
 				border-radius: 15rpx;
-				
+
 				li {
 					background: #edfeff;
 					border-top: 2rpx solid #499eff;
@@ -476,7 +476,7 @@
 					    font-size: 28rpx;
 						line-height: 28rpx;
 					    font-weight: 400;
-					  
+
 				    }
 					.wire {
 						width: 2rpx;
@@ -489,13 +489,13 @@
 							margin: 0;
 							width: 0;
 						}
-						
+
 					}
 				}
 			}
-				
+
 		}
-		
+
 		.barColor {
 			color: #0f74c8 !important;
 		}
@@ -504,14 +504,14 @@
 			color: #ffffff;
 		}
 	}
-	
+
 	.box{
 		width: 100vw;
-		height: 100%; 
+		height: 100%;
 		background-color: #f5f5f5;
 		display: flex;
 		flex-direction: column;
-	 
+
 	  .without {
 	  	font-size: 40rpx;
 	  	width: 700rpx;
@@ -529,7 +529,7 @@
 	  		text-align: center;
 	  	}
 	  }
-	
+
 		.scroll-Y {
 			width: 750rpx;
 			text-align: center;
@@ -564,7 +564,7 @@
 					width: 684rpx;
 					background: #ffffff;
 					border-radius: 12rpx;
-					
+
 					&:last-of-type{
 						margin:28rpx 33rpx 28rpx 33rpx;
 					}
@@ -584,9 +584,9 @@
 							justify-content: center;
 							align-items: center;
 						}
-						
+
 					}
-					
+
 					.title {
 						.clinic{
 							width: 646rpx;
@@ -602,8 +602,8 @@
 							justify-content: center;
 							align-items: center;
 						}
-						
-						
+
+
 						.title-calling{
 							height: 95rpx;
 							display: flex;
@@ -613,8 +613,8 @@
 							font-size: 30rpx;
 							.left {
 							width: 33.33%;
-							
-							
+
+
 							.no{
 								font-weight: 600;
 							}
@@ -637,7 +637,7 @@
 						}
 						.right {
 							width: 33.33%;
-							
+
 							.time {
 								font-weight: 600;
 							}
@@ -647,7 +647,7 @@
 							}
 						}
 						}
-						
+
 					}
 					.wire-box{
 						height: 10rpx;
@@ -657,7 +657,7 @@
 							justify-content: space-between;
 						    height: 0rpx;
 						    border: 4rpx solid #eeeeee;
-						
+
 						    image{
 							    width: 10rpx;
 							    height: 36rpx;
@@ -672,7 +672,7 @@
 						margin-top: 3%;
 						padding-bottom: 2.4%;
 						position: relative;
-						
+
 						.icon {
 							position: absolute;
 							width: 110rpx;
@@ -695,17 +695,17 @@
 								height: 52rpx;
 							}
 						}
-						
+
 						ul {
 							li {
 								margin:0 6% 0 4%;
 								width: 90%;
 								display: flex;
-								
+
 								&:first-of-type{
 									// margin:3% 6% 0 4%;
 								}
-								
+
 								.attribute{
 									min-height: 36rpx;
 									line-height: 36rpx;
@@ -715,7 +715,7 @@
 									margin-bottom:2%;
 									justify-content: left;
 								}
-								
+
 								.name {
 									min-height: 36rpx;
 									line-height: 36rpx;
@@ -728,7 +728,7 @@
 								}
 							}
 						}
-						
+
 						.btn {
 							view {
 								display: flex;
@@ -760,7 +760,7 @@
 							justify-content: center;
 							view{
 								text{
-									
+
 								}
 							}
 						}
@@ -775,7 +775,7 @@
 								background: #f4faff;
 								border-radius: 14rpx;
 								margin-bottom:24rpx;
-								
+
 								.inquiry-box {
 									width: 100%;
 									height: 60rpx;
@@ -783,7 +783,7 @@
 									justify-content: space-between;
 									align-items: center;
 									margin: 0 25rpx;
-									
+
 									.left {
 										display: flex;
 										align-items: center;
@@ -800,9 +800,9 @@
 											line-height: 32rpx;
 											font-family: Source Han Sans CN, Source Han Sans CN-500;
 											font-weight: 500;
-											
+
 										}
-										
+
 									}
 									.inquiryBtn {
 										display: flex;
@@ -818,7 +818,7 @@
 									}
 								}
 							}
-							
+
 						}
 					}
 				}
