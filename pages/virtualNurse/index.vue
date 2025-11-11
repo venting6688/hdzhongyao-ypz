@@ -37,15 +37,19 @@
                   <!-- 消息模板 -->
                   <view class="top1" v-if="x.type == 1">
                     <view
+                      class="answer"
                       @click="answer(item)"
                       v-for="(item, index) in x.questionList"
                       :key="index"
                     >
-                      <text>{{ item }}</text>
+                      <view class="tipContent">
+                        <view>{{ item }}</view>
+                        <image src="../../static/img/arrow.png" />
+                      </view>
                     </view>
                   </view>
                   <view class="ai-tips" v-if="pattern !== 1 && !x.msgLoad && x.type !== 1">
-                    此内容由AI生成，仅供参考
+                    · 此内容由AI生成，仅供参考
                   </view>
                 </view>
               </view>
@@ -59,10 +63,10 @@
                     </view>
                     <view class="top2-center" v-for="(clinic, u) in x.department" :key="u">
                       <text>{{ clinic.name }}</text>
-                      <view class="registeredBtn" @click="footType(clinic)">去挂号</view>
+                      <view class="registeredBtn" @click="footType(clinic, 'department')">去挂号</view>
                     </view>
                   </view>
-                  <view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
+                  <view class="ai-tips" v-if="!x.msgLoad">· 此内容由AI生成，仅供参考</view>
                 </view>
               </view>
               <!-- 医生排班 -->
@@ -84,12 +88,12 @@
                         {{ item.doctSpec ? formatText(item.doctSpec, 35) : '暂无简介信息' }}
                       </view>
                     </view>
-                    <view class="registeredBtn" @click="footType(clinic)">去挂号</view>
+                    <view class="registeredBtn" @click="footType(item, 'doctor')">去挂号</view>
                   </view>
                   <view class="noData" v-show="x.scheduling.length == 0">
                     很抱歉，暂无当前科室排班
                   </view>
-                  <view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
+                  <view class="ai-tips" v-if="!x.msgLoad">· 此内容由AI生成，仅供参考</view>
                 </view>
               </view>
               <!-- 地图导航 -->
@@ -97,7 +101,7 @@
                 <view class="top2-content">
                   <view class="title">科室导航</view>
                   <view class="noData">{{ x.map }}</view>
-                  <view class="ai-tips" v-if="!x.msgLoad">此内容由AI生成，仅供参考</view>
+                  <view class="ai-tips" v-if="!x.msgLoad">· 此内容由AI生成，仅供参考</view>
                 </view>
               </view>
             </view>
@@ -238,6 +242,7 @@ import login from '@/utils/login.js'
 import { parse } from 'best-effort-json-parser'
 import aiNotice from '@/components/aiNotice.vue'
 import { safeParseJSON } from '@/utils/jsonHelper.js'
+import dayjs from 'dayjs'
 
 export default {
   mixins: [mixin],
@@ -314,12 +319,9 @@ export default {
     handleConfirm() {
       this.showMsg = true
     },
-    // tipsBtn(index) {
-    //   // 使用 this.$set 修改数组中某一项的属性
-    //   this.$set(this.msgList[index], 'tipsState', !this.msgList[index].tipsState)
-    // },
-    markdown(item) {
-      return this.md.render(item)
+    markdown(content) {
+      const safeContent = typeof content === 'string' ? content : String(content || '')
+      return this.md.render(safeContent)
     },
     more() {
       uni.navigateTo({
@@ -336,9 +338,20 @@ export default {
     onblur() {
       this.Focus = false
     },
-    footType(item) {
+    footType(item, type) {
+      let name = '',
+      id = '',
+      date = item.medDate ? item.medDate : dayjs().format('YYYY-MM-DD'),
+      today = date == dayjs().format('YYYY-MM-DD') ? 2 : 1;
+      if (type == 'doctor') {
+        name = item.deptName;
+        id = item.deptCode;
+      } else {
+        name = item.name;
+        id = item.id;
+      }
       uni.navigateTo({
-        url: `/sub_packages/subscribe/doctors?title=${item.name}&CLGRPRowId=${item.id}`
+        url: `/sub_packages/subscribe/doctors?title=${name}&CLGRPRowId=${id}&date=${date}&thatDay=${today}`
       })
     },
     // 保持消息体可见
@@ -504,6 +517,8 @@ export default {
                 continue
               }
 
+              this.conversation_id = obj.conversation_id || this.conversation_id
+
               const answer = obj.answer || obj.data?.outputs?.answer
               if (!answer) continue
               const jsonData = safeParseJSON(answer)
@@ -512,28 +527,27 @@ export default {
               const type = jsonData.intent
               const content = jsonData.content
 
-              // 仅处理普通文本流
               if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
-                const newPart = content.slice(lastAnswer.length)
-                lastAnswer = content
-                partialAnswer += newPart
+                  const safeContent = typeof content === 'string' ? content : String(content || '')
+                  if (typeof lastAnswer !== 'string') lastAnswer = String(lastAnswer || '')
 
-                const lastMsg = this.msgList[this.msgList.length - 1]
+                  const newPart = safeContent.slice(lastAnswer.length)
+                  if (typeof newPart !== 'string' || !newPart.trim()) return
 
-                if (lastMsg && lastMsg.msgLoad) {
-                  lastMsg.msgLoad = false
-                  lastMsg.msg = partialAnswer
-                } else if (lastMsg && !lastMsg.msgLoad) {
-                  this.showTypewriterEffect(partialAnswer)
-                } else {
-                  this.msgList.push({
-                    my: false,
-                    msgLoad: false,
-                    msg: partialAnswer
-                  })
-                }
+                  lastAnswer = safeContent
+                  const lastMsg = this.msgList[this.msgList.length - 1]
 
-                this.$forceUpdate()
+                  if (lastMsg && lastMsg.msgLoad) {
+                      lastMsg.msgLoad = false
+                      this.showTypewriterEffect(newPart, lastMsg)
+                  } else if (lastMsg && !lastMsg.msgLoad) {
+                      this.showTypewriterEffect(newPart, lastMsg)
+                  } else {
+                      const msgObj = { my: false, msgLoad: false, msg: '' }
+                      this.msgList.push(msgObj)
+                      this.showTypewriterEffect(newPart, msgObj)
+                  }
+                  this.$forceUpdate()
               } else if (type === 'A001') {
                 const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
                 this.msgList.splice(this.msgList.length - 1, 1, {
@@ -572,39 +586,38 @@ export default {
         })
       }
     },
-    // 模拟 ChatGPT 式逐字展示
-    showTypewriterEffect(fullText) {
-      const lastMsg = this.msgList[this.msgList.length - 1]
+    showTypewriterEffect(newText, lastMsg) {
       if (!lastMsg) return
+      if (typeof newText !== 'string' || !newText.length) return
 
-      // 如果第一次接收到内容，替换掉“思考中”
-      if (lastMsg.msgLoad) {
-        lastMsg.msgLoad = false
-        lastMsg.msg = ''
-      }
-
-      // 清理上次定时器
       if (this.typewriterTimer) clearInterval(this.typewriterTimer)
 
-      let displayLength = lastMsg.msg.length
-      const step = 1 // 每次显示的字数
-      const speed = 30 // 每30ms 显示一个字（越小越快）
-
-      // 保存目标文本
-      this.targetMsg = fullText
+      let displayLength = 0
+      const step = 1
+      const speed = 25
 
       this.typewriterTimer = setInterval(() => {
-        if (displayLength < this.targetMsg.length) {
-          displayLength += step
-          lastMsg.msg = this.targetMsg.slice(0, displayLength)
-          this.$forceUpdate()
-        } else {
-          clearInterval(this.typewriterTimer)
-          this.typewriterTimer = null
-        }
+          if (displayLength < newText.length) {
+              displayLength += step
+              let nextChar = newText.slice(displayLength - step, displayLength)
+
+              if (typeof nextChar !== 'string') {
+                  try { nextChar = String(nextChar) }
+                  catch (err) { console.error('Typewriter字符转换异常:', err, nextChar); nextChar = '' }
+              }
+
+              if (typeof lastMsg.msg !== 'string') {
+                  lastMsg.msg = String(lastMsg.msg || '')
+              }
+
+              lastMsg.msg += nextChar
+              this.$forceUpdate()
+          } else {
+              clearInterval(this.typewriterTimer)
+              this.typewriterTimer = null
+          }
       }, speed)
     },
-
     arrayBufferToString(buffer) {
       const bytes = new Uint8Array(buffer)
       let out = '',
@@ -931,6 +944,7 @@ export default {
 
               .msg {
                 text-align: left;
+                margin-bottom: 20rpx;
               }
 
               .top1 {
@@ -939,19 +953,35 @@ export default {
                 color: #87653a;
                 display: flex;
                 flex-wrap: wrap;
-
-                view {
-                  margin: 20rpx 14rpx 0 14rpx;
-
-                  text {
-                    border-bottom: 2rpx solid #87653a;
-                  }
-                }
+               .answer {
+                 width: 100%;
+                 .tipContent {
+                   display: flex;
+                   padding: 20rpx;
+                   color: #87653A;
+                   background: #fff;
+                   border-radius: 50rpx;
+                   margin-bottom: 20rpx;
+                   align-items: center;
+                   justify-content: space-between;
+                   /* 半透明白色 + 毛玻璃效果 */
+                   background: rgba(255, 255, 255, 0.6);
+                   backdrop-filter: blur(10px);
+                   -webkit-backdrop-filter: blur(10px);
+                   /* 阴影和边框，提升立体感 */
+                   box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+                   border: 1rpx solid rgba(255, 255, 255, 0.4);
+                   image {
+                     width: 56rpx;
+                     height: 17rpx;
+                   }
+                 }
+               }
               }
 
               .ai-tips {
                 margin-top: 20rpx;
-                text-align: center;
+                text-align: left;
                 font-size: 26rpx;
                 color: #919191;
               }
@@ -1083,7 +1113,7 @@ export default {
 
             .ai-tips {
               margin-top: 20rpx;
-              text-align: center;
+              text-align: left;
               font-size: 26rpx;
               color: #919191;
             }
@@ -1156,7 +1186,7 @@ export default {
 
             .ai-tips {
               margin-top: 20rpx;
-              text-align: center;
+              text-align: left;
               font-size: 26rpx;
               color: #919191;
             }
@@ -1560,9 +1590,6 @@ export default {
 
   .prompt-layer-1 .span {
     color: rgba(0, 0, 0, 0.6);
-  }
-
-  .prompt-loader .em {
   }
 
   /* 语音音阶------------- */

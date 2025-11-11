@@ -3,7 +3,6 @@
 		<!-- <CustomNavBar :showBack="showBack" :title="title"/> -->
 		<view class="content">
 			<view class="title">
-				<!-- <image @click="affirm" src="@/static/image/Frame 2121@2x.png" mode=""></image> -->
 				<image src="../static/image/Frame-1.png" mode=""></image>
 				<view class="test">
 					<image v-if="stateName==='待取药' || stateName==='已取药'" src="../static/image/Frame-2.png" mode=""></image>
@@ -39,7 +38,7 @@
 					<text>注意：药品配送中，请注意通讯正常</text>
 					<button class="cu-btn" @click="viewLogistics('查看物流')">查看物流</button>
 				</view>
-				
+
 			</view>
 			<view class="drug">
 				<view class="drug-inventory">
@@ -140,17 +139,17 @@
 				}else{
 					uni.showToast({
 					    title: '暂未开放',
-					    icon: 'none',   
-					    duration: 2000 
-					})  
+					    icon: 'none',
+					    duration: 2000
+					})
 				}
 			},
 			viewLogistics(){
 				uni.showToast({
 						title: '暂未开放',
 						icon: 'none',
-						duration: 2000 
-				})  
+						duration: 2000
+				})
 			},
 			// 登录成功后重新渲染foot
 			updateData(){
@@ -165,7 +164,7 @@
 					let loginValue = uni.getStorageSync("loginData");
 					loginValue = loginValue.defaultArchives;
 					let idCardNum = loginValue.patientCard; // 370911199507194418
-					
+
 					prescriptionApi.getPrescription(idCardNum).then(res => {
 						if(res.data.code === 200){
 							let arr = res.data.data ? res.data.data.mstvws || [] : [];
@@ -223,15 +222,15 @@
 	}
 	.medicine {
 		width: 100vw;
-		height: 100%; 
+		height: 100%;
 		display: flex;
 		flex-direction: column;
-		
+
 		.content {
 			width: 750rpx;
 			flex: auto;
 			overflow: auto;
-			
+
 			.title {
 				height: 100rpx;
 				margin-top: 30rpx;
@@ -260,7 +259,7 @@
 						line-height: 48rpx;
 					}
 				}
-				
+
 			}
 			.prescription {
 				width: 710rpx;
@@ -278,7 +277,7 @@
 					li {
 						margin-right: 60rpx;
 						color: #999999;
-						
+
 						.wire {
 							margin-top: 10rpx;
 							width: 68rpx;
@@ -300,7 +299,7 @@
 								color: #707070;
 								margin-right:14rpx;
 							}
-							
+
 						}
 					}
 				}
@@ -310,7 +309,7 @@
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
-					
+
 					button {
 						width: 192rpx;
 						height: 56rpx;
@@ -357,7 +356,7 @@
 					.ul2 {
 						display: flex;
 						flex-wrap: wrap;
-						
+
 						>li {
 							width: 33.33%;
 							display: flex;
@@ -398,7 +397,7 @@
 				}
 				.drug-guidance{
 					padding: 20rpx;
-					
+
 					ul {
 						li {
 							padding: 10rpx 0;

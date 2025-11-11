@@ -8,7 +8,6 @@
 					<view class="title">
 						<view class="name">
 							<text>{{item.medDate}} {{item.medTime}}</text>
-						    <!-- <image src="../static/image/icon-edit.png" mode=""></image> -->
 						</view>
 						<!-- <view class="delete">
 							<text>查看详情</text>
@@ -72,7 +71,7 @@
 					let data = {
 						cardNo: this.siginData.patientCard,
 						patientId: this.siginData.patientCard,
-						cardType: 1, 
+						cardType: 1,
 						patientId: '',
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
@@ -93,7 +92,7 @@
 					console.log(error)
 				}
 			},
-			
+
 			showStatus(val) {
 				let text = '';
 				switch(val) {
@@ -132,14 +131,14 @@
 				}
 				return text;
 			},
-			
+
 			show(time){
 				const datePattern = /^\d{4}-\d{2}-\d{2}$/.test(time.startTime);
 				if(datePattern){
 					this.date = time
 					this.getVisitRecord();
 				}
-				
+
 			},
 			information(item){
 				let data = {...this.date,...item}
@@ -158,11 +157,11 @@
 <style lang="less" scoped>
 	.box {
 		width: 100vw;
-		height: 100%; 
+		height: 100%;
 		background-color: #f5f5f5;
 		display: flex;
 		flex-direction: column;
-		
+
 		.information {
 			width: 100%;
 			overflow: auto;
@@ -190,7 +189,7 @@
 							height: 18rpx;
 							margin-left:20rpx;
 						}
-						
+
 						.name {
 							display: flex;
 							align-items: center;
@@ -243,6 +242,6 @@
 				align-items: center;
 			}
 		}
-		
+
 	}
 </style>

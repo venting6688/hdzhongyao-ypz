@@ -60,7 +60,7 @@
 				{
 					//家庭管理
 					"path" : "family/familyManage",
-					"style" : 
+					"style" :
 					{
 						"navigationBarTitleText": "就诊人管理",
 						"disableScroll": true,
@@ -97,7 +97,7 @@
 			{
 				//门诊缴费-主页
 				"path" : "outpatientExpenditure/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "门诊缴费",
 					"disableScroll": true
@@ -106,7 +106,7 @@
 			{
 				//门诊缴费-费用明细
 				"path" : "outpatientExpenditure/particulars",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "费用明细",
 					"disableScroll": true
@@ -115,7 +115,7 @@
 			{
 				//门诊报告-列表
 				"path" : "report/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "门诊报告",
 					"disableScroll": true
@@ -124,7 +124,7 @@
 			{
 				//门诊报告-详情
 				"path" : "report/examine",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "门诊报告",
 					"disableScroll": true
@@ -133,7 +133,7 @@
 			{
 				//门诊报告-详情
 				"path" : "report/checkout",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "门诊报告",
 					"disableScroll": true
@@ -142,7 +142,7 @@
 			{
 				//就诊记录-列表
 				"path" : "record/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "就诊记录",
 					"disableScroll": true
@@ -151,25 +151,16 @@
 			{
 				//就诊记录-详情
 				"path" : "record/details",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "就诊记录",
 					"disableScroll": true
 				}
 			},
 			{
-				//我的
-				"path" : "mine/index",
-				"style" : 
-				{
-					"navigationBarTitleText": "我的",
-					"disableScroll": true
-				}
-			},
-			{
 				// 预约挂号-科室
 				"path" : "subscribe/departments",
-				"style" : 
+				"style" :
 				{
 					// "navigationStyle": "custom",
 				"navigationBarTitleText": "预约挂号",
@@ -179,7 +170,7 @@
 			{
 				//预约挂号-医生
 				"path" : "subscribe/doctors",
-				"style" : 
+				"style" :
 				{
 				"navigationBarTitleText": "预约挂号",
 					"disableScroll": true
@@ -188,7 +179,7 @@
 			{
 				//预约挂号-医生详情
 				"path" : "subscribe/doctorDetails",
-				"style" : 
+				"style" :
 				{
 				"navigationBarTitleText": "预约挂号",
 					"disableScroll": true
@@ -197,7 +188,7 @@
 			{
 				//查询档案
 				"path" : "filing/selectCard",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "查询档案",
 					"disableScroll": true
@@ -206,7 +197,7 @@
 			{
 				//添加就诊人-填写信息页面
 				"path" : "filing/information",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "添加就诊人",
 					"disableScroll": true
@@ -215,7 +206,7 @@
 			{
 				//更多处方
 				"path" : "prescription/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "更多处方",
 					"disableScroll": true
@@ -224,7 +215,7 @@
 			{
 				//取药服务
 				"path" : "medicine/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "取药服务",
 					"disableScroll": true
@@ -240,7 +231,7 @@
 			{
 				//隐私政策
 				"path" : "agreement/privacyPolicy",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "隐私政策",
 					"disableScroll": true
@@ -249,7 +240,7 @@
 			{
 				//用户协议
 				"path" : "agreement/userAgreement",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "用户协议",
 					"disableScroll": true
@@ -258,7 +249,7 @@
 			{
 				//预约须知
 				"path" : "agreement/appointment",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "预约须知",
 					"disableScroll": true
@@ -267,7 +258,7 @@
 			{
 				//预问诊
 				"path" : "convenientModule/inquiry",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "预问诊",
 					"disableScroll": true
@@ -276,7 +267,7 @@
 			{
 				//住院记录
 				"path" : "convenientModule/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "住院记录"
 					// "disableScroll": true
@@ -285,7 +276,7 @@
 			{
 				//住院清单
 				"path" : "convenientModule/list",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "住院清单"
 				}
@@ -293,7 +284,7 @@
 			{
 				//住院清单详情
 				"path" : "convenientModule/detail",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "清单明细",
 					"disableScroll": true
@@ -302,7 +293,7 @@
 			{
 				//住院充值
 				"path" : "deposit/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "住院预交金",
 					"disableScroll": true
@@ -311,7 +302,7 @@
 			{
 				//住院充值记录
 				"path" : "deposit/topUpRecord",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "充值记录",
 					"disableScroll": true
@@ -319,7 +310,7 @@
 			},
 			{
 				"path" : "olderVersion/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "",
 					"navigationStyle": "custom"
@@ -327,7 +318,7 @@
 			},
 			{
 				"path" : "questionnaire/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "",
 					"navigationStyle": "custom"
@@ -335,7 +326,7 @@
 			},
 			{
 				"path" : "complaint/index",
-				"style" : 
+				"style" :
 				{
 					"navigationBarTitleText": "",
 					"navigationStyle": "custom"
@@ -414,26 +405,26 @@
   	"selectedColor": "#87653A",
   	"fontSize": "36rpx",
   	"list": [
-  		{ 
-  			"text": "首页", 
+  		{
+  			"text": "首页",
   			"pagePath": "pages/home/index",
   			"iconPath": "static/img/tabBar/home.png",
   			"selectedIconPath": "static/img/tabBar/home-h.png"
   		},
-  		{ 
-  			"text": "虚拟护士", 
+  		{
+  			"text": "虚拟护士",
   			"pagePath": "pages/virtualNurse/index",
   			"iconPath": "static/img/tabBar/nurs.png",
   			"selectedIconPath": "static/img/tabBar/nurs-h.png"
   		},
-  		{ 
-  			"text": "便捷导引", 
+  		{
+  			"text": "便捷导引",
   			"pagePath": "pages/convenient/index",
   			"iconPath": "static/img/tabBar/daoyin.png",
   			"selectedIconPath": "static/img/tabBar/daoyin-h.png"
   		},
-  		{ 
-  			"text": "我的", 
+  		{
+  			"text": "我的",
   			"pagePath": "pages/user/index",
   			"iconPath": "static/img/tabBar/my.png",
   			"selectedIconPath": "static/img/tabBar/my-h.png"
