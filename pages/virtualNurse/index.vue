@@ -63,7 +63,7 @@
                     </view>
                     <view class="top2-center" v-for="(clinic, u) in x.department" :key="u">
                       <text>{{ clinic.name }}</text>
-                      <view class="registeredBtn" @click="footType(clinic)">去挂号</view>
+                      <view class="registeredBtn" @click="footType(clinic, 'department')">去挂号</view>
                     </view>
                   </view>
                   <view class="ai-tips" v-if="!x.msgLoad">· 此内容由AI生成，仅供参考</view>
@@ -88,7 +88,7 @@
                         {{ item.doctSpec ? formatText(item.doctSpec, 35) : '暂无简介信息' }}
                       </view>
                     </view>
-                    <view class="registeredBtn" @click="footType(clinic)">去挂号</view>
+                    <view class="registeredBtn" @click="footType(item, 'doctor')">去挂号</view>
                   </view>
                   <view class="noData" v-show="x.scheduling.length == 0">
                     很抱歉，暂无当前科室排班
@@ -242,6 +242,7 @@ import login from '@/utils/login.js'
 import { parse } from 'best-effort-json-parser'
 import aiNotice from '@/components/aiNotice.vue'
 import { safeParseJSON } from '@/utils/jsonHelper.js'
+import dayjs from 'dayjs'
 
 export default {
   mixins: [mixin],
@@ -322,8 +323,9 @@ export default {
     //   // 使用 this.$set 修改数组中某一项的属性
     //   this.$set(this.msgList[index], 'tipsState', !this.msgList[index].tipsState)
     // },
-    markdown(item) {
-      return this.md.render(item)
+    markdown(content) {
+      const safeContent = typeof content === 'string' ? content : String(content || '')
+      return this.md.render(safeContent)
     },
     more() {
       uni.navigateTo({
@@ -340,9 +342,20 @@ export default {
     onblur() {
       this.Focus = false
     },
-    footType(item) {
+    footType(item, type) {
+      let name = '',
+      id = '',
+      date = item.medDate,
+      today = date == dayjs().format('YYYY-MM-DD') ? 2 : 1;
+      if (type == 'doctor') {
+        name = item.deptName;
+        id = item.deptCode;
+      } else {
+        name = item.name;
+        id = item.id;
+      }
       uni.navigateTo({
-        url: `/sub_packages/subscribe/doctors?title=${item.name}&CLGRPRowId=${item.id}`
+        url: `/sub_packages/subscribe/doctors?title=${name}&CLGRPRowId=${id}&date=${date}&thatDay=${today}`
       })
     },
     // 保持消息体可见
@@ -518,15 +531,14 @@ export default {
               const type = jsonData.intent
               const content = jsonData.content
 
-              // 仅处理普通文本流
               if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
-                  // 确保 content 是字符串
-                  const safeContent = typeof content === 'string' ? content : ''
+                  const safeContent = typeof content === 'string' ? content : String(content || '')
+                  if (typeof lastAnswer !== 'string') lastAnswer = String(lastAnswer || '')
+
                   const newPart = safeContent.slice(lastAnswer.length)
-                  if (!newPart || typeof newPart !== 'string' || !newPart.trim()) return
+                  if (typeof newPart !== 'string' || !newPart.trim()) return
 
                   lastAnswer = safeContent
-
                   const lastMsg = this.msgList[this.msgList.length - 1]
 
                   if (lastMsg && lastMsg.msgLoad) {
@@ -539,7 +551,6 @@ export default {
                       this.msgList.push(msgObj)
                       this.showTypewriterEffect(newPart, msgObj)
                   }
-
                   this.$forceUpdate()
               } else if (type === 'A001') {
                 const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
@@ -579,12 +590,10 @@ export default {
         })
       }
     },
-    // 模拟 ChatGPT 式逐字展示
     showTypewriterEffect(newText, lastMsg) {
       if (!lastMsg) return
       if (typeof newText !== 'string' || !newText.length) return
 
-      // 清除上一次定时器
       if (this.typewriterTimer) clearInterval(this.typewriterTimer)
 
       let displayLength = 0
@@ -594,9 +603,18 @@ export default {
       this.typewriterTimer = setInterval(() => {
           if (displayLength < newText.length) {
               displayLength += step
-              const nextChar = newText.slice(displayLength - step, displayLength)
-              // 👇 避免非字符串拼接
-              lastMsg.msg = (lastMsg.msg || '') + nextChar
+              let nextChar = newText.slice(displayLength - step, displayLength)
+
+              if (typeof nextChar !== 'string') {
+                  try { nextChar = String(nextChar) }
+                  catch (err) { console.error('Typewriter字符转换异常:', err, nextChar); nextChar = '' }
+              }
+
+              if (typeof lastMsg.msg !== 'string') {
+                  lastMsg.msg = String(lastMsg.msg || '')
+              }
+
+              lastMsg.msg += nextChar
               this.$forceUpdate()
           } else {
               clearInterval(this.typewriterTimer)
@@ -604,7 +622,6 @@ export default {
           }
       }, speed)
     },
-
     arrayBufferToString(buffer) {
       const bytes = new Uint8Array(buffer)
       let out = '',

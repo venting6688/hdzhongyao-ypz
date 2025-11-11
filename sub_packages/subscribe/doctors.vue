@@ -2,17 +2,17 @@
 	<view class="doctors">
 		<van-notice-bar text="温馨提示：开放7天号源，每天18：00放出第八天号源" />
 		<view class="timeCard">
-			<scroll-view 
-				:scroll-x="true" 
+			<scroll-view
+				:scroll-x="true"
 				:show-scrollbar="true"
 				scroll-with-animation
 				class="scroll-container"
 			>
-				<view 
-					v-for="(item,index) in timeList" 
-					:key="index" 
+				<view
+					v-for="(item,index) in timeList"
+					:key="index"
 					class="scroll-item"
-					:class="{back:timeObj.date===item.date}"
+					:class="{back:timeObj.date && !schedule === item.date || schedule && schedule === item.date}"
 					@click="getScheduleDetail(item,index)"
 				>
 					<view>{{item.week}}</view>
@@ -32,7 +32,7 @@
 							<text>{{item.doctName}}</text>
 							<text>{{item.doctTech}}</text>
 							<!-- <text class="money">￥{{item.regAmount / 100}}</text> -->
-						</view> 
+						</view>
 						<view class="synopsis">{{item.doctSpec ? item.doctSpec : '暂无简介'}}</view>
 					</view>
 				</view>
@@ -48,23 +48,23 @@
 						<view>
 							<button
 								v-if="i.restNum > 0"
-								type="primary" 
-								size="mini" 
-								style="background-color: #007AFF; color: white; margin-right: 10rpx;" 
-								@click="today ? doctorReserve(item, i.medAmPm, {}) : doctorDetails(item, i.restNum, i.medAmPm)" 
+								type="primary"
+								size="mini"
+								style="background-color: #007AFF; color: white; margin-right: 10rpx;"
+								@click="today ? doctorReserve(item, i.medAmPm, {}) : doctorDetails(item, i.restNum, i.medAmPm)"
 							>
 								剩余{{i.restNum < 0 ? 0 : i.restNum}}
 							</button>
 							<button
 								v-else
-								type="primary" 
-								size="mini" 
-								style="background-color: #ccc; color: white; margin-right: 10rpx;" 
+								type="primary"
+								size="mini"
+								style="background-color: #ccc; color: white; margin-right: 10rpx;"
 							>
 								剩余0
 							</button>
 						</view>
-						
+
 						<!-- <view   v-if="item.restNum > 0" disabled>预约</view> -->
 					</view>
 				</view>
@@ -93,9 +93,9 @@
 				</view>
 			</view>
 			</scroll-view>
-			
+
 		  </view>
-		  
+
 		</uni-popup>
 	</view>
 </template>
@@ -121,7 +121,7 @@ import registrationApi from '@/api/registrationApi.js'
 				doctorList:[],
 				doctor:{},
 				doctorTimeList:[],
-				today:true,   //是否是当天的
+				today: true,   //是否是当天的
 				nowDate:'',
 				siginData: {},
 				regMode: 1,
@@ -129,6 +129,8 @@ import registrationApi from '@/api/registrationApi.js'
 				medAmPm: '',
 				restNum: '',
 				departmentName: '',
+        schedule: '',
+        thatDay: '',
 			}
 		},
 		computed: {
@@ -155,7 +157,7 @@ import registrationApi from '@/api/registrationApi.js'
 				this.nowDate = this.timeList[0].date;
 				this.getScheduleDetail(this.timeList[0],0)
 			},
-			
+
 			// 获取医生
 			getScheduleDetail(item,index){
 				this.timeObj = item
@@ -165,13 +167,13 @@ import registrationApi from '@/api/registrationApi.js'
 					this.today = false
 				}
 				this.optList = item;
-				this.regMode = this.today ? 2 : 1; //1 预约  2  挂号
+				this.regMode = this.thatDay ? this.thatDay : (this.today ? 2 : 1); //1 预约  2  挂号
 				registrationApi.getScheduleDetail({
-					regMode: this.regMode, 
+					regMode: this.regMode,
 					regType: '',
 					deptCode: this.deptCode,
-					startDate: item.date,
-					endDate:item.date
+					startDate: this.schedule ? this.schedule : item.date,
+					endDate: this.schedule ? this.schedule : item.date
 				}).then(res => {
 					let result = JSON.parse(res.data.msg);
 					if (result.success) {
@@ -185,7 +187,7 @@ import registrationApi from '@/api/registrationApi.js'
 						})
 						uni.showToast({
 							title: result.msg,
-							icon: 'none',  
+							icon: 'none',
 							duration: 2000
 						});
 					}
@@ -231,7 +233,7 @@ import registrationApi from '@/api/registrationApi.js'
 			      waitNum: item.waitNum,
 					});
 			  });
-				
+
 				//将对象转换为数组，并确保上午排在下午前面
 				let result = Object.values(mergedDoctors).map(doctor => {
 					doctor.Scheduling.sort((a, b) => a.medAmPm - b.medAmPm);
@@ -266,7 +268,7 @@ import registrationApi from '@/api/registrationApi.js'
 						} else {
 							uni.showToast({
 								title: result.msg,
-								icon: 'none',  
+								icon: 'none',
 								duration: 2000
 							});
 						}
@@ -274,7 +276,7 @@ import registrationApi from '@/api/registrationApi.js'
 						console.log('2：', err);
 					})
 					this.$refs.popup.open('bottom')
-					
+
 				}
 			},
 			doctorReserve(item, medAmPm, reserveItem) {
@@ -302,17 +304,19 @@ import registrationApi from '@/api/registrationApi.js'
 					})
 				}
 			},
-			
+
 			close(){
 				this.$refs.popup.close()
 			},
-			
+
 		},
 		onLoad(e) {
 			this.title = e.title;
 			this.parentDeptName = e.parentDeptName;
 			this.detailName = e.detail;
 			this.deptCode = e.deptCode ? e.deptCode : e.CLGRPRowId
+			this.schedule = e.date ? e.date : '';
+      this.thatDay = e.thatDay ? e.thatDay : '';
 			wx.setNavigationBarTitle({
 				title: e.title
 			})
@@ -325,7 +329,7 @@ import registrationApi from '@/api/registrationApi.js'
 				uni.reLaunch({ url:"/sub_packages/login/index?title=青岛西海岸新区第二中医医院" })
 			}
 		},
-		
+
 	}
 </script>
 
@@ -344,12 +348,12 @@ import registrationApi from '@/api/registrationApi.js'
 	}
     .doctors {
 	    width: 100vw;
-	    height: 100%; 
+	    height: 100%;
 	    background-color: #f5f5f5;
 	    display: flex;
 		// align-items: center;
 	    flex-direction: column;
-		
+
 		/deep/.van-notice-bar{
 			background: #f0f7ff;
 			height: 58rpx;
@@ -380,7 +384,7 @@ import registrationApi from '@/api/registrationApi.js'
 					justify-content: center;
 					align-items: center;
 					height: 33.33%;
-					
+
 					&:nth-of-type(1){
 						font-size: 23rpx;
 						line-height: 23rpx;
@@ -398,7 +402,7 @@ import registrationApi from '@/api/registrationApi.js'
 				}
 			}
 		}
-		
+
 		.head {
 			margin-bottom: 20rpx;
 			display: flex;
@@ -408,7 +412,7 @@ import registrationApi from '@/api/registrationApi.js'
 			height: 40rpx;
 			line-height: 5rpx;
 			margin:10rpx 34rpx;
-			
+
 			.left {
 				.time {
 					margin-right: 15rpx;
@@ -417,18 +421,18 @@ import registrationApi from '@/api/registrationApi.js'
 			.right {
 				display: flex;
 				align-items: center;
-				
+
 				>text {
 					display: inline-block;
 					margin-right: 15rpx;
 				}
 			}
 		}
-		
+
 		.middle {
 			overflow: auto;
 			margin: 15rpx  0 50rpx 0;
-			
+
 			.center {
 				width: 680rpx;
 				// height: 350rpx;
@@ -436,19 +440,19 @@ import registrationApi from '@/api/registrationApi.js'
 				border-radius: 11.45rpx;
 				margin: 25rpx auto;
 				padding: 20rpx 0;
-				
+
 				&:nth-of-type(1){
 					margin-top: 5rpx;
 				}
 				&:last-of-type{
 					margin-bottom: 20rpx;
 				}
-				
+
 				.datum{
 					margin:0 10rpx;
 					padding: 17rpx 0;
 					display: flex;
-					
+
 					.img{
 						width: 122.14rpx;
 						height: 152.67rpx;
@@ -467,7 +471,7 @@ import registrationApi from '@/api/registrationApi.js'
 							align-items: center;
 							position: relative;
 							text {
-								
+
 								&:nth-of-type(1){
 									font-size: 36rpx;
 									line-height: 27rpx;
@@ -479,7 +483,7 @@ import registrationApi from '@/api/registrationApi.js'
 									color: #999999;
 									margin-right: 20rpx;
 								}
-								
+
 							}
 							.expert{
 								display: inline-block;
@@ -495,8 +499,8 @@ import registrationApi from '@/api/registrationApi.js'
 								justify-content: center;
 								align-items: center;
 							}
-							
-							
+
+
 						}
 						.synopsis {
 							width: 508rpx;
@@ -509,11 +513,11 @@ import registrationApi from '@/api/registrationApi.js'
 							display: -webkit-box; //将元素设为盒子伸缩模型显示
 							-webkit-box-orient: vertical; //伸缩方向设为垂直方向
 							-webkit-line-clamp: 4;  //超出3行隐藏，并显示省略号
-							
+
 						}
 					}
 				}
-				
+
 				.footer {
 					.subscribe{
 						display: flex;
@@ -528,7 +532,7 @@ import registrationApi from '@/api/registrationApi.js'
 						.num {
 							display: flex;
 							align-items: center;
-							
+
 							.subscribe-time{
 								margin-right: 80rpx;
 							}
@@ -559,20 +563,20 @@ import registrationApi from '@/api/registrationApi.js'
 		}
 		.Dialog {
 						width: 750rpx;
-						
+
 						.center {
 							width: 750rpx;
 							background-color: #ffffff;
 							border-radius: 30rpx 30rpx 0 0;
 							height: 720rpx;
 							overflow: hidden;
-							
+
 							.Dialog-title {
 								margin: 10rpx 30rpx;
 								display: flex;
 								justify-content: space-between;
 								align-items: center;
-								
+
 								.title-time {
 									letter-spacing: 2rpx;
 								}
@@ -595,16 +599,16 @@ import registrationApi from '@/api/registrationApi.js'
 									display: inline-block;
 									margin: 0 30rpx;
 									padding: 10rpx;
-									
+
 									&:first-of-type{
 										margin: 0 30rpx 0 0;
 									}
 								}
 							}
-							
+
 						.scroll {
 								height: 72%;
-								
+
 								.middle {
 									    margin: 0 20rpx 0 20rpx;
 										display: flex;
@@ -621,18 +625,18 @@ import registrationApi from '@/api/registrationApi.js'
 											font-size: 27rpx;
 											background: #F3F8FF;
 											border-radius: 40rpx;
-											
+
 										}
 										.is-hover {
 											background: #4286FF;
 											color: #fff;
 										}
-										
+
 									}
 								}
-								
+
 							}
 					}
-					
+
 	}
 </style>
