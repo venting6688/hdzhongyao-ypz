@@ -520,26 +520,27 @@ export default {
 
               // 仅处理普通文本流
               if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
-                const newPart = content.slice(lastAnswer.length)
-                lastAnswer = content
-                partialAnswer += newPart
+                  // 确保 content 是字符串
+                  const safeContent = typeof content === 'string' ? content : ''
+                  const newPart = safeContent.slice(lastAnswer.length)
+                  if (!newPart || typeof newPart !== 'string' || !newPart.trim()) return
 
-                const lastMsg = this.msgList[this.msgList.length - 1]
+                  lastAnswer = safeContent
 
-                if (lastMsg && lastMsg.msgLoad) {
-                  lastMsg.msgLoad = false
-                  lastMsg.msg = partialAnswer
-                } else if (lastMsg && !lastMsg.msgLoad) {
-                  this.showTypewriterEffect(partialAnswer)
-                } else {
-                  this.msgList.push({
-                    my: false,
-                    msgLoad: false,
-                    msg: partialAnswer
-                  })
-                }
+                  const lastMsg = this.msgList[this.msgList.length - 1]
 
-                this.$forceUpdate()
+                  if (lastMsg && lastMsg.msgLoad) {
+                      lastMsg.msgLoad = false
+                      this.showTypewriterEffect(newPart, lastMsg)
+                  } else if (lastMsg && !lastMsg.msgLoad) {
+                      this.showTypewriterEffect(newPart, lastMsg)
+                  } else {
+                      const msgObj = { my: false, msgLoad: false, msg: '' }
+                      this.msgList.push(msgObj)
+                      this.showTypewriterEffect(newPart, msgObj)
+                  }
+
+                  this.$forceUpdate()
               } else if (type === 'A001') {
                 const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
                 this.msgList.splice(this.msgList.length - 1, 1, {
@@ -579,42 +580,28 @@ export default {
       }
     },
     // 模拟 ChatGPT 式逐字展示
-    showTypewriterEffect(fullText) {
-      const lastMsg = this.msgList[this.msgList.length - 1]
+    showTypewriterEffect(newText, lastMsg) {
       if (!lastMsg) return
+      if (typeof newText !== 'string' || !newText.length) return
 
-      // 如果第一次接收到内容，替换掉“思考中”
-      if (lastMsg.msgLoad) {
-        lastMsg.msgLoad = false
-        lastMsg.msg = ''
-      }
-
-      // 清理上次定时器
+      // 清除上一次定时器
       if (this.typewriterTimer) clearInterval(this.typewriterTimer)
 
-      const step = 1 // 每次显示的字数
-      const speed = 30 // 每30ms 显示一个字
-      this.targetMsg = fullText
+      let displayLength = 0
+      const step = 1
+      const speed = 25
 
-      let displayLength = lastMsg.msg.length
-
-      // 🚀 立即显示第一个字符，避免出现空白
-      if (displayLength === 0 && this.targetMsg.length > 0) {
-        displayLength = 1
-        lastMsg.msg = this.targetMsg.slice(0, displayLength)
-        this.$forceUpdate()
-      }
-
-      // 然后开始逐字显示
       this.typewriterTimer = setInterval(() => {
-        if (displayLength < this.targetMsg.length) {
-          displayLength += step
-          lastMsg.msg = this.targetMsg.slice(0, displayLength)
-          this.$forceUpdate()
-        } else {
-          clearInterval(this.typewriterTimer)
-          this.typewriterTimer = null
-        }
+          if (displayLength < newText.length) {
+              displayLength += step
+              const nextChar = newText.slice(displayLength - step, displayLength)
+              // 👇 避免非字符串拼接
+              lastMsg.msg = (lastMsg.msg || '') + nextChar
+              this.$forceUpdate()
+          } else {
+              clearInterval(this.typewriterTimer)
+              this.typewriterTimer = null
+          }
       }, speed)
     },
 
