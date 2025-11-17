@@ -91,7 +91,7 @@
       uni.getSystemInfo({
         success: res => {
           // 总屏幕高度 - 顶部 header - 分类 - 分类标题 - 状态栏
-          const topHeight = 150 + 20 + 50 // header图片+搜索+分类+标题大约高度
+          const topHeight = 150 + 20 + 50 + 56// header图片+搜索+分类+标题大约高度
           this.listHeight = res.windowHeight - topHeight - this.barHeight
         }
       })
@@ -255,7 +255,7 @@
     }
 
     .list-scroll {
-      flex: 1;
+      //flex: 1;
       min-height: 100px;
       padding: 0 20rpx;
     }
