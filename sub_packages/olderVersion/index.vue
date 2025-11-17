@@ -10,7 +10,7 @@
 				class="icon-card"
 				mode="aspectFit"
 				@click="onJumpClick(item)"
-			/> 
+			/>
 		</view>
 		<view class="btn" @click="goBack">退出长辈版</view>
 	</scroll-view>
@@ -20,7 +20,7 @@
 	import { mapState } from 'vuex'
 	import customerNav from '@/components/customerNav.vue';
 	import patients from '@/components/patients.vue';
-	
+
 	export default {
 	  components: {
 	    customerNav,
@@ -70,6 +70,7 @@
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-around;
+      margin-top: 20rpx;
 			.icon-card {
 			  width: 332rpx;
 				height: 332rpx;
