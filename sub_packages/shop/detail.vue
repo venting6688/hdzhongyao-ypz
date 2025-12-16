@@ -204,7 +204,7 @@
         this.loginCheck()
         if (this.isLogin) {
           let data = {
-            number: 1,
+            number: 7,
             goodsId: this.drug.id,
             userId: this.userId,
             productId: this.productIds
@@ -230,7 +230,7 @@
         if (this.isLogin) {
           const goodsData = [{
             ...this.drug,
-            quantity: 1
+            quantity: 7
           }]
           uni.navigateTo({
             url: `/sub_packages/shop/submitOrder?goodsData=${encodeURIComponent(
