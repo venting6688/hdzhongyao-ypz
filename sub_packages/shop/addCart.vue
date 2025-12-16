@@ -20,9 +20,9 @@
               </view>
 
               <view class="quantity-box">
-                <text class="btn" @click="changeQuantity(item, 'dele')">-</text>
+                <text class="btn" :class="{'disabled-btn': item.quantity <= 7}" @click="changeQuantity(item, 'dele')">-</text>
                 <text class="num">{{ item.quantity }}</text>
-                <text class="btn" @click="changeQuantity(item, 'add')">+</text>
+                <text class="btn" :class="{'disabled-btn': item.quantity >= 28}" @click="changeQuantity(item, 'add')">+</text>
               </view>
             </view>
           </uni-swipe-action-item>
@@ -117,10 +117,24 @@
         })
       },
       changeQuantity(item, type) {
+        if (type == 'add' && item.quantity >= 28) {
+          uni.showToast({
+            title: '最多购买28付',
+            icon: 'none'
+          })
+          return
+        }
+        if (type == 'dele' && item.quantity <= 7) {
+          uni.showToast({
+            title: '最少购买7付',
+            icon: 'none'
+          })
+          return
+        }
         let goodsId = item.goodsId
         let productId = item.productId
         let data = {
-          number: 1,
+          number: 7,
           goodsId,
           userId: this.userId,
           productId
@@ -224,7 +238,7 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .cart-page {
     min-height: 100vh;
     background: #f5f5f5;
@@ -296,6 +310,12 @@
     align-items: center;
     flex-shrink: 0;
     margin-left: 20rpx;
+
+    .disabled-btn {
+      color: #ccc;
+      background-color: #f5f5f5;
+      cursor: not-allowed;
+    }
   }
 
   .btn {
