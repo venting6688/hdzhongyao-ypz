@@ -12,7 +12,11 @@ export const getTitleBarHeight= () => {
 }
 
 export const getNavBarHeight= () => getStatusBarHeight() + getTitleBarHeight()
-
-
+// 二进制转为base64
+export function handleBinaryImage(arrayBuffer) {
+  // 转换为base64
+  const base64 = uni.arrayBufferToBase64(arrayBuffer)
+  return `data:image/png;base64,${base64}`;
+}
 
 
