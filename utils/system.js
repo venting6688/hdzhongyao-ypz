@@ -16,7 +16,24 @@ export const getNavBarHeight= () => getStatusBarHeight() + getTitleBarHeight()
 export function handleBinaryImage(arrayBuffer) {
   // 转换为base64
   const base64 = uni.arrayBufferToBase64(arrayBuffer)
-  return `data:image/png;base64,${base64}`;
+  return `data:image/png;base64,${base64}`
+}
+
+// 计算年龄
+export function getAge(birthday) {
+  const birthDate = new Date(birthday)
+  let year = birthDate.getFullYear()
+  let month = birthDate.getMonth() + 1
+  let day = birthDate.getDate()
+  let today = new Date()
+  let age = today.getFullYear() - parseInt(year)
+  if (
+    today.getMonth() + 1 < parseInt(month) ||
+    (today.getMonth() + 1 == parseInt(month) && today.getDate() < parseInt(day))
+  ) {
+    age--
+  }
+  return age
 }
 
 
