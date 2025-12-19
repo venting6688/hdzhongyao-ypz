@@ -284,15 +284,15 @@ const shop = {
     return res?.data || {}
   },
   // 开处方
-  async createPrescription({ orderId, userId }) {
+  async createPrescription({ params, medicines }) {
     const res = await cjRequest(
       {
         url: 'api/dierzhongyiyuan/prescription/getPrescriptionFile',
-        method: 'get'
-        // data: {
-        //   orderId,
-        //   userId,
-        // },
+        method: 'post',
+        data: {
+          params,
+          medicines
+        }
       },
       2,
       true
@@ -301,13 +301,3 @@ const shop = {
   }
 }
 export default shop
-
-// 检查字符串是否为base64格式
-function isBase64(str) {
-  if (str.length % 4 !== 0) return false
-  try {
-    return btoa(atob(str)) === str
-  } catch (err) {
-    return false
-  }
-}

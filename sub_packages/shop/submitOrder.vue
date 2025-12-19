@@ -186,13 +186,11 @@ export default {
 
     if (options.goodsData) {
       const goods = JSON.parse(decodeURIComponent(options.goodsData))
-      const newGoods = goods.map((item, index) => ({
-        id: item.id,
-        img: item.image,
-        name: item.name,
-        price: item.price,
-        goodsId: item.goodsId ? item.goodsId : item.id,
-        quantity: item.quantity
+      const newGoods = goods.map(({ id, image, goodsId, ...rest }) => ({
+        id,
+        img: image,
+        goodsId: goodsId ? goodsId : id,
+        ...rest
       }))
       this.orderData.goods = [...newGoods]
     }
@@ -366,13 +364,37 @@ export default {
       uni.showLoading({
         title: '加载中'
       })
-      let goodsId = this.orderData.goods.map(v => v.goodsId)
+
       const localImageUrlList = []
       await Promise.all(
-        goodsId.map(async v => {
+        this.orderData.goods.map(async ({ quantity, effect, ingredients, usage }) => {
+          const newIngredients = ingredients
+            .toString()
+            .split('、')
+            .map(item => ({
+              name: item
+            }))
           const res = await shopApi.createPrescription({
-            // orderId: this.orderData.id,
-            // userId: this.loginData.userId
+            params: {
+              hospitalName: '青岛市黄岛区第二中医医院',
+              prescriptionNo: '025120900212',
+              prescriptionType: '普通',
+              department: '中医内科',
+              feeType: '自费',
+              date: dayjs().format('YYYY-MM-DD'),
+              patientName: this.loginData.defaultArchives?.patientName,
+              gender: this.loginData.defaultArchives?.gender,
+              age: (this.loginData.defaultArchives?.age).toString(),
+              registerNo: '12345678',
+              diagnosis: effect,
+              usage: usage,
+              takeWay: '温服',
+              doseCount: `${quantity}剂`,
+              doctorName: '马强',
+              dispenser: '崔璀',
+              amount: (this.orderData.totalPrice / 100).toFixed(2)
+            },
+            medicines: newIngredients
           })
           localImageUrlList.push(handleBinaryImage(res))
         })
@@ -382,7 +404,7 @@ export default {
         uni.hideLoading()
         this.imageUrlList = [...localImageUrlList]
         this.isPrescriptionCreated = true
-        if (this.imageUrlList.length === goodsId.length) {
+        if (this.imageUrlList.length === this.orderData.goods.length) {
           uni.showToast({
             title: '开处方成功',
             icon: 'success'
