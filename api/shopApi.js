@@ -298,6 +298,21 @@ const shop = {
       true
     )
     return res?.data || {}
+  },
+  // 获取物流信息
+  async getLogisticsInfo({ orderId, userId }) {
+    const res = await cjRequest(
+      {
+        url: 'api/logistics/info',
+        method: 'get',
+        data: {
+          orderId,
+          userId
+        }
+      },
+      2
+    )
+    return res?.data || {}
   }
 }
 export default shop

@@ -18,9 +18,7 @@
           <view class="dot last-step">
             <uni-icons class="icon-location" size="24" type="location-filled"></uni-icons>
           </view>
-          <view class="content">
-            地址
-          </view>
+          <view class="content">地址</view>
         </view>
       </view>
     </view>
@@ -31,6 +29,7 @@ import shopApi from '@/api/shopApi.js'
 export default {
   data() {
     return {
+      orderId: null,
       logisticsList: [
         {
           status: '订单已发货',
@@ -52,15 +51,13 @@ export default {
   },
   onLoad(options) {
     console.log(options.id)
-    uni.setNavigationBarTitle({
-      title: '物流信息'
-    })
+    this.orderId = options.id
+    getLogisticsList()
   },
   methods: {
     async getLogisticsList() {
-      api.getLogisticsInfo(orderId).then(response => {
-        this.logisticsList = response.data;
-      });
+      const res = await shopApi.getLogisticsInfo({ orderId: this.orderId })
+      this.logisticsList = res.logisticsList
     }
   }
 }
@@ -164,5 +161,4 @@ export default {
     color: @medium-text;
   }
 }
-
 </style>

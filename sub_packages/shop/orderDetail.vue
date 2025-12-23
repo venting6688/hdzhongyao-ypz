@@ -15,11 +15,6 @@
             <view class="logistics-item">
               <text class="logistics-status">{{ logistics.status }}</text>
               <text class="logistics-time">{{ logistics.time }}</text>
-              <view v-show="index === 0" class="detail-button" @click="onClickLogisticsDetail">
-                <text class="logistics-button">物流详情</text>
-                <uni-icons v-show="index === 0" class="logistics-icon" color="#999" size="18" type="arrowright"></uni-icons>
-              </view>
-
             </view>
             <view class="logistics-desc">
               {{ logistics.desc }}
@@ -33,6 +28,10 @@
           <view class="content">
             地址
           </view>
+        </view>
+        <view class="detail-button" @click="onClickLogisticsDetail">
+          <text class="logistics-button">物流详情</text>
+          <uni-icons class="logistics-icon" color="#999" size="18" type="arrowright"></uni-icons>
         </view>
       </view>
     </view>
@@ -151,6 +150,7 @@
         })
       },
       onClickLogisticsDetail() {
+        console.log("跳转物流详情")
         uni.navigateTo({
           url: '/sub_packages/shop/logistics?id=' + this.orderData.id
         })
@@ -196,6 +196,23 @@
         margin: 0 10rpx 0 50rpx;
         padding-left: 0rpx;
         //border-left: 2px solid #e0e0e0; /* 纵向主线 */
+
+        .detail-button {
+          position: absolute;
+          right: 0;
+          top: 0;
+          .logistics-button {
+            font-size: @medium-font-size;
+            color: @dark-text;
+            width: 200rpx;
+            vertical-align: top;
+            //text-align: right;
+          }
+
+          .logistics-icon {
+            width: 50rpx;
+          }
+        }
       }
 
       .stepper-item {
@@ -253,19 +270,6 @@
           font-size: @medium-font-size;
           color: @light-text;
           margin-right: 150rpx;
-        }
-        .detail-button {
-          float: right;
-          .logistics-button {
-            font-size: @medium-font-size;
-            color: @dark-text;
-            width: 200rpx;
-            //text-align: right;
-          }
-
-          .logistics-icon {
-            width: 50rpx;
-          }
         }
       }
 
