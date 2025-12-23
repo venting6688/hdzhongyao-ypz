@@ -7,53 +7,38 @@
       <!--      >-->
     </view>
 
-    <view class="order-logistics" v-if="false">
+    <view v-if="true" class="order-logistics">
       <view class="stepper">
-        <view class="stepper-item">
+        <view v-for="(logistics, index) in logisticsList" :key="index" class="stepper-item">
           <view class="dot"></view>
           <view class="content">
             <view class="logistics-item">
-              <text class="logistics-status">已签收</text>
-              <text class="logistics-time">2023-08-15 10:00:00</text>
-              <text class="logistics-button">物流详情</text>
-              <uni-icons class="logistics-icon" type="arrowright" size="18" color="#999"></uni-icons>
+              <text class="logistics-status">{{ logistics.status }}</text>
+              <text class="logistics-time">{{ logistics.time }}</text>
+              <view v-show="index === 0" class="detail-button" @click="onClickLogisticsDetail">
+                <text class="logistics-button">物流详情</text>
+                <uni-icons v-show="index === 0" class="logistics-icon" color="#999" size="18" type="arrowright"></uni-icons>
+              </view>
+
             </view>
             <view class="logistics-desc">
-              【代收点】您的快件已签收,签收人在:浙富科技园2号楼-1楼电梯厅丰巢柜(浙富科技园2号楼-1楼电梯
+              {{ logistics.desc }}
             </view>
           </view>
         </view>
         <view class="stepper-item">
           <view class="dot last-step">
-            <uni-icons type="location-filled" size="24" class="icon-location"></uni-icons>
+            <uni-icons class="icon-location" size="24" type="location-filled"></uni-icons>
           </view>
           <view class="content">
-            <view class="address-card" @click="toSelectAddress">
-              <view class="address-content">
-                <template v-if="orderData.address.street">
-                  <view class="address-detail">
-                    <!--              <text class="region">{{ orderData.address.region }}</text>-->
-                    <view>
-                      {{ orderData.address.region + orderData.address.street }}
-                    </view>
-                  </view>
-                  <view class="user-info">
-                    <text class="name">{{ orderData.address.name }}</text>
-                    <text class="phone">{{ orderData.address.phone }}</text>
-                  </view>
-                </template>
-                <template v-else>
-                  <view class="no-address">请选择收货地址</view>
-                </template>
-              </view>
-            </view>
+            地址
           </view>
         </view>
       </view>
     </view>
     <!--订单详情-->
     <view class="goods-card">
-      <order-item :order="orderData" :isShowFooter="false"></order-item>
+      <order-item :isShowFooter="false" :order="orderData"></order-item>
 
       <view class="item-line total-price-line">
         <text class="value actual-price">
@@ -69,7 +54,7 @@
 
       <view class="item-line">
         <text class="label">订单编号:</text>
-        <view class="value note-text" v-show="orderData.orderSn">
+        <view v-show="orderData.orderSn" class="value note-text">
           {{ orderData.orderSn }}
         </view>
         <view class="value note-text copy-btn" @click="onClickCopy">复制</view>
@@ -88,7 +73,24 @@
       return {
         orderData: {},
         active: 2,
-        loginData: null
+        loginData: null,
+        logisticsList: [
+          {
+            status: '已发货',
+            time: '2023-08-10 14:30:00',
+            desc: '您的订单已发货，正在前往目的地'
+          },
+          {
+            status: '运输中',
+            time: '2023-08-12 09:15:00',
+            desc: '您的订单正在运输途中，请耐心等待'
+          },
+          {
+            status: '派送中',
+            time: '2023-08-14 16:45:00',
+            desc: '您的订单正在派送中，快递员即将送达'
+          }
+        ]
       }
     },
     onLoad(options) {
@@ -147,11 +149,16 @@
             })
           }
         })
-      }
+      },
+      onClickLogisticsDetail() {
+        uni.navigateTo({
+          url: '/sub_packages/shop/logistics?id=' + this.orderData.id
+        })
+      },
     }
   }
 </script>
-<style scoped lang="less">
+<style lang="less" scoped>
   /* 变量 */
   @theme-color: #f04848;
   @price-color: #ff4848;
@@ -232,7 +239,7 @@
       .logistics-item {
         display: flex;
         justify-content: space-between;
-        padding-bottom: 20rpx;
+        //padding-bottom: 20rpx;
         margin-bottom: 20rpx;
         //border-bottom: 1rpx solid @border-color;
 
@@ -245,18 +252,20 @@
         .logistics-time {
           font-size: @medium-font-size;
           color: @light-text;
-          margin-right: 20rpx;
+          margin-right: 150rpx;
         }
+        .detail-button {
+          float: right;
+          .logistics-button {
+            font-size: @medium-font-size;
+            color: @dark-text;
+            width: 200rpx;
+            //text-align: right;
+          }
 
-        .logistics-button {
-          font-size: @medium-font-size;
-          color: @dark-text;
-          width: 200rpx;
-          text-align: right;
-        }
-
-        .logistics-icon {
-          width: 50rpx;
+          .logistics-icon {
+            width: 50rpx;
+          }
         }
       }
 

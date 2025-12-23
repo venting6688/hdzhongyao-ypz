@@ -397,6 +397,14 @@
 					"navigationBarTitleText": "订单详情",
 					"disableScroll": false
 				}
+			},
+      {
+				"path" : "shop/logistics",
+				"style" :
+				{
+					"navigationBarTitleText": "物流详情",
+					"disableScroll": false
+				}
 			}
 		]
   }],
