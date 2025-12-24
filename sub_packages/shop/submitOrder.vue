@@ -368,12 +368,11 @@ export default {
       const localImageUrlList = []
       await Promise.all(
         this.orderData.goods.map(async ({ quantity, effect, ingredients, usage }) => {
-          const newIngredients = ingredients
-            .toString()
+          const newIngredients = ingredients?.toString()
             .split('、')
             .map(item => ({
               name: item
-            }))
+            })) || []
           const res = await shopApi.createPrescription({
             params: {
               hospitalName: '青岛市黄岛区第二中医医院',
