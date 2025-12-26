@@ -8,6 +8,10 @@
     </view>
 
     <view v-if="true" class="order-logistics">
+      <view class="detail-button" @click="onClickLogisticsDetail">
+        <text class="logistics-button">物流详情</text>
+        <uni-icons class="logistics-icon" color="#999" size="18" type="arrowright"></uni-icons>
+      </view>
       <view class="stepper">
         <view v-for="(logistics, index) in logisticsList" :key="index" class="stepper-item">
           <view class="dot"></view>
@@ -28,10 +32,6 @@
           <view class="content">
             地址
           </view>
-        </view>
-        <view class="detail-button" @click="onClickLogisticsDetail">
-          <text class="logistics-button">物流详情</text>
-          <uni-icons class="logistics-icon" color="#999" size="18" type="arrowright"></uni-icons>
         </view>
       </view>
     </view>
@@ -191,28 +191,30 @@
       border-radius: 0 0 16rpx 16rpx;
       padding: 30rpx 0 10rpx;
 
+      .detail-button {
+        position: absolute;
+        right: 20rpx;
+        z-index: 9999;
+        //top: 0;
+        .logistics-button {
+          font-size: @medium-font-size;
+          color: @dark-text;
+          width: 200rpx;
+          vertical-align: top;
+          //text-align: right;
+        }
+
+        .logistics-icon {
+          width: 50rpx;
+        }
+      }
+
       .stepper {
         position: relative;
         margin: 0 10rpx 0 50rpx;
         padding-left: 0rpx;
         //border-left: 2px solid #e0e0e0; /* 纵向主线 */
 
-        .detail-button {
-          position: absolute;
-          right: 0;
-          top: 0;
-          .logistics-button {
-            font-size: @medium-font-size;
-            color: @dark-text;
-            width: 200rpx;
-            vertical-align: top;
-            //text-align: right;
-          }
-
-          .logistics-icon {
-            width: 50rpx;
-          }
-        }
       }
 
       .stepper-item {
