@@ -52,7 +52,7 @@ export default {
   onLoad(options) {
     console.log(options.id)
     this.orderId = options.id
-    getLogisticsList()
+    this.getLogisticsList()
   },
   methods: {
     async getLogisticsList() {
