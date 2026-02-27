@@ -14,7 +14,7 @@ const shop = {
     return res?.data || {}
   },
   async getDrugDetailApi({ drugId, userId }) {
-    const url = `/api/goods/detail?id=${drugId}&userId=${userId}`
+    const url = `api/goods/detail?id=${drugId}&userId=${userId}`
     const res = await cjRequest(
       {
         url: url,
@@ -114,7 +114,7 @@ const shop = {
   async getOrderListApi({ userId }) {
     const res = await cjRequest(
       {
-        url: '/api/order/orderList',
+        url: 'api/order/orderList',
         method: 'get',
         data: {
           userId
@@ -128,7 +128,7 @@ const shop = {
   async getOrderDetailApi({ orderId, userId }) {
     const res = await cjRequest(
       {
-        url: '/api/order/detail',
+        url: 'api/order/detail',
         method: 'get',
         data: {
           orderId,
@@ -143,7 +143,7 @@ const shop = {
   async updateSuccessApi({ orderId, userId, orderSn }) {
     const res = await cjRequest(
       {
-        url: `/api/order/updateSuccess?orderId=${orderId}&userId=${userId}&orderSn=${orderSn}`,
+        url: `api/order/updateSuccess?orderId=${orderId}&userId=${userId}&orderSn=${orderSn}`,
         method: 'post'
       },
       2
@@ -154,7 +154,7 @@ const shop = {
   async submitOrderApi(data) {
     const res = await cjRequest(
       {
-        url: '/api/order/submit',
+        url: 'api/order/submit',
         method: 'post',
         data
       },
@@ -166,7 +166,7 @@ const shop = {
   async cancelOrderApi({ orderId, userId }) {
     const res = await cjRequest(
       {
-        url: `/api/order/cancelOrder?orderId=${orderId}&userId=${userId}`,
+        url: `api/order/cancelOrder?orderId=${orderId}&userId=${userId}`,
         method: 'post'
       },
       2
@@ -177,7 +177,7 @@ const shop = {
   async confirmOrderApi({ orderId, userId }) {
     const res = await cjRequest(
       {
-        url: `/api/order/confirmOrder?orderId=${orderId}&userId=${userId}`,
+        url: `api/order/confirmOrder?orderId=${orderId}&userId=${userId}`,
         method: 'post'
       },
       2

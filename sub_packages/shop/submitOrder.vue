@@ -134,12 +134,20 @@
 
 <script>
 import shopApi from '@/api/shopApi.js'
+import logisticsApi from '@/api/logisticsApi'
 import registrationApi from '@/api/registrationApi'
 import visitNotice from '@/components/visitNotice.vue'
 import addressItem from '../components/addressItem.vue'
 import orderItem from '@/sub_packages/shop/components/order-item.vue'
 import dayjs from 'dayjs'
 import { handleBinaryImage } from '@/utils/system.js'
+
+const srcAddress = {
+  srcProvince: "山东省",
+  srcCity: "青岛市",
+  srcDistrict: "黄岛区",
+  srcAddress: "中原街333号",
+}
 
 export default {
   components: {
@@ -182,8 +190,6 @@ export default {
     this.loginData = uni.getStorageSync('loginData') || {}
     this.userId = this.loginData ? this.loginData.userId : ''
     this.buyType = options.buyType ? options.buyType : this.buyType
-    this.getDefaultAddress()
-
     if (options.goodsData) {
       const goods = JSON.parse(decodeURIComponent(options.goodsData))
       const newGoods = goods.map(({ id, image, goodsId, ...rest }) => ({
@@ -203,6 +209,8 @@ export default {
     if (this.orderData.goods.length > 0) {
       if (this.buyType == 'buy') await this.getProductById(this.orderData.goods[0].id)
     }
+    await this.getShippingAddress()
+    await this.getDefaultAddress()
   },
   methods: {
     async getAddressList() {
@@ -224,17 +232,44 @@ export default {
       this.selectedAddress = item
       this.defaultAddress = item
       this.closeAddressPopup()
+      this.queryFreight()
+    },
+    // 查询预估运费
+    queryFreight() {
+      const payload = {
+        expressType: "1",
+        parcelWeighs: "10",
+        destAddress: this.defaultAddress.detailInfo,
+        destCity: this.defaultAddress.cityName,
+        destDistrict: this.defaultAddress.countyName,
+        destProvince: this.defaultAddress.provinceName,
+        ...srcAddress
+      }
+      logisticsApi.queryFreightApi(payload)
+    },
+    // 获取医院寄件地址
+    async getShippingAddress() {
+       const res = await logisticsApi.getShippingAddressApi()
+       if (res.code === 200) {
+          const address = res.rows.find(item => item.isDefault === 1)
+          srcAddress.srcProvince = address.provinceName
+          srcAddress.srcCity = address.cityName
+          srcAddress.srcDistrict = address.districtName
+          srcAddress.srcAddress = address.address
+       }
     },
     goManageAddress() {
       uni.navigateTo({
         url: '/sub_packages/address/index'
       })
     },
+    // 获取用户默认地址并设置为选中地址
     async getDefaultAddress() {
       let res = await shopApi.defaultAddress(this.userId)
       if (res.data.errmsg == '执行成功' && res.data.data.length) {
         this.defaultAddress = res.data.data[0]
         this.selectedAddress = this.defaultAddress
+        this.queryFreight()
       }
     },
     async getProductById(drugId) {
@@ -270,7 +305,7 @@ export default {
         })
       } else {
         let data = {
-          number: 1,
+          number: 7,
           goodsId,
           userId: this.loginData.userId,
           productId: this.productId
@@ -310,6 +345,7 @@ export default {
           }
           const resRegister = await registrationApi.registerOrder(datas)
           this.startPayment(resRegister, orderInfo)
+          this.createLogisticsOrder({orderSn: orderInfo?.orderSn, actualPrice: orderInfo?.actualPrice})
         } else {
           uni.hideLoading()
           uni.showToast({
@@ -319,7 +355,6 @@ export default {
         }
       }
     },
-
     /** 启动支付流程 */
     startPayment({ data }, { id, orderSn }) {
       if (!data?.miniPayRequest || !orderSn) throw new Error('缺少支付参数')

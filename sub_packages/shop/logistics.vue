@@ -26,6 +26,7 @@
 </template>
 <script>
 import shopApi from '@/api/shopApi.js'
+import logisticsApi from '@/api/logisticsApi'
 export default {
   data() {
     return {
