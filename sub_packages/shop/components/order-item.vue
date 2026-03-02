@@ -119,7 +119,10 @@ export default {
   },
   methods: {
     viewLogistics(order) {
-      console.log('查看物流', order.id)
+      console.log(order)
+      uni.navigateTo({
+        url: '/sub_packages/shop/logistics?orderSn=' + order.orderSn
+      })
     },
     async confirmOrder(order) {
       const res = await shopApi.confirmOrderApi({
@@ -254,14 +257,14 @@ export default {
       this.$refs.refundPopup.close()
     },
     async onClickConfirm() {
-      const res = await shopApi.applyRefundApi({
+      const res = await shopApi.cancelOrderApi({
         orderId: this.order.id,
         userId: this.loginData.userId,
-        note: this.orderData.note
+        // note: this.orderData.note
       })
       if (res.errno === 0) {
         uni.showToast({
-          title: '申请退款成功',
+          title: '申请退款成功，将在24小时内到账',
           icon: 'success'
         })
         this.$emit('getOrderListEmit')

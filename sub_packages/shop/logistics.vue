@@ -14,12 +14,12 @@
             </view>
           </view>
         </view>
-        <view class="stepper-item">
-          <view class="dot last-step">
-            <uni-icons class="icon-location" size="24" type="location-filled"></uni-icons>
-          </view>
-          <view class="content">地址</view>
-        </view>
+<!--        <view class="stepper-item">-->
+<!--          <view class="dot last-step">-->
+<!--            <uni-icons class="icon-location" size="24" type="location-filled"></uni-icons>-->
+<!--          </view>-->
+<!--          <view class="content">地址</view>-->
+<!--        </view>-->
       </view>
     </view>
   </view>
@@ -27,38 +27,32 @@
 <script>
 import shopApi from '@/api/shopApi.js'
 import logisticsApi from '@/api/logisticsApi'
+import logistics from '@/utils/logistics'
+
 export default {
   data() {
     return {
-      orderId: null,
-      logisticsList: [
-        {
-          status: '订单已发货',
-          time: '2024-06-01 10:00',
-          desc: '您的订单已由顺丰快递发出，快递单号：SF1234567890'
-        },
-        {
-          status: '订单处理中',
-          time: '2024-05-31 15:30',
-          desc: '您的订单正在打包中，预计明天发货'
-        },
-        {
-          status: '订单已确认',
-          time: '2024-05-30 12:00',
-          desc: '您的订单已确认，我们将尽快为您处理'
-        }
-      ]
+      orderSn: null,
+      logisticsList: []
     }
   },
   onLoad(options) {
-    console.log(options.id)
-    this.orderId = options.id
+    console.log(options.orderSn)
+    this.orderSn = options.orderSn
     this.getLogisticsList()
   },
   methods: {
     async getLogisticsList() {
-      const res = await shopApi.getLogisticsInfo({ orderId: this.orderId })
-      this.logisticsList = res.logisticsList
+      const res = await logisticsApi.getLogisticsInfoApi(0 , this.orderSn )
+      console.log('物流详情：', res)
+      if (res.code === 200) {
+        const logisticsList = res.data.map(item => ({
+          status: logistics.getOpcodeDescription(item.opcode, ...item.acceptAddress),
+          time: item.acceptTotaltime,
+          desc: item.remark
+        }))
+        this.logisticsList = [...logisticsList]
+      }
     }
   }
 }

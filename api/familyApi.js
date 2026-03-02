@@ -3,7 +3,7 @@ import { cjRequest } from '@/utils/service.js'
 const family = {
   // 查询
   async getMemberListApi(params) {
-    const url = `member/list?ownerUserId=${params.ownerUserId}`
+    const url = `api/member/list?ownerUserId=${params.ownerUserId}`
     const res = await cjRequest(
       {
         url: url,

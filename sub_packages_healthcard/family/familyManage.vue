@@ -473,12 +473,6 @@ export default {
               relation: item.relationship
             }
           })) ?? []
-      } else {
-        uni.showToast({
-          title: '获取健康卡列表失败',
-          icon: 'none',
-          duration: 2000
-        })
       }
     },
 

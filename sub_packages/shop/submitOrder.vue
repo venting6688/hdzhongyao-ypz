@@ -141,6 +141,7 @@ import addressItem from '../components/addressItem.vue'
 import orderItem from '@/sub_packages/shop/components/order-item.vue'
 import dayjs from 'dayjs'
 import { handleBinaryImage } from '@/utils/system.js'
+import subMessage from '@/utils/subscribe'
 
 const srcAddress = {
   srcProvince: "山东省",
@@ -296,6 +297,7 @@ export default {
 
     /** 提交订单并支付 */
     async submitOrder() {
+      this.subscribeMessage()
       let goodsId = this.orderData.goods.map(v => v.goodsId)
       goodsId = goodsId.join(',')
       if (!this.defaultAddress.id) {
@@ -330,6 +332,7 @@ export default {
         }
         const res = await shopApi.submitOrderApi(payload)
         if (res.data && res.errno == 0) {
+
           uni.hideLoading()
           const { orderInfo } = res.data
           const datas = {
@@ -345,7 +348,6 @@ export default {
           }
           const resRegister = await registrationApi.registerOrder(datas)
           this.startPayment(resRegister, orderInfo)
-          this.createLogisticsOrder({orderSn: orderInfo?.orderSn, actualPrice: orderInfo?.actualPrice})
         } else {
           uni.hideLoading()
           uni.showToast({
@@ -372,13 +374,15 @@ export default {
             title: '支付成功',
             icon: 'success'
           })
+          await this.subscribeMessage()
+
           const res = await shopApi.updateSuccessApi({
             orderId: id,
             orderSn: orderSn,
             userId: this.loginData.userId
           })
           if (res.errno === 0) {
-            uni.navigateTo({ url: '/sub_packages/shop/orderDetail?id=' + id })
+            uni.redirectTo({ url: '/sub_packages/shop/orderDetail?id=' + id })
           } else {
             uni.showToast({
               title: res.errmsg || '支付失败',
@@ -394,12 +398,22 @@ export default {
         }
       })
     },
+    // 订阅消息
+    async subscribeMessage() {
+      let tmplIds = [
+        'JJMOmMIBKaun86h677Zz0sW3DbUum1I1Xi4QLKS715k', // 订单发货提醒
+        'puaYZrSP-1nUpvn6tMVfGIXy6FvJlTSqX768JlzO3fU', // 订单送达通知
+        'FFXLdWCLOKJldXhzKgnGc0h2B9vRfjm3Sz2CXo-ozm8' // 订单取消通知
+      ];
+      subMessage.subscribeRegisterNotice(
+        tmplIds,
+      )
+    },
     // 开处方
     async onClickCreatePrescription() {
       uni.showLoading({
         title: '加载中'
       })
-
       const localImageUrlList = []
       await Promise.all(
         this.orderData.goods.map(async ({ quantity, effect, ingredients, usage }) => {
@@ -418,7 +432,7 @@ export default {
               date: dayjs().format('YYYY-MM-DD'),
               patientName: this.loginData.defaultArchives?.patientName,
               gender: this.loginData.defaultArchives?.gender,
-              age: (this.loginData.defaultArchives?.age).toString(),
+              age: String(this.loginData.defaultArchives?.age),
               registerNo: '12345678',
               diagnosis: effect,
               usage: usage,
