@@ -144,10 +144,10 @@ import { handleBinaryImage } from '@/utils/system.js'
 import subMessage from '@/utils/subscribe'
 
 const srcAddress = {
-  srcProvince: "山东省",
-  srcCity: "青岛市",
-  srcDistrict: "黄岛区",
-  srcAddress: "中原街333号",
+  srcProvince: "",
+  srcCity: "",
+  srcDistrict: "",
+  srcAddress: "",
 }
 
 export default {

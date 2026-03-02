@@ -1,5 +1,5 @@
 <template>
-  <view class="order-card" :class="{ 'has-padding': isShowFooter }">
+  <view :class="{ 'has-padding': isShowFooter }" class="order-card">
     <view class="order-header">
       <text class="order-date">{{ order.date }}</text>
       <text class="order-status">{{ order.status }}</text>
@@ -7,7 +7,7 @@
 
     <view v-for="goods in order.goods" :key="goods.id">
       <view class="order-body" @click="onClickOrderDetail(order)">
-        <image :src="goods.img" mode="aspectFill" class="order-img"></image>
+        <image :src="goods.img" class="order-img" mode="aspectFill"></image>
         <view class="order-info">
           <text class="order-name">{{ goods.name }}</text>
           <view class="price-qty">
@@ -18,7 +18,7 @@
       </view>
     </view>
 
-    <view class="order-footer" v-if="isShowFooter">
+    <view v-if="isShowFooter" class="order-footer">
       <text class="total">总金额 ￥{{ order.total | formatPrice }}</text>
 
       <view class="actions">
@@ -51,15 +51,15 @@
         </view>
       </view>
     </view>
-    <uni-popup ref="refundPopup" type="bottom" background-color="#fff">
+    <uni-popup ref="refundPopup" background-color="#fff" type="bottom">
       <view class="popup-header">
         <text class="popup-title">确认退款信息</text>
-        <uni-icons type="close" size="24" color="#666" @click="closeNotePopup"></uni-icons>
+        <uni-icons color="#666" size="24" type="close" @click="closeNotePopup"></uni-icons>
       </view>
       <view class="popup-content">
         <view v-for="goods in order.goods" :key="goods.id">
           <view class="order-body" @click="onClickOrderDetail(order)">
-            <image :src="goods.img" mode="aspectFill" class="order-img"></image>
+            <image :src="goods.img" class="order-img" mode="aspectFill"></image>
             <view class="order-info">
               <text class="order-name">{{ goods.name }}</text>
               <view class="price-qty">
@@ -77,9 +77,9 @@
           <text>退款原因：</text>
           <textarea
             v-model="orderData.note"
-            placeholder="请输入您的退款原因"
-            maxLength="100"
             class="note-textarea"
+            maxLength="100"
+            placeholder="请输入您的退款原因"
           ></textarea>
         </view>
       </view>
@@ -246,9 +246,14 @@ export default {
       })
     },
     onClickOrderDetail(order) {
-      uni.navigateTo({
-        url: '/sub_packages/shop/orderDetail?id=' + order.id
-      })
+      const page = getCurrentPages()
+      if (page[page.length - 1].route === 'sub_packages/shop/orderDetail') {
+        return
+      } else {
+        uni.navigateTo({
+          url: '/sub_packages/shop/orderDetail?id=' + order.id
+        })
+      }
     },
     async onClickApplyRefund(order) {
       this.$refs.refundPopup.open()
@@ -259,7 +264,7 @@ export default {
     async onClickConfirm() {
       const res = await shopApi.cancelOrderApi({
         orderId: this.order.id,
-        userId: this.loginData.userId,
+        userId: this.loginData.userId
         // note: this.orderData.note
       })
       if (res.errno === 0) {
@@ -280,7 +285,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 .order-card {
   background: #fff;
   border-radius: 12rpx;
