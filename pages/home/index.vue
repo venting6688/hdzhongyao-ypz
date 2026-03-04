@@ -55,6 +55,8 @@ import { mapState } from 'vuex'
 import customerNav from '@/components/customerNav.vue'
 import visitNotice from '@/components/visitNotice.vue'
 import patients from '@/components/patients.vue'
+import subMessage from '@/utils/subscribe'
+import shopApi from '@/api/shopApi'
 
 export default {
   components: {
@@ -137,6 +139,9 @@ export default {
   onLoad() {
     let loginValue = uni.getStorageSync('loginData')
     this.defaultVal = JSON.stringify(loginValue) != '{}' ? loginValue.defaultArchives : {}
+    if (loginValue?.defaultArchives) {
+      this.$store.commit('SET_FOOT_DATA', this.defaultVal)
+    }
     const confirmed = uni.getStorageSync('popupConfirmed')
     if (!confirmed) {
       this.$nextTick(() => {
