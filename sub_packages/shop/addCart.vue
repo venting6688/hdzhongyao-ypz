@@ -38,7 +38,7 @@
         </view>
 
         <view class="right">
-          <view class="delete-btn" @click="onSwipeDelete(null)">删除</view>
+          <view class="delete-btn" :class="{'is-disabled': !this.cartList.some(i => i.checkedArr.length > 0)}" @click="onSwipeDelete(null)">删除</view>
           <view class="checkout-btn" @click="checkout">去结算</view>
         </view>
       </view>
@@ -164,6 +164,14 @@
         }
       },
       async onSwipeDelete(item) {
+        const notCheckedAny = item == null ? !this.cartList.some(i => i.checkedArr.length > 0) : false
+        if (notCheckedAny) {
+          uni.showToast({
+            title: '请先选择要删除的商品',
+            icon: 'none'
+          })
+          return
+        }
         const res = await new Promise(resolve => {
           uni.showModal({
             title: '提示',
@@ -398,5 +406,9 @@
     color: #fff;
     font-size: 34rpx;
     margin-top: 30rpx;
+  }
+  .is-disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 </style>
