@@ -297,15 +297,9 @@ export default {
 
     /** 提交订单并支付 */
     async submitOrder() {
-      this.subscribeMessage()
       let goodsId = this.orderData.goods.map(v => v.goodsId)
       goodsId = goodsId.join(',')
-      if (!this.defaultAddress.id) {
-        uni.showToast({
-          title: '请选择收货地址',
-          icon: 'none'
-        })
-      } else {
+
         let data = {
           number: 7,
           goodsId,
@@ -355,7 +349,6 @@ export default {
             icon: 'none'
           })
         }
-      }
     },
     /** 启动支付流程 */
     startPayment({ data }, { id, orderSn }) {
@@ -411,6 +404,13 @@ export default {
     },
     // 开处方
     async onClickCreatePrescription() {
+      if (!this.defaultAddress.id) {
+        uni.showToast({
+          title: '请选择收货地址',
+          icon: 'none'
+        })
+        return
+      }
       uni.showLoading({
         title: '加载中'
       })
