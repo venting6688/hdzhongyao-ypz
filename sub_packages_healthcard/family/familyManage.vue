@@ -610,7 +610,10 @@ export default {
     },
     authCancel(e) {
       console.log('用户取消授权：', e)
-    }
+    },
+    returnHome() {
+      uni.navigateTo({url: '/sub_packages_healthcard/family/familyManage'});
+    },
   }
 }
 </script>
