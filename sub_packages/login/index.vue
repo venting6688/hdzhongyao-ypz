@@ -82,7 +82,8 @@ export default {
 
           family.getDefaultPatientApi({ ownerUserId: loginInfo.userId }).then(({ data, code }) => {
             if (code === 200) {
-              this.handleLoginSuccess(loginInfo, data, profileInfo)
+              const defaultPatient = "memberDetail" in data ? data.memberDetail : data
+              this.handleLoginSuccess(loginInfo, defaultPatient, profileInfo)
             }
           })
 
@@ -105,6 +106,7 @@ export default {
     },
     // 处理登录成功后的逻辑
     handleLoginSuccess(loginInfo, defaultPatient, profileInfo) {
+      console.log(defaultPatient)
       const loginData = {
         userId: loginInfo.userId,
         xcxOpenId: loginInfo.openid,
@@ -115,7 +117,7 @@ export default {
           idNum: defaultPatient?.id_card,
           patientCard: defaultPatient?.id_card,
           gender: defaultPatient?.gender == 1 ? '男' : '女',
-          age: getAge(defaultPatient?.birthday.val),
+          age: getAge(defaultPatient?.birthday?.val),
           // qrCodeText: "",// !! 这还有问题
           // linkHealthCard: ""// !! 这还有问题
           // healthCardNum: '',
