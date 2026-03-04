@@ -7,7 +7,7 @@
       <!--      >-->
     </view>
 
-    <view v-if="true" class="order-logistics">
+    <view class="order-logistics">
       <view class="detail-button" @click="onClickLogisticsDetail">
         <text class="logistics-button">物流详情</text>
         <uni-icons class="logistics-icon" color="#999" size="18" type="arrowright"></uni-icons>
@@ -80,7 +80,6 @@
       }
     },
     async onLoad(options) {
-      shop.refundApi()
       const orderId = options.id
       this.loginData = uni.getStorageSync('loginData')
       await this.getOrderDetail(orderId)
