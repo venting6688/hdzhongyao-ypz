@@ -21,19 +21,24 @@
       </view>
       <view class="drug-info">
         <view class="drug-price">
-          ￥{{ drug.price | formatPrice }}
+          ￥{{ drug.price | formatPrice }} <text class="drug-price-per">/ 付</text>
           <text class="drug-stock">库存&nbsp;{{ drug.stock }}</text>
           <text class="drug-monthly-sales">已售出&nbsp;{{ drug.salesVolume }}</text>
         </view>
         <view class="drug-name">{{ drug.name }}</view>
         <view class="drug-desc">{{ drug.desc }}</view>
-        <!--                <view class="divider"></view>-->
-        <!--        <view class="delivery-info"-->
-        <!--          ><text class="info-label">送达</text>京东物流配送·不包邮</view-->
-        <!--        >-->
+<!--        <view class="divider"></view>-->
         <view class="delivery-info">
           <text class="info-label">服务</text>
           <text class="info-value">{{ serviceText }}</text>
+        </view>
+        <view class="delivery-info">
+          <text class="info-label">客服</text>
+          <text class="info-value">0532 88191639</text>
+        </view>
+        <view class="delivery-info">
+          <text class="info-label">说明</text>
+          <text class="info-value">代茶饮一天一付，7付为一疗程</text>
         </view>
       </view>
       <view class="drug-detail">
@@ -59,12 +64,12 @@
     <!-- 底部操作栏 -->
     <view class="action-bar">
       <view class="left">
-        <view class="action-item" @click="onClickCustomerService">
-          <view class="icon-box">
-            <image src="@/static/image/service.png" mode="aspectFit" class="icon-btn" />
-          </view>
-          <view class="cart-text">客服</view>
-        </view>
+<!--        <view class="action-item" @click="onClickCustomerService">-->
+<!--          <view class="icon-box">-->
+<!--            <image src="@/static/image/service.png" mode="aspectFit" class="icon-btn" />-->
+<!--          </view>-->
+<!--          <view class="cart-text">客服</view>-->
+<!--        </view>-->
         <view class="action-item cart-tab" @click="onClickCart">
           <view class="icon-box">
             <image class="cart-icon" src="@/static/image/shopping.png" mode="aspectFit" />
@@ -166,6 +171,8 @@
             'valueList' in specificationList[0]
           ) {
             detailData = specificationList?.[0]?.valueList?.[0]
+          } else {
+            detailData = info
           }
           this.drug = {
             id: info.id || null,
@@ -306,6 +313,11 @@
         font-weight: 500;
         padding-right: 70rpx;
       }
+      .drug-price-per {
+        color: rgb(51, 51, 51);
+        margin-left: 8rpx;
+        font-size: 24rpx;
+      }
 
       .drug-stock {
         //border-left: solid 1px #87653a;
@@ -344,7 +356,8 @@
       .info-label {
         color: #999999;
         margin: 0 15rpx 0 0;
-        width: 150rpx;
+        width: 60rpx;
+        flex: none;
       }
     }
   }
@@ -491,7 +504,7 @@
     }
 
     .right {
-      width: 450rpx;
+      width: 500rpx;
       display: flex;
       justify-content: space-around;
       height: 73rpx;
@@ -503,6 +516,7 @@
         font-size: 28rpx;
         color: #87653a;
         line-height: 73rpx;
+        //margin-right: 30rpx;
       }
 
       .buy-now {
@@ -512,6 +526,7 @@
         color: #fff;
         font-size: 28rpx;
         line-height: 73rpx;
+        //margin-right: 20rpx;
       }
     }
   }

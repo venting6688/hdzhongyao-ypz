@@ -39,7 +39,7 @@
             <view class="item-name">{{ item.name }}</view>
             <view class="item-desc">{{ item.desc }}</view>
             <view class="item-desc">{{ item.category }}</view>
-            <view class="item-price">￥{{ item.price | formatPrice }}</view>
+            <view><text class="item-price">￥{{ item.price | formatPrice }}</text> /付</view>
           </view>
         </view>
 
@@ -339,6 +339,7 @@
       color: #e67e22;
       font-size: 30rpx;
       font-weight: 600;
+      margin-right: 5rpx;
     }
 
     .load-text {
