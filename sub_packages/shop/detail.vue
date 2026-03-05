@@ -26,7 +26,7 @@
           <text class="drug-monthly-sales">已售出&nbsp;{{ drug.salesVolume }}</text>
         </view>
         <view class="drug-name">{{ drug.name }}</view>
-        <view class="drug-desc">{{ drug.desc }}</view>
+        <view class="drug-desc">{{ drug.effect }}</view>
 <!--        <view class="divider"></view>-->
         <view class="delivery-info">
           <text class="info-label">服务</text>
@@ -183,10 +183,10 @@
             stock: info.goodsNumber || 0,
             // delivery: INFO.delivery,
             // service: INFO.service,
-            effect: detailData.efficacy || '',
+            effect: detailData.effect || '',
             ingredients: detailData.mainIngredients || '',
             usage: detailData.usageDosage || '',
-            notice: detailData.thingsToNote || '',
+            notice: detailData.precautions || '',
             image: info.listPicUrl
           }
         } else {

@@ -10,7 +10,9 @@ const shop = {
         method: 'post',
         data: params
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -22,7 +24,9 @@ const shop = {
         url: url,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -34,7 +38,9 @@ const shop = {
         method: 'post',
         data: params
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -45,7 +51,9 @@ const shop = {
         url: url,
         method: 'get',
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -58,7 +66,9 @@ const shop = {
         method: 'get',
         params: params
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   }

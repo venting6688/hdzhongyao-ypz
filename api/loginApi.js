@@ -1,8 +1,8 @@
 
- 
+
 import { cjRequest } from '@/utils/service.js'
- 
- 
+
+
 const patient = {
 
 	   async getPhoneNumber(data) {
@@ -11,12 +11,13 @@ const patient = {
 	   		method: "post",
 	   		data:{
 					phoneCode:data.phoneCode,
-					openidCode:data.openidCode, 
+					openidCode:data.openidCode,
 	   		}
-	   
-	   	},2)
+	   	},2,
+        false,
+        true)
 	   	return res
 	   },
 }
- 
+
 export default patient

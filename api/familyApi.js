@@ -9,7 +9,9 @@ const family = {
         url: url,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -23,7 +25,9 @@ const family = {
         method: 'post',
         data: params
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -37,7 +41,9 @@ const family = {
         method: 'post',
         data: params
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -50,7 +56,9 @@ const family = {
         url: url,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -64,7 +72,9 @@ const family = {
         method: 'delete',
         data: params
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   }

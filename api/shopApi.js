@@ -9,7 +9,9 @@ const shop = {
         url: url,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -20,7 +22,9 @@ const shop = {
         url: url,
         method: 'post'
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -32,7 +36,9 @@ const shop = {
         url: 'api/catalog/index',
         method: 'post'
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -43,7 +49,9 @@ const shop = {
         url: 'api/goods/detail?id=' + id,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -54,7 +62,9 @@ const shop = {
         url: 'api/address/list?userId=' + userId,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -66,7 +76,9 @@ const shop = {
         method: 'post',
         data
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -78,7 +90,9 @@ const shop = {
         url: 'api/address/delete?id=' + id,
         method: 'delete'
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -89,7 +103,9 @@ const shop = {
         url: 'api/address/getDefaultAddress?id=' + userId,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -120,7 +136,9 @@ const shop = {
           userId
         }
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -135,7 +153,9 @@ const shop = {
           userId
         }
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -146,7 +166,9 @@ const shop = {
         url: `api/order/updateSuccess?orderId=${orderId}&userId=${userId}&orderSn=${orderSn}`,
         method: 'post'
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -158,7 +180,9 @@ const shop = {
         method: 'post',
         data
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -169,7 +193,9 @@ const shop = {
         url: `api/order/cancelOrder?orderId=${orderId}&userId=${userId}`,
         method: 'post'
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -180,7 +206,9 @@ const shop = {
         url: `api/order/confirmOrder?orderId=${orderId}&userId=${userId}`,
         method: 'post'
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -192,7 +220,9 @@ const shop = {
         url: 'api/product/getProductsByIds?goodsId=' + goodsIds,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -203,7 +233,9 @@ const shop = {
         method: 'post',
         data
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -214,7 +246,9 @@ const shop = {
         method: 'post',
         data
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -224,7 +258,9 @@ const shop = {
         url: 'api/cart/index?userId=' + userId,
         method: 'get'
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -235,7 +271,9 @@ const shop = {
         method: 'post',
         data
       },
-      2
+      2,
+      false,
+      true
     )
     return res
   },
@@ -252,7 +290,9 @@ const shop = {
           userId
         }
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -264,7 +304,9 @@ const shop = {
         method: 'post',
         data
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   },
@@ -295,6 +337,7 @@ const shop = {
         }
       },
       2,
+      true,
       true
     )
     return res?.data || {}
@@ -310,7 +353,9 @@ const shop = {
           userId
         }
       },
-      2
+      2,
+      false,
+      true
     )
     return res?.data || {}
   }
