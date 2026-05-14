@@ -132,7 +132,7 @@
 				let type = num === 1 ? 'jiancha' : 'jianyan';
 				this.getVisitRecord(type)
 			},
-			
+
 			//实人验证
 			// healthcardVerify() {
 			// 	var plugin = requirePlugin("healthCardPlugins");
@@ -146,11 +146,11 @@
 			// 		wechatCode: true,
 			// 	});
 			// },
-			
+
 			//实人验证生成orderid
 			verifyOrder(val) {
 				const { wechatCode } = val.result;
-				
+
 				let data = {
 					cardType: '01',
 					idCard: this.siginData.patientCard,
@@ -167,7 +167,7 @@
 					domainChannel: 3,
 					openId: this.loginData.xcxOpenId,
 				}
-				
+
 				healthCard.registerUniformVerifyOrder(data).then((res) => {
 					if (res.data.code == 200) {
 						let url = res.data.data.rsp.verifyUrl;
@@ -184,7 +184,7 @@
 					verifyResult: this.registerOrderId,
 					openId: this.loginData.xcxOpenId,
 				}
-				
+
 				healthCard.checkUniformVerifyResult(data).then((res) => {
 					if (res.data.code == 200) {
 						this.headBtn(1);
@@ -192,9 +192,9 @@
 					}
 				});
 			},
-			
+
 			authSuccess(e) {
-				const res = e.detail; 
+				const res = e.detail;
 				this.verifyOrder(res);
 			},
 			authFail(e) {
@@ -207,7 +207,7 @@
 			getVisitRecord(type) {
 				try {
 					let data = {
-						cardNo: this.siginData.patientCard, 
+						cardNo: this.siginData.patientCard,
 						patientId: this.footData.hisPatientId,
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
@@ -239,7 +239,7 @@
 					//TODO handle the exception
 				}
 			},
-			
+
 			information(item){
 				if(this.headIndex===1){
 					//检查
@@ -260,17 +260,17 @@
 <style lang="less" scoped>
 	.box {
 		width: 100vw;
-		height: 100%; 
+		height: 100%;
 		background-color: #f5f5f5;
 		display: flex;
 		flex-direction: column;
-		
+
 		.head {
 			width: 700rpx;
 			margin: 0 auto;
 			background: #ffffff;
 			// height: 120rpx;
-			
+
 			border-radius: 12rpx 12rpx 0 0;
 			>view{
 				// padding-top: 20rpx;
@@ -334,7 +334,7 @@
 							.name {
 								display: flex;
 								align-items: center;
-								font-size: 28rpx;
+								font-size: 32rpx;
 								line-height: 34.35rpx;
 								font-family: PingFang SC, PingFang SC-600;
 								font-weight: 600;
@@ -344,7 +344,7 @@
 							.delete {
 								display: flex;
 								align-items: center;
-								font-size: 26.72rpx;
+								font-size: 28rpx;
 								line-height: 26.72rpx;
 								font-family: PingFang SC, PingFang SC-400;
 								font-weight: 400;
@@ -357,7 +357,7 @@
 							flex-direction: column;
 							justify-content: space-between;
 							.no {
-								font-size: 24rpx;
+								font-size: 30rpx;
 								padding: 8rpx 0;
 								text {
 									&:nth-child(1){

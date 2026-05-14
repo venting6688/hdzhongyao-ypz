@@ -17,7 +17,7 @@ export const cjRequest =  (parmas, state) => {
 				}else{
 					return Promise.reject(false);
 				}
-				
+
 			}else {
 				store.commit('SET_LOGIN_VALUE', true);
 				return request(parmas,state)
@@ -29,19 +29,20 @@ export const cjRequest =  (parmas, state) => {
 			}else{
 				return Promise.reject(false);
 			}
-			
+
 		}
-		
+
 	}else{
 		return request(parmas,state)
 	}
 }
 
-const baseUrl = "https://api.2zhongyi.cn/prod-api/mobile2/"
+// const baseUrl = "https://api.2zhongyi.cn/prod-api/mobile2/"
+const baseUrl = "https://xcx.2zhongyi.cn/prod-api/mobile2/"
 
 function request(parmas,state){
 	let header = { "Authorization": store.state.loginToken };
-	
+
 	return new Promise((resolve, reject) => {
 		if(!state){
 			requestCount++;
