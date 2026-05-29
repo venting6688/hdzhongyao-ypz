@@ -38,7 +38,7 @@ export const cjRequest =  (parmas, state) => {
 }
 
 // const baseUrl = "https://api.2zhongyi.cn/prod-api/mobile2/"
-const baseUrl = "https://xcx.2zhongyi.cn/prod-api/mobile2/"
+const baseUrl = "https://xcx.2zhongyi.cn/prod-api/mobile2/";
 
 function request(parmas,state){
 	let header = { "Authorization": store.state.loginToken };
