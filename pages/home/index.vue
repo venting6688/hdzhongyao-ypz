@@ -39,7 +39,7 @@
             link-type="navigateTo"
             v-for="(item, index) in gridList[current]"
             :key="index"
-            @click="onGridClick(item)"
+            @click="item.isClick ? jumpClick() : onGridClick(item)"
           >
             <view class="img"><image :src="item.img" mode="" /></view>
             <view class="name">{{ item.name }}</view>
@@ -71,6 +71,7 @@ export default {
       fontMode: 'normal',
       current: 0,
       defaultVal: {},
+      loginValue: {},
       list: [
         { img: '../../static/img/yuyue.png', url: '/sub_packages/subscribe/departments' },
         { img: '../../static/img/menzhen.png', url: '/sub_packages/report/index' },
@@ -112,9 +113,17 @@ export default {
             name: '住院费用',
             url: '/sub_packages/convenientModule/index'
           },
-          { img: '../../static/img/navigation/zy-report.png', name: '住院报告' } //, url: '/sub_packages/report/hospitalization'
+          {
+            img: '../../static/img/navigation/zy-report.png',
+            name: '住院报告' ,
+          } //, url: '/sub_packages/report/hospitalization'
         ],
         [
+          {
+            img: '../../static/img/navigation/yxfw.png',
+            name: '药学服务',
+            isClick: true,
+          },
           {
             img: '../../static/img/navigation/info.png',
             name: '就诊人管理',
@@ -135,8 +144,8 @@ export default {
     }
   },
   onLoad() {
-    let loginValue = uni.getStorageSync('loginData')
-    this.defaultVal = JSON.stringify(loginValue) != '{}' ? loginValue.defaultArchives : {}
+    this.loginValue = uni.getStorageSync('loginData')
+    this.defaultVal = JSON.stringify(this.loginValue) != '{}' ? this.loginValue.defaultArchives : {}
     const confirmed = uni.getStorageSync('popupConfirmed')
     if (!confirmed) {
       this.$nextTick(() => {
@@ -173,6 +182,68 @@ export default {
         })
       }
     },
+
+    async jumpClick() {
+      const openId = this.loginValue.xcxOpenId;
+
+      if (!openId) {
+        uni.showToast({
+          title: '缺少openId，暂无法跳转',
+          icon: 'none'
+        })
+        return
+      }
+
+      uni.showLoading({
+        title: '加载中'
+      })
+
+      try {
+        let res = await this.getEncryptArcBasId(this.defaultVal.patientCard)
+        let encryptArcBasId = '';
+        if (res.code == '200') {
+          encryptArcBasId = res.data;
+        }
+        if (!encryptArcBasId) {
+          throw new Error('获取失败')
+        }
+
+        wx.navigateToMiniProgram({
+          appId: 'wx9af874b43d4ce86d',
+          openId,
+          arcbasid: encryptArcBasId,
+          envVersion: 'release',
+          success: function (res) {},
+          fail: function (err) {
+            console.log('跳转失败', err)
+          }
+        })
+      } catch (error) {
+        console.log('获取加密arcbasid失败', error)
+        uni.showToast({
+          title: '暂无法打开药学服务',
+          icon: 'none'
+        })
+      } finally {
+        uni.hideLoading()
+      }
+    },
+
+    getEncryptArcBasId(idCard) {
+      return new Promise((resolve, reject) => {
+        uni.request({
+          url: 'https://mk.2zhongyi.cn/api/platformwx/wechat/patient/getEncryptArcBasIdEncrypt?arcbasid='+idCard,
+          method: 'GET',
+          success: res => {
+            resolve(res)
+          },
+          fail: err => {
+            reject(err)
+          }
+        })
+      })
+    },
+
     onAiClick() {
       wx.reLaunch({ url: '/pages/virtualNurse/index' })
     },
