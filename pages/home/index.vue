@@ -70,6 +70,7 @@ export default {
       showMain: false,
       fontMode: 'normal',
       current: 0,
+      openid: '',
       defaultVal: {},
       loginValue: {},
       list: [
@@ -143,16 +144,21 @@ export default {
       ]
     }
   },
+  onShow() {
+  	const loginData = uni.getStorageSync('loginData') || {};
+  	this.loginValue = loginData;
+  	this.openid = loginData.xcxOpenId || '';
+  },
   onLoad() {
-    this.loginValue = uni.getStorageSync('loginData')
-    this.defaultVal = JSON.stringify(this.loginValue) != '{}' ? this.loginValue.defaultArchives : {}
-    const confirmed = uni.getStorageSync('popupConfirmed')
+    this.defaultVal = this.loginValue.defaultArchives || {};
+    const confirmed = uni.getStorageSync('popupConfirmed');
+
     if (!confirmed) {
       this.$nextTick(() => {
-        this.$refs.notice.open()
-      })
+        this.$refs.notice.open();
+      });
     } else {
-      this.showMain = true
+      this.showMain = true;
     }
   },
   methods: {
@@ -183,40 +189,38 @@ export default {
       }
     },
 
-    async jumpClick() {
-      const openId = this.loginValue.xcxOpenId;
-
+    jumpClick() {
+      let openId = this.openid;
       if (!openId) {
-        uni.showToast({
-          title: '缺少openId，暂无法跳转',
-          icon: 'none'
+        uni.showModal({
+        	title: '提示',
+        	content: '未获取到就诊人，请先添加就诊人',
+        	showCancel: false,
+        	success: () => {
+        		uni.navigateTo({
+        			url: '/sub_packages_healthcard/family/familyManage'
+        		})
+        	}
         })
         return
       }
-
       uni.showLoading({
         title: '加载中'
       })
 
       try {
-        let res = await this.getEncryptArcBasId(this.defaultVal.patientCard)
-        let encryptArcBasId = '';
-        if (res.code == '200') {
-          encryptArcBasId = res.data;
-        }
-        if (!encryptArcBasId) {
-          throw new Error('获取失败')
-        }
-
-        wx.navigateToMiniProgram({
-          appId: 'wx9af874b43d4ce86d',
-          openId,
-          arcbasid: encryptArcBasId,
-          envVersion: 'release',
-          success: function (res) {},
-          fail: function (err) {
-            console.log('跳转失败', err)
+        this.getEncryptArcBasId(this.defaultVal.patientCard).then(res => {
+          let encryptArcBasId = '';
+          if (res.data.code == '200') {
+            encryptArcBasId = res.data.data;
           }
+          if (!encryptArcBasId) {
+            throw new Error('获取失败')
+          }
+          let jumpUrl = `https://mk.2zhongyi.cn/?appId=wx9af874b43d4ce86d&openId=${openId}&arcbasid=${encryptArcBasId}`;
+          console.log(jumpUrl,'w==w=w=w');
+          jumpUrl = encodeURIComponent(jumpUrl);
+          uni.navigateTo({ url: `/pages/webview/webview?url=${jumpUrl}` });
         })
       } catch (error) {
         console.log('获取加密arcbasid失败', error)

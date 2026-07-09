@@ -73,7 +73,7 @@
 					<text class="blue" @click="appointment">《预约须知》</text>
 				</view>
 			</view>
-			
+
 			<uni-popup ref="QRCodePopup" type="center" :is-mask-click="false" background-color="#fff">
 				<view class="pay-box">
 					<view class="text-center">微信扫一扫</view>
@@ -82,7 +82,7 @@
 					<button @click="closeQRCodePopup">关闭</button>
 				</view>
 			</uni-popup>
-			
+
 		</view>
 		<Toast v-if="toastObj.state" @back="closeToast" :type="toastObj.type" :url="toastObj.url" :tips="toastObj.tips" :message="toastObj.message" />
 	</view>
@@ -96,7 +96,7 @@
 	import guideApi from '@/api/guideApi.js'
 	import healthCard from '@/api/healthCard.js'
 	import subMessage from '@/utils/subscribe.js'
-	
+
 	export default {
 		components:{
 			Toast,
@@ -146,7 +146,7 @@
 				detailName: '',
 			}
 		},
-		computed: { 
+		computed: {
 			...mapState(['footData']),
 		},
 		methods: {
@@ -164,9 +164,9 @@
 				if(!this.agreementState){
 					uni.showToast({
 					    title: '请先阅读预约须知',
-					    icon: 'none',   
-					    duration: 2000 
-					}) 
+					    icon: 'none',
+					    duration: 2000
+					})
 					 return
 				}
 				let loginValue = uni.getStorageSync("loginData");
@@ -177,6 +177,9 @@
 				}
 			},
 			today(data){
+        // registrationApi.refund({merOrderId: '157Q-20260630160922-3128081', refundAmount: 2000, targerOrderId: ''}).then(r => {
+        // 	console.log(JSON.stringify(r.data))
+        // })
 				//锁号
 				let lockNumData = {
 					cardNo: this.siginData.patientCard,
@@ -198,8 +201,8 @@
 					if(!res.success) {
 						uni.showToast({
 							title: res.msg,
-							icon: 'none',   
-							duration: 2000 
+							icon: 'none',
+							duration: 2000
 						})
 					} else {
 						//用卡检测数据接口（电子健康卡）
@@ -216,7 +219,7 @@
 								department = '1800'
 							}
 						}
-						
+
 						let healthCardData = {
 							qrCodeText: this.siginData.qrCodeText,
 							time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
@@ -230,16 +233,16 @@
 						}
 						healthCard.reportHISData(healthCardData).then(healthRes => {
 						});
-						
+
 						let lockId = res.data.lockId;
-						
+
 						let randNum = Math.floor(1000000 + Math.random() * 9000000);
-						let datas = { 
+						let datas = {
 							lockId,
 							patientId: this.siginData.patientCard,
 							patientName: this.siginData.patientName,
 							subOpenId: data.xcxOpenId,
-							totalAmount: String(this.doctor.Fee * 100), 
+							totalAmount: String(this.doctor.Fee * 100),
 							merOrderId: '157Q-'+dayjs().format('YYYYMMDDHHmmss')+'-'+randNum,
 							uploadData: {
 								lockId,
@@ -317,7 +320,7 @@
 													];
 													subMessage.subscribeRegisterNotice(
 														tmplIds,
-														registrationApi.registrationSuccessNotificationMsg, 
+														registrationApi.registrationSuccessNotificationMsg,
 														sendMsg
 													).then((res) => {
 														this.toastObj = {
@@ -329,8 +332,8 @@
 												} else {
 													//上传失败进行解锁+退款
 													let refundData = {
-														merOrderId: resMsg.merOrderId, 
-														refundAmount: resMsg.invoiceAmount, 
+														merOrderId: resMsg.merOrderId,
+														refundAmount: resMsg.invoiceAmount,
 														targerOrderId: resMsg.targetOrderld
 													}
 													//退款
@@ -374,7 +377,7 @@
 										}
 									})
 								}
-							})		
+							})
 						})
 					}
 				})
@@ -403,30 +406,30 @@
 <style lang="less" scoped>
     .doctorsDetails {
 	    width: 100vw;
-	    height: 100%; 
+	    height: 100%;
 	    background-color: #f5f5f5;
 	    display: flex;
 		// align-items: center;
 	    flex-direction: column;
-		
+
 		.middle {
 			overflow: auto;
 			margin: 15rpx  0 50rpx 0;
-			
+
 			.center {
 				width: 680rpx;
 				height: 480rpx;
 				background: #ffffff;
 				border-radius: 11.45rpx;
 				margin: 25rpx auto;
-				
-			
-				
+
+
+
 				.datum{
 					margin:0 10rpx;
 					padding: 17rpx 0;
 					display: flex;
-					
+
 					.img{
 						width: 122.14rpx;
 						height: 152.67rpx;
@@ -444,7 +447,7 @@
 							align-items: center;
 							position: relative;
 							text {
-								
+
 								&:nth-of-type(1){
 									font-size: 36rpx;
 									line-height: 27rpx;
@@ -469,7 +472,7 @@
 							display: -webkit-box; //将元素设为盒子伸缩模型显示
 							-webkit-box-orient: vertical; //伸缩方向设为垂直方向
 							-webkit-line-clamp: 4;  //超出3行隐藏，并显示省略号
-							
+
 						}
 					}
 				}
@@ -480,7 +483,7 @@
 						align-items: center;
 						font-size: 30rpx;
 						margin: 16rpx 20rpx;
-						
+
 						> text {
 							&:first-child{
 								color: #999999;
@@ -496,7 +499,7 @@
 							text {
 								margin-left: 20rpx;
 							}
-							
+
 							.twoDays {
 								width: 64.89rpx;
 								height: 26.72rpx;
@@ -507,17 +510,17 @@
 								display: flex;
 								justify-content: center;
 								align-items: center;
-							
+
 							}
-							
+
 							image {
 								width: 27rpx;
 								height: 27rpx;
 								margin-left: 10rpx;
 							}
 						}
-						
-												
+
+
 					}
 				}
 			}
@@ -531,7 +534,7 @@
 				justify-content: space-between;
 				align-items: center;
 				font-size: 27rpx;
-				
+
 				>.title {
 					color: #999999;
 					line-height: 27rpx;
@@ -542,11 +545,11 @@
 					color: #4286ff;
 					display: flex;
 					align-items: center;
-					
+
 					text {
 						line-height: 27rpx;
 					}
-					
+
 					image {
 						width: 27rpx;
 						height: 27rpx;
@@ -560,23 +563,23 @@
 				background: #ffffff;
 				border-radius: 11.45rpx;
 				margin: 25rpx auto;
-				
+
 				.tips-head {
 					margin: 20rpx 15rpx;
 					padding-top: 20rpx;
 				}
-				
+
 				.tips-middle {
 					> view {
 						margin: 20rpx 15rpx;
 						display: flex;
 						font-size: 22.9rpx;
 						line-height: 40 rpx;
-						
+
 						&:first-child{
 							color: #FFC03D;
 						}
-						
+
 						text {
 							&:first-child{
 								margin-right: 14rpx;
@@ -604,19 +607,19 @@
 					font-size: 30.53rpx;
 					line-height: 30.53rpx;
 					margin-bottom: 40rpx;
-					
+
 					text {
 						letter-spacing: 4rpx;
 						padding-left: 4rpx;
 					}
-					
+
 				}
 				.agreement {
 					display: flex;
 					align-items: center;
 					justify-content: center;
 					color: #999999;
-					
+
 					>view {
 						display: flex;
 						align-items: center;
@@ -634,16 +637,16 @@
 							margin-right: 12rpx;
 						}
 					}
-					
-					
+
+
 					.blue {
 						color: #076AFF;
 					}
-					
+
 				}
 			}
-			
+
 		}
-		
+
 	}
 </style>

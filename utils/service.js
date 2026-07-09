@@ -26,7 +26,7 @@ export const cjRequest =  (parmas, state) => {
 			if(!store.state.showModalState && state!==3){
 				store.commit('SET_SHOW_MODAL_STATE', true);
 				return login.loginData(state)
-			}else{
+			} else {
 				return Promise.reject(false);
 			}
 

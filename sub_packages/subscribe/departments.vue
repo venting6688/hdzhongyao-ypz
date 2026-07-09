@@ -120,7 +120,7 @@
 				this.mainActiveIndex = index.target.index;
 				this.clickDepartment = this.filteredItems[this.mainActiveIndex];
 				this.departmentName = this.clickDepartment.text;
-				
+
 				this.filteredItems.forEach((i,x)=> {
 					if(x === this.mainActiveIndex){
 						i.children = this.clickDepartment['children'];
@@ -132,21 +132,19 @@
 				this.searchQuery = ''
 				this.filteredItems = []
 				this.items = []
-					// 处理点击事件
-					uni.navigateTo({
-						url: `/sub_packages/subscribe/doctors?title=${item.target.text}&deptCode=${item.target.deptCode}&parentDeptName=${this.departmentName}&detail=${item.target.text}`
-					})
+        // 处理点击事件
+        uni.navigateTo({
+          url: `/sub_packages/subscribe/doctors?title=${item.target.text}&deptCode=${item.target.deptCode}&parentDeptName=${this.departmentName}&detail=${item.target.text}`
+        })
 			}
 	},
-	mounted() {
-	}
 };
 </script>
 
 <style  lang="less" scoped>
 	.department {
 		width: 100vw;
-		height: 100%; 
+		height: 100%;
 		background-color: #ffffff;
 		// input
 		/deep/.van-search{
@@ -167,16 +165,16 @@
 		  color: #3E99FF;
 		  background: #f2f6f9;
 		  border-color: var(--sidebar-selected-border-color,#3E99FF);
-		     
+
 		}
 		/deep/ .van-tree-select__content{
 			background-color: #F2F6F9;
 			width: 65%;
-			
+
 			.van-ellipsis {
 				border-bottom: 2rpx solid #ffffff;
 			}
 		}
-		
+
 	}
 </style>
