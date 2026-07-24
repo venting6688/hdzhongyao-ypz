@@ -63,7 +63,9 @@
                     </view>
                     <view class="top2-center" v-for="(clinic, u) in x.department" :key="u">
                       <text>{{ clinic.name }}</text>
-                      <view class="registeredBtn" @click="footType(clinic, 'department')">去挂号</view>
+                      <view class="registeredBtn" @click="footType(clinic, 'department')">
+                        去挂号
+                      </view>
                     </view>
                   </view>
                   <view class="ai-tips" v-if="!x.msgLoad">· 此内容由AI生成，仅供参考</view>
@@ -340,19 +342,34 @@ export default {
     },
     footType(item, type) {
       let name = '',
-      id = '',
-      date = item.medDate ? item.medDate : dayjs().format('YYYY-MM-DD'),
-      today = date == dayjs().format('YYYY-MM-DD') ? 2 : 1;
+        id = ''
+      let date = item.medDate ? item.medDate : dayjs().format('YYYY-MM-DD')
+      let today = date == dayjs().format('YYYY-MM-DD') ? 2 : 1
+      let week = this.getWeekday(date)
+      let timeObj = {}
+      let url = ''
       if (type == 'doctor') {
-        name = item.deptName;
-        id = item.deptCode;
+        name = item.deptName
+        id = item.deptCode
+        timeObj = {
+          date,
+          week,
+          deptCode: id,
+          status: '有号'
+        }
+        url = `/sub_packages/subscribe/doctors?title=${name}&CLGRPRowId=${id}&timeObj=${JSON.stringify(
+          timeObj
+        )}&thatDay=${today}&jumpType='jump'`
       } else {
-        name = item.name;
-        id = item.id;
+        name = item.name
+        id = item.id
+        url = `/sub_packages/subscribe/doctors?title=${name}&CLGRPRowId=${id}`
       }
-      uni.navigateTo({
-        url: `/sub_packages/subscribe/doctors?title=${name}&CLGRPRowId=${id}&date=${date}&thatDay=${today}`
-      })
+      uni.navigateTo({ url })
+    },
+    getWeekday(date) {
+      const weekMap = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+      return weekMap[dayjs(date).day()]
     },
     // 保持消息体可见
     msgGo(i) {
@@ -528,26 +545,26 @@ export default {
               const content = jsonData.content
 
               if (['A004', 'A005', 'A999', 'A998'].includes(type)) {
-                  const safeContent = typeof content === 'string' ? content : String(content || '')
-                  if (typeof lastAnswer !== 'string') lastAnswer = String(lastAnswer || '')
+                const safeContent = typeof content === 'string' ? content : String(content || '')
+                if (typeof lastAnswer !== 'string') lastAnswer = String(lastAnswer || '')
 
-                  const newPart = safeContent.slice(lastAnswer.length)
-                  if (typeof newPart !== 'string' || !newPart.trim()) return
+                const newPart = safeContent.slice(lastAnswer.length)
+                if (typeof newPart !== 'string' || !newPart.trim()) return
 
-                  lastAnswer = safeContent
-                  const lastMsg = this.msgList[this.msgList.length - 1]
+                lastAnswer = safeContent
+                const lastMsg = this.msgList[this.msgList.length - 1]
 
-                  if (lastMsg && lastMsg.msgLoad) {
-                      lastMsg.msgLoad = false
-                      this.showTypewriterEffect(newPart, lastMsg)
-                  } else if (lastMsg && !lastMsg.msgLoad) {
-                      this.showTypewriterEffect(newPart, lastMsg)
-                  } else {
-                      const msgObj = { my: false, msgLoad: false, msg: '' }
-                      this.msgList.push(msgObj)
-                      this.showTypewriterEffect(newPart, msgObj)
-                  }
-                  this.$forceUpdate()
+                if (lastMsg && lastMsg.msgLoad) {
+                  lastMsg.msgLoad = false
+                  this.showTypewriterEffect(newPart, lastMsg)
+                } else if (lastMsg && !lastMsg.msgLoad) {
+                  this.showTypewriterEffect(newPart, lastMsg)
+                } else {
+                  const msgObj = { my: false, msgLoad: false, msg: '' }
+                  this.msgList.push(msgObj)
+                  this.showTypewriterEffect(newPart, msgObj)
+                }
+                this.$forceUpdate()
               } else if (type === 'A001') {
                 const originalTipsState = this.msgList[this.msgList.length - 1]?.tipsState
                 this.msgList.splice(this.msgList.length - 1, 1, {
@@ -597,25 +614,29 @@ export default {
       const speed = 25
 
       this.typewriterTimer = setInterval(() => {
-          if (displayLength < newText.length) {
-              displayLength += step
-              let nextChar = newText.slice(displayLength - step, displayLength)
+        if (displayLength < newText.length) {
+          displayLength += step
+          let nextChar = newText.slice(displayLength - step, displayLength)
 
-              if (typeof nextChar !== 'string') {
-                  try { nextChar = String(nextChar) }
-                  catch (err) { console.error('Typewriter字符转换异常:', err, nextChar); nextChar = '' }
-              }
-
-              if (typeof lastMsg.msg !== 'string') {
-                  lastMsg.msg = String(lastMsg.msg || '')
-              }
-
-              lastMsg.msg += nextChar
-              this.$forceUpdate()
-          } else {
-              clearInterval(this.typewriterTimer)
-              this.typewriterTimer = null
+          if (typeof nextChar !== 'string') {
+            try {
+              nextChar = String(nextChar)
+            } catch (err) {
+              console.error('Typewriter字符转换异常:', err, nextChar)
+              nextChar = ''
+            }
           }
+
+          if (typeof lastMsg.msg !== 'string') {
+            lastMsg.msg = String(lastMsg.msg || '')
+          }
+
+          lastMsg.msg += nextChar
+          this.$forceUpdate()
+        } else {
+          clearInterval(this.typewriterTimer)
+          this.typewriterTimer = null
+        }
       }, speed)
     },
     arrayBufferToString(buffer) {
@@ -721,13 +742,6 @@ export default {
             .replace('？', '')
           this.voiceState = false
         }
-      }
-      this.manager.onStart = res => {
-        // uni.hideLoading()
-        // uni.showLoading({
-        // 	title:"语音识别中...",
-        // })
-        // console.log("成功开始录音识别", res)
       }
       this.manager.onError = res => {
         console.error('error msg', res.retcode, res.msg)
@@ -889,14 +903,6 @@ export default {
             width: 630rpx;
             margin: 20rpx 25rpx 20rpx 0;
 
-            .triangle {
-              width: 0;
-              height: 0;
-              border-style: solid;
-              border-width: 15rpx 0 15rpx 18rpx;
-              border-color: transparent transparent transparent #9a7546;
-            }
-
             .center {
               color: #ffffff;
               background: #9a7546;
@@ -926,14 +932,6 @@ export default {
             align-items: center;
             margin: 20rpx 24rpx;
 
-            .triangle {
-              width: 0;
-              height: 0;
-              border-style: solid;
-              border-width: 15rpx 18rpx 15rpx 0;
-              border-color: transparent rgba(255, 255, 255, 0.8) transparent transparent;
-            }
-
             .center {
               color: #333333;
               font-size: 34rpx;
@@ -953,30 +951,30 @@ export default {
                 color: #87653a;
                 display: flex;
                 flex-wrap: wrap;
-               .answer {
-                 width: 100%;
-                 .tipContent {
-                   display: flex;
-                   padding: 20rpx;
-                   color: #87653A;
-                   background: #fff;
-                   border-radius: 50rpx;
-                   margin-bottom: 20rpx;
-                   align-items: center;
-                   justify-content: space-between;
-                   /* 半透明白色 + 毛玻璃效果 */
-                   background: rgba(255, 255, 255, 0.6);
-                   backdrop-filter: blur(10px);
-                   -webkit-backdrop-filter: blur(10px);
-                   /* 阴影和边框，提升立体感 */
-                   box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
-                   border: 1rpx solid rgba(255, 255, 255, 0.4);
-                   image {
-                     width: 56rpx;
-                     height: 17rpx;
-                   }
-                 }
-               }
+                .answer {
+                  width: 100%;
+                  .tipContent {
+                    display: flex;
+                    padding: 20rpx;
+                    color: #87653a;
+                    background: #fff;
+                    border-radius: 50rpx;
+                    margin-bottom: 20rpx;
+                    align-items: center;
+                    justify-content: space-between;
+                    /* 半透明白色 + 毛玻璃效果 */
+                    background: rgba(255, 255, 255, 0.6);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    /* 阴影和边框，提升立体感 */
+                    box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+                    border: 1rpx solid rgba(255, 255, 255, 0.4);
+                    image {
+                      width: 56rpx;
+                      height: 17rpx;
+                    }
+                  }
+                }
               }
 
               .ai-tips {
@@ -1116,6 +1114,7 @@ export default {
               text-align: left;
               font-size: 26rpx;
               color: #919191;
+              margin-left: 20rpx;
             }
           }
 
@@ -1189,6 +1188,7 @@ export default {
               text-align: left;
               font-size: 26rpx;
               color: #919191;
+              margin-left: 25rpx;
             }
           }
         }
@@ -1283,9 +1283,12 @@ export default {
     }
 
     .foot {
-      margin-bottom: 24rpx; //带着footbar
-      // margin-bottom:50rpx;
       width: 750rpx;
+      padding: 30rpx 0 15rpx;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
 
       .foot-bar {
         margin-left: 12rpx;
@@ -1331,7 +1334,6 @@ export default {
           align-items: center;
           background: #ffffff;
           border: 2rpx solid transparent;
-          // border-image: linear-gradient(108deg, #499eff 0%, #7b5afd 100%) 1 1;
           background-image: linear-gradient(#ffffff, #ffffff),
             linear-gradient(108deg, #499eff 0%, #7b5afd 100%);
           border-radius: 40rpx;

@@ -1,8 +1,8 @@
 
- 
+
 import { cjRequest } from '@/utils/service.js'
- 
- 
+
+
 const patient = {
 	// 获取所有服务组
 	async getServiceGroup(data) {
@@ -86,7 +86,7 @@ const patient = {
 		})
 		return res
 	},
-	
+
 	//上传接口
 	async registrationSettlement(data) {
 		const res = await cjRequest({
@@ -96,7 +96,7 @@ const patient = {
 		})
 		return res
 	},
-	
+
 	// 结算上传
 	async opPay(data) {
 		const res = await cjRequest({
@@ -106,7 +106,7 @@ const patient = {
 		})
 		return res
 	},
-	
+
 	// 取消锁号
 	async unRegistrationLock(data) {
 		const res = await cjRequest({
@@ -126,7 +126,7 @@ const patient = {
 	   	})
 	   	return res
 	},
-	
+
 	//退费
 	async refund(data) {
 		const res = await cjRequest({
@@ -136,7 +136,7 @@ const patient = {
 		})
 		return res
 	},
-	
+
 	//挂号/预约挂号 发送消息
 	async registrationSuccessNotificationMsg(data) {
 		const res = await cjRequest({
@@ -146,7 +146,7 @@ const patient = {
 		})
 		return res
 	},
-	
+
 	//取消挂号 发送消息
 	async cancelRegistrationMsg(data) {
 		const res = await cjRequest({
@@ -156,7 +156,7 @@ const patient = {
 		})
 		return res
 	},
-	
+
 	//退费 发送消息
 	async wxRefund(data) {
 		const res = await cjRequest({
@@ -166,7 +166,7 @@ const patient = {
 		})
 		return res
 	},
-	
+
 }
- 
+
 export default patient

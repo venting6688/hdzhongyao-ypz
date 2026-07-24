@@ -27,7 +27,7 @@ export const cjRequest =  (parmas, state, isArraybuffer = false, isNew = false) 
 			if(!store.state.showModalState && state!==3){
 				store.commit('SET_SHOW_MODAL_STATE', true);
 				return login.loginData(state)
-			}else{
+			} else {
 				return Promise.reject(false);
 			}
 
@@ -38,7 +38,8 @@ export const cjRequest =  (parmas, state, isArraybuffer = false, isNew = false) 
 	}
 }
 
-const baseUrl = "https://api.2zhongyi.cn/prod-api/"
+// const baseUrl = "https://api.2zhongyi.cn/prod-api/"
+const baseUrl = "https://xcx.2zhongyi.cn/prod-api/mobile2/";
 // const baseUrl = "http://192.168.10.45:8088/mobile/"
 const middleUrl = "mobile2/"
 const middleUrlNew = "mobile/"

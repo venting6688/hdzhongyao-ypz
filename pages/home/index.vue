@@ -39,7 +39,7 @@
             link-type="navigateTo"
             v-for="(item, index) in gridList[current]"
             :key="index"
-            @click="onGridClick(item)"
+            @click="item.isClick ? jumpClick() : onGridClick(item)"
           >
             <view class="img"><image :src="item.img" mode="" /></view>
             <view class="name">{{ item.name }}</view>
@@ -72,7 +72,9 @@ export default {
       showMain: false,
       fontMode: 'normal',
       current: 0,
+      openid: '',
       defaultVal: {},
+      loginValue: {},
       list: [
         { img: '../../static/img/yuyue.png', url: '/sub_packages/subscribe/departments' },
         { img: '../../static/img/menzhen.png', url: '/sub_packages/report/index' },
@@ -114,9 +116,17 @@ export default {
             name: '住院费用',
             url: '/sub_packages/convenientModule/index'
           },
-          { img: '../../static/img/navigation/zy-report.png', name: '住院报告' } //, url: '/sub_packages/report/hospitalization'
+          {
+            img: '../../static/img/navigation/zy-report.png',
+            name: '住院报告' ,
+          } //, url: '/sub_packages/report/hospitalization'
         ],
         [
+          {
+            img: '../../static/img/navigation/yxfw.png',
+            name: '药学服务',
+            isClick: true,
+          },
           {
             img: '../../static/img/navigation/info.png',
             name: '就诊人管理',
@@ -136,19 +146,27 @@ export default {
       ]
     }
   },
+  onShow() {
+  	const loginData = uni.getStorageSync('loginData') || {};
+  	this.loginValue = loginData;
+  	this.openid = loginData.xcxOpenId || '';
+  },
   onLoad() {
     let loginValue = uni.getStorageSync('loginData')
     this.defaultVal = JSON.stringify(loginValue) != '{}' ? loginValue.defaultArchives : {}
     if (loginValue?.defaultArchives) {
       this.$store.commit('SET_FOOT_DATA', this.defaultVal)
     }
-    const confirmed = uni.getStorageSync('popupConfirmed')
+
+    this.defaultVal = this.loginValue.defaultArchives || {};
+    const confirmed = uni.getStorageSync('popupConfirmed');
+
     if (!confirmed) {
       this.$nextTick(() => {
-        this.$refs.notice.open()
-      })
+        this.$refs.notice.open();
+      });
     } else {
-      this.showMain = true
+      this.showMain = true;
     }
   },
   methods: {
@@ -178,6 +196,65 @@ export default {
         })
       }
     },
+
+    jumpClick() {
+      let openId = this.openid;
+      if (!openId) {
+        uni.showModal({
+        	title: '提示',
+        	content: '未获取到就诊人，请先添加就诊人',
+        	showCancel: false,
+        	success: () => {
+        		uni.navigateTo({
+        			url: '/sub_packages_healthcard/family/familyManage'
+        		})
+        	}
+        })
+        return
+      }
+      uni.showLoading({
+        title: '加载中'
+      })
+
+      try {
+        this.getEncryptArcBasId(this.defaultVal.patientCard).then(res => {
+          let encryptArcBasId = '';
+          if (res.data.code == '200') {
+            encryptArcBasId = res.data.data;
+          }
+          if (!encryptArcBasId) {
+            throw new Error('获取失败')
+          }
+          let jumpUrl = `https://mk.2zhongyi.cn/?appId=wx9af874b43d4ce86d&openId=${openId}&arcbasid=${encryptArcBasId}`;
+          jumpUrl = encodeURIComponent(jumpUrl);
+          uni.navigateTo({ url: `/pages/webview/webview?url=${jumpUrl}` });
+        })
+      } catch (error) {
+        console.log('获取加密arcbasid失败', error)
+        uni.showToast({
+          title: '暂无法打开药学服务',
+          icon: 'none'
+        })
+      } finally {
+        uni.hideLoading()
+      }
+    },
+
+    getEncryptArcBasId(idCard) {
+      return new Promise((resolve, reject) => {
+        uni.request({
+          url: 'https://mk.2zhongyi.cn/api/platformwx/wechat/patient/getEncryptArcBasIdEncrypt?arcbasid='+idCard,
+          method: 'GET',
+          success: res => {
+            resolve(res)
+          },
+          fail: err => {
+            reject(err)
+          }
+        })
+      })
+    },
+
     onAiClick() {
       wx.reLaunch({ url: '/pages/virtualNurse/index' })
     },
