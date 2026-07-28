@@ -70,9 +70,8 @@
 				try {
 					let data = {
 						cardNo: this.siginData.patientCard,
-						patientId: this.siginData.patientCard,
+						patientId: this.siginData.hisPatientId,
 						cardType: 1,
-						patientId: '',
 						startDate: this.date.startTime,
 						endDate: this.date.endTime,
 					}
@@ -147,7 +146,7 @@
 				})
 			}
 		},
-		mounted(){
+		onLoad(){
 			let data = uni.getStorageSync('loginData');
 			this.siginData = data.defaultArchives ? data.defaultArchives : {};
 		}

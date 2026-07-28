@@ -181,7 +181,8 @@ import registrationApi from '@/api/registrationApi.js'
 				}).then(res => {
 					let result = JSON.parse(res.data.msg);
 					if (result.success) {
-						this.doctorList = this.mergeDoctorSchedules(result.data);
+						let mergeRecord = this.mergeDoctorSchedules(result.data);
+            this.doctorList = mergeRecord.filter(x => !x.doctName.includes('复诊号'))
 					} else {
 						this.doctorList = [];
 						this.timeList.map(v => {
